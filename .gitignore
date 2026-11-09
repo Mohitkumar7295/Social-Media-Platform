@@ -1,0 +1,35 @@
+# Environment variables & secrets
+.env
+*.env
+!.env.example
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.settings/
+.project
+.classpath
+
+# Build directories
+target/
+build/
+dist/
+*.class
+
+# Log files
+*.log
+logs/
+
+# Node (if any tools used later)
+node_modules/
+package-lock.json
+
+# Maven wrapper jar if not needed, but usually keep wrapper
