@@ -292,60 +292,224 @@ WriteSpace implements **Stateless JWT Authentication**:
 
 ```
 WriteSpace/
-├── README.md                           # Master project documentation
-├── .env.example                        # Template for environment variables
-├── .gitignore                          # Standard Git ignore rules
+├── .env.example                                    # Environment variables template
+├── .gitignore                                      # Git ignore rules for Java, OS, IDEs
+├── README.md                                       # Master project documentation & onboarding
 │
-├── docs/                               # Complete project documentation suite
-│   ├── DOCUMENTATION_INDEX.md          # Navigation map of all documentation
-│   ├── PROJECT_OVERVIEW.md             # Vision, mission, goals, audience
-│   ├── ARCHITECTURE.md                 # Deep technical architecture manual
-│   ├── REQUIREMENTS.md                 # SRS, functional and non-functional reqs
-│   ├── FEATURES.md                     # Comprehensive feature catalog & MVP matrix
-│   ├── DATABASE_SCHEMA.md              # Relational schema, DDL, Flyway, indexes
-│   ├── API_DOCUMENTATION.md            # REST API specification & payloads
-│   ├── AUTHENTICATION_SECURITY.md      # Spring Security, JWT, hardening guide
-│   ├── BACKEND_DOCUMENTATION.md        # Spring Boot engineering manual
-│   ├── FRONTEND_DOCUMENTATION.md       # Vanilla JS & CSS UI architecture
-│   ├── USER_WORKFLOWS.md               # User journeys and sequence flows
-│   ├── UI_UX_GUIDELINES.md             # Design tokens, typography, component rules
-│   ├── PROJECT_STRUCTURE.md            # Directory and file taxonomy
-│   ├── DEVELOPMENT_ROADMAP.md          # Phased engineering roadmap
-│   ├── TESTING_STRATEGY.md             # Quality assurance and testing manual
-│   ├── DEPLOYMENT_GUIDE.md             # Local, cloud, and InsForge deployment
-│   ├── CONTRIBUTING.md                 # Contribution workflows and Git standards
-│   └── FUTURE_ENHANCEMENTS.md          # Long-term feature roadmap
+├── docs/                                           # Complete project documentation suite
+│   ├── DOCUMENTATION_INDEX.md                      # Navigation map of all documentation
+│   ├── PROJECT_OVERVIEW.md                         # Vision, mission, goals, audience, personas
+│   ├── ARCHITECTURE.md                             # Deep technical architecture manual
+│   ├── REQUIREMENTS.md                             # System Requirements Specification (SRS)
+│   ├── FEATURES.md                                 # Comprehensive feature catalog & MVP matrix
+│   ├── DATABASE_SCHEMA.md                          # Relational schema, DDL, Flyway, indexes
+│   ├── API_DOCUMENTATION.md                        # REST API specification & JSON payloads
+│   ├── AUTHENTICATION_SECURITY.md                  # Spring Security, JWT, BCrypt, hardening
+│   ├── BACKEND_DOCUMENTATION.md                    # Spring Boot engineering manual
+│   ├── FRONTEND_DOCUMENTATION.md                   # Vanilla JS & CSS UI architecture
+│   ├── USER_WORKFLOWS.md                           # User journeys and sequence flowcharts
+│   ├── UI_UX_GUIDELINES.md                         # Design tokens, typography, component rules
+│   ├── PROJECT_STRUCTURE.md                        # Full repository taxonomy
+│   ├── DEVELOPMENT_ROADMAP.md                      # 12-phase engineering roadmap
+│   ├── TESTING_STRATEGY.md                         # Quality assurance and testing manual
+│   ├── DEPLOYMENT_GUIDE.md                         # Local, cloud, and InsForge deployment
+│   ├── CONTRIBUTING.md                             # Git workflows, PR standards, code quality
+│   └── FUTURE_ENHANCEMENTS.md                      # Long-term feature roadmap
 │
-├── backend/                            # Spring Boot Java application
-│   ├── pom.xml                         # Maven dependencies and build plugins
-│   ├── mvnw / mvnw.cmd                 # Maven wrapper scripts
+├── backend/                                        # Spring Boot Java application
+│   ├── pom.xml                                     # Maven dependencies and build configuration
+│   ├── mvnw                                        # Maven wrapper script (Unix/macOS)
+│   ├── mvnw.cmd                                    # Maven wrapper script (Windows)
 │   └── src/
 │       ├── main/
-│       │   ├── java/com/writespace/    # Application source code
+│       │   ├── java/
+│       │   │   └── com/
+│       │   │       └── writespace/
+│       │   │           ├── WriteSpaceApplication.java         # Spring Boot entry point
+│       │   │           │
+│       │   │           ├── config/                            # Infrastructure & framework beans
+│       │   │           │   ├── SecurityConfig.java            # SecurityFilterChain & CORS rules
+│       │   │           │   ├── WebMvcConfig.java              # WebMvcConfigurer & formatters
+│       │   │           │   ├── JpaConfig.java                 # JPA Auditing listener setup
+│       │   │           │   ├── OpenApiConfig.java             # Swagger/OpenAPI documentation
+│       │   │           │   └── CorsConfig.java                # Cross-origin policy definition
+│       │   │           │
+│       │   │           ├── controller/                        # REST Controllers (@RestController)
+│       │   │           │   ├── AuthController.java            # /api/v1/auth (Register, Login, Me)
+│       │   │           │   ├── UserController.java            # /api/v1/users (Profile lookup & edit)
+│       │   │           │   ├── PostController.java            # /api/v1/posts (Article CRUD & slugs)
+│       │   │           │   ├── CommentController.java         # /api/v1/posts/{id}/comments
+│       │   │           │   ├── SocialController.java          # /api/v1/posts/{id}/like
+│       │   │           │   ├── FollowController.java          # /api/v1/users/{id}/follow
+│       │   │           │   ├── FeedController.java            # /api/v1/feed (Following feed)
+│       │   │           │   └── BookmarkController.java        # /api/v1/bookmarks (Saved posts)
+│       │   │           │
+│       │   │           ├── dto/                               # Data Transfer Objects (Records)
+│       │   │           │   ├── request/                       # Inbound request bodies with @Valid
+│       │   │           │   │   ├── RegisterRequest.java       # User registration payload
+│       │   │           │   │   ├── LoginRequest.java          # User login payload
+│       │   │           │   │   ├── ProfileUpdateRequest.java  # Bio & display name update
+│       │   │           │   │   ├── PostCreateRequest.java     # Article draft/publish payload
+│       │   │           │   │   ├── PostUpdateRequest.java     # Article modification payload
+│       │   │           │   │   └── CommentCreateRequest.java  # Comment text payload
+│       │   │           │   │
+│       │   │           │   └── response/                      # Outbound response bodies
+│       │   │           │       ├── AuthResponse.java          # JWT token + user summary
+│       │   │           │       ├── UserSummaryResponse.java   # Lightweight user metadata
+│       │   │           │       ├── UserProfileResponse.java   # Full profile + follow stats
+│       │   │           │       ├── PostResponse.java          # Full article with author & counts
+│       │   │           │       ├── PostSummaryResponse.java   # Article card summary for feeds
+│       │   │           │       ├── CommentResponse.java       # Comment + author metadata
+│       │   │           │       ├── LikeToggleResponse.java    # Boolean liked + total count
+│       │   │           │       ├── FollowToggleResponse.java  # Boolean following + follower count
+│       │   │           │       ├── BookmarkToggleResponse.java# Boolean bookmarked
+│       │   │           │       ├── PageResponse.java          # Generic pagination envelope
+│       │   │           │       ├── ErrorResponse.java         # Standard RFC 7807 error format
+│       │   │           │       └── ValidationErrorResponse.java# Detailed field-error breakdown
+│       │   │           │
+│       │   │           ├── entity/                            # JPA / Hibernate database entities
+│       │   │           │   ├── BaseAuditEntity.java           # created_at & updated_at base
+│       │   │           │   ├── User.java                      # Users table mapping
+│       │   │           │   ├── Post.java                      # Posts table mapping
+│       │   │           │   ├── Comment.java                   # Comments table mapping
+│       │   │           │   ├── Like.java                      # Likes table mapping
+│       │   │           │   ├── Follow.java                    # Follows table mapping
+│       │   │           │   ├── Bookmark.java                  # Bookmarks table mapping
+│       │   │           │   └── enums/
+│       │   │           │       ├── Role.java                  # ROLE_USER, ROLE_ADMIN
+│       │   │           │       └── PostStatus.java            # DRAFT, PUBLISHED, ARCHIVED
+│       │   │           │
+│       │   │           ├── repository/                        # Spring Data JPA interfaces
+│       │   │           │   ├── UserRepository.java            # User lookups & existence checks
+│       │   │           │   ├── PostRepository.java            # Slug queries, feeds, and search
+│       │   │           │   ├── CommentRepository.java         # Threaded comments by post_id
+│       │   │           │   ├── LikeRepository.java            # Likes by user and post
+│       │   │           │   ├── FollowRepository.java          # Social graph relationships
+│       │   │           │   └── BookmarkRepository.java        # Saved reading list records
+│       │   │           │
+│       │   │           ├── service/                           # Business logic service contracts
+│       │   │           │   ├── AuthService.java               # Authentication contract
+│       │   │           │   ├── UserService.java               # Profile operations contract
+│       │   │           │   ├── PostService.java               # Article CRUD contract
+│       │   │           │   ├── CommentService.java            # Discussion comments contract
+│       │   │           │   ├── SocialService.java             # Likes & interactions contract
+│       │   │           │   ├── FollowService.java             # Social graph follow contract
+│       │   │           │   ├── FeedService.java               # Following feed query contract
+│       │   │           │   ├── BookmarkService.java           # Bookmarking contract
+│       │   │           │   │
+│       │   │           │   └── impl/                          # Transactional implementations
+│       │   │           │       ├── AuthServiceImpl.java       # Registration, login, JWT issuance
+│       │   │           │       ├── UserServiceImpl.java       # Profile retrieval & updates
+│       │   │           │       ├── PostServiceImpl.java       # Publishing, slugs, read time
+│       │   │           │       ├── CommentServiceImpl.java    # Sanitization & comments CRUD
+│       │   │           │       ├── SocialServiceImpl.java     # Idempotent like toggling
+│       │   │           │       ├── FollowServiceImpl.java     # Follow validation & self-check
+│       │   │           │       ├── FeedServiceImpl.java       # Feed generation with joins
+│       │   │           │       └── BookmarkServiceImpl.java   # Bookmark toggling & listing
+│       │   │           │
+│       │   │           ├── security/                          # Spring Security & JWT components
+│       │   │           │   ├── JwtTokenProvider.java          # Token generation, claims, signing
+│       │   │           │   ├── JwtAuthenticationFilter.java   # Bearer token interception filter
+│       │   │           │   ├── JwtAuthenticationEntryPoint.java# 401 Unauthorized handler
+│       │   │           │   ├── CustomUserDetailsService.java  # UserDetails resolution from DB
+│       │   │           │   └── UserPrincipal.java             # Authenticated principal object
+│       │   │           │
+│       │   │           ├── mapper/                            # Entity <-> DTO mappers
+│       │   │           │   ├── UserMapper.java                # User <-> UserDTO conversions
+│       │   │           │   ├── PostMapper.java                # Post <-> PostDTO conversions
+│       │   │           │   └── CommentMapper.java             # Comment <-> CommentDTO conversions
+│       │   │           │
+│       │   │           ├── exception/                         # Centralized exception handlers
+│       │   │           │   ├── ResourceNotFoundException.java # 404 entity not found
+│       │   │           │   ├── ResourceAlreadyExistsException.java # 409 conflict
+│       │   │           │   ├── UnauthorizedActionException.java # 403 forbidden / IDOR
+│       │   │           │   ├── SelfFollowException.java       # 400 self-follow violation
+│       │   │           │   ├── InvalidTokenException.java     # 401 bad JWT
+│       │   │           │   └── GlobalExceptionHandler.java    # Central @RestControllerAdvice
+│       │   │           │
+│       │   │           └── util/                              # Shared helper utilities
+│       │   │               ├── SlugUtils.java                 # Kebab-case slug generator
+│       │   │               └── ReadingTimeCalculator.java     # Word-count reading time estimator
+│       │   │
 │       │   └── resources/
-│       │       ├── application.yml     # Application configuration
-│       │       └── db/migration/       # Flyway SQL migration scripts (V1, V2...)
-│       └── test/java/com/writespace/   # Unit and integration test suites
+│       │       ├── application.yml                            # Core Spring Boot configuration
+│       │       ├── application-dev.yml                        # Local development overrides
+│       │       ├── application-prod.yml                       # Production configuration & SSL
+│       │       └── db/
+│       │           └── migration/                             # Flyway SQL migrations
+│       │               ├── V1__init_schema.sql                # Initial schema DDL & constraints
+│       │               ├── V2__add_performance_indexes.sql    # B-Tree & composite indexes
+│       │               └── V3__seed_initial_data.sql          # Test seed data
+│       │
+│       └── test/                                              # Automated test suites
+│           └── java/
+│               └── com/
+│                   └── writespace/
+│                       ├── controller/                        # Controller & API integration tests
+│                       │   ├── AuthControllerTest.java        # Registration & login tests
+│                       │   ├── PostControllerTest.java        # Article endpoint security tests
+│                       │   └── SocialControllerTest.java      # Likes & comments endpoint tests
+│                       ├── service/                           # Unit tests with Mockito
+│                       │   ├── AuthServiceTest.java           # Authentication logic unit tests
+│                       │   ├── PostServiceTest.java           # Slug & reading time unit tests
+│                       │   └── FollowServiceTest.java         # Self-follow validation tests
+│                       ├── repository/                        # JPA & constraint tests (@DataJpaTest)
+│                       │   ├── UserRepositoryTest.java        # Unique constraint tests
+│                       │   ├── PostRepositoryTest.java        # Custom JPQL feed tests
+│                       │   └── LikeRepositoryTest.java        # Unique like constraint checks
+│                       └── security/                          # Security subsystem tests
+│                           └── JwtTokenProviderTest.java      # Token expiration & tampering tests
 │
-└── frontend/                           # Responsive Web Client (HTML/CSS/JS)
-    ├── index.html                      # Landing & Explore page
-    ├── feed.html                       # Following Feed page
-    ├── article.html                    # Article reading view
-    ├── editor.html                     # Publishing canvas
-    ├── profile.html                    # Author profile page
-    ├── bookmarks.html                  # Saved reading list
-    ├── login.html                      # Login page
-    ├── register.html                   # Registration page
-    ├── css/                            # Modular stylesheets
-    │   ├── variables.css               # Design tokens & color system
-    │   ├── base.css                    # Typography, resets, global layouts
-    │   ├── components.css              # Cards, buttons, inputs, modals
-    │   └── pages/                      # Page-specific styling rules
-    └── js/                             # Modular JavaScript files
-        ├── api.js                      # REST API client & fetch wrappers
-        ├── auth.js                     # Authentication context & storage
-        ├── ui.js                       # Reusable UI alerts, formatting, DOM helpers
-        └── pages/                      # Page controllers
+└── frontend/                                       # Responsive Web Client (HTML/CSS/JS)
+    ├── index.html                                  # Global explore and landing view
+    ├── feed.html                                   # Authenticated follower feed view
+    ├── article.html                                # Article reading view & comments thread
+    ├── editor.html                                 # Publishing studio & draft canvas
+    ├── profile.html                                # Author profile and catalog view
+    ├── bookmarks.html                              # Saved reading list view
+    ├── login.html                                  # Sign-in view
+    ├── register.html                               # Account registration view
+    │
+    ├── assets/                                     # Static media, icons, and illustrations
+    │   ├── icons/
+    │   │   ├── heart.svg                           # Unliked heart icon
+    │   │   ├── heart-filled.svg                    # Liked active heart icon
+    │   │   ├── bookmark.svg                        # Unsaved bookmark icon
+    │   │   ├── bookmark-filled.svg                 # Saved bookmark icon
+    │   │   ├── comment.svg                         # Comment bubble icon
+    │   │   ├── search.svg                          # Search lens icon
+    │   │   └── write.svg                           # Pencil compose icon
+    │   └── images/
+    │       ├── default-avatar.svg                  # Fallback author avatar image
+    │       ├── placeholder-cover.webp              # Fallback article cover banner
+    │       └── logo.svg                            # WriteSpace logo brand mark
+    │
+    ├── css/                                        # Modular stylesheets
+    │   ├── variables.css                           # Design tokens (colors, typography, spacing)
+    │   ├── base.css                                # Global resets, typography, container widths
+    │   ├── components.css                          # Cards, buttons, forms, badges, modals, toasts
+    │   └── pages/                                  # Specialized page stylesheets
+    │       ├── index.css                           # Explore feed layout & hero styling
+    │       ├── feed.css                            # Following feed layout & empty-state styling
+    │       ├── article.css                         # Editorial reading column (700px) & typography
+    │       ├── editor.css                          # Distraction-free writing canvas
+    │       ├── profile.css                         # Author header, metrics, and tabs
+    │       ├── bookmarks.css                       # Saved reading list card view
+    │       └── auth.css                            # Centered authentication card forms
+    │
+    └── js/                                         # Modular JavaScript client engine
+        ├── api.js                                  # REST API client & centralized fetch wrapper
+        ├── auth.js                                 # Token storage & authentication state guard
+        ├── ui.js                                   # Reusable UI toasts, formatting, DOM helpers
+        └── pages/                                  # Page controllers (invoked per HTML view)
+            ├── index.js                            # Explore feed loading & tag filtering
+            ├── feed.js                             # Follower feed loading & empty state
+            ├── article.js                          # Article rendering, like & comment handlers
+            ├── editor.js                           # Draft autosave, slug check, publish handler
+            ├── profile.js                          # Author stats & follow toggle handler
+            ├── bookmarks.js                        # Bookmarks list loading & remove handler
+            ├── login.js                            # Login form submission & token storage
+            └── register.js                         # Registration form submission & validation
 ```
 
 ---
