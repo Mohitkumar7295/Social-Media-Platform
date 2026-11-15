@@ -251,7 +251,7 @@ export default function Write() {
 
         if (error || !post) throw error || new Error('Publishing failed.');
         finalPostId = post.id;
-        navigate(`/story/${post.slug}`, { replace: true });
+        navigate(`/p/${post.slug}`, { replace: true });
       } else {
         // Update to published
         const { post, error } = await postService.updatePost(finalPostId, {
@@ -266,7 +266,7 @@ export default function Write() {
         });
 
         if (error || !post) throw error || new Error('Publishing failed.');
-        navigate(`/story/${post.slug}`, { replace: true });
+        navigate(`/p/${post.slug}`, { replace: true });
       }
     } catch (err) {
       console.error('Publishing error:', err);

@@ -81,7 +81,24 @@ This document details the phase-by-phase implementation schedule, deliverables, 
   - `src/services/postService.js`, `src/utils/editorUtils.js`
   - `scripts/test-phase4.mjs` integration test suite
 - **Validation**: All 6 integration tests passed with 0 failures; build and live deployment verified.
-- **Validation**: All 5 integration tests pass with 0 failures; live build deployed.
+
+---
+
+### Phase 5: Professional Article Reading Experience
+- **Status**: **COMPLETED**
+- **Objective**: Dedicated, distraction-free reading experience inspired by Medium and Substack at canonical route `/p/:slug` (with backward-compatible aliases `/story/:slug` and `/post/:slug`). Includes reading navigation, scroll progress indicator, cover image viewer, sanitized article body with typography styling, dynamic Table of Contents, native web share and clipboard fallback, author bio card, and real related articles query from PostgreSQL.
+- **Deliverables**:
+  - `src/pages/ArticleReadingView.jsx` (canonical `/p/:slug` page)
+  - `src/components/reading/ReadingNavbar.jsx`
+  - `src/components/reading/ReadingProgressBar.jsx`
+  - `src/components/reading/TableOfContents.jsx`
+  - `src/components/reading/ArticleRenderer.jsx`
+  - `src/components/reading/ShareButton.jsx`
+  - `src/components/reading/RelatedArticles.jsx`
+  - `src/utils/seoUtils.js` (dynamic meta title, canonical link, and Open Graph tags)
+  - `src/services/postService.js` (enhanced with `getRelatedPosts` and draft privacy isolation)
+  - `scripts/test-phase5.mjs` integration test suite
+- **Validation**: All 6 integration tests passed with 0 failures; Vite production build succeeded; live deployed to `https://u9367zk9.insforge.site`.
 
 ---
 

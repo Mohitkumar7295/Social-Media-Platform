@@ -113,6 +113,23 @@ Execution Summary:
 - Build: `npm run build` completed with exit code 0.
 - Production Deployment: Live on `https://u9367zk9.insforge.site`.
 
+### Phase 5 Test Suite Results (Professional Article Reading Experience)
+Executed via `scripts/test-phase5.mjs`:
+
+| Test # | Target Module | Test Description | Result | Status |
+|---|---|---|---|---|
+| **Test 1** | `editorUtils.estimateReadingTime` | Verify dynamic reading time calculation algorithm based on ~200 WPM | Accurately calculated reading minutes | **PASSED** |
+| **Test 2** | `ArticleRenderer` & DOMPurify | Verify strict sanitization stripping malicious `<script>` and `onerror` XSS payloads | Stripped scripts and invalid event handlers | **PASSED** |
+| **Test 3** | `postService.createPost` | Create test article with headings and HTML content in PostgreSQL | Created test record in `posts` table | **PASSED** |
+| **Test 4** | `postService.getPostBySlug` | Verify anonymous public accessibility to published article at `/p/:slug` | Anonymous reader fetched article successfully | **PASSED** |
+| **Test 5** | Draft Privacy Isolation | Verify unpublished/draft articles return 404/rejection to unauthenticated readers | Draft access denied to anonymous request | **PASSED** |
+| **Test 6** | `postService.getRelatedPosts` | Query real published related stories excluding current post ID | Returned related stories matching category | **PASSED** |
+
+Execution Summary:
+- **6 of 6 integration tests passed with 0 errors**.
+- Build: `npm run build` completed successfully (exit code 0).
+- Production Deployment: Live on `https://u9367zk9.insforge.site`.
+
 ### Test Scenario: Complete Publishing & Engagement Lifecycle
 1. **Account Registration**:
    - Navigate to `/register`.

@@ -192,7 +192,7 @@ export default function Dashboard() {
                 {story.status === 'published' ? (
                   <>
                     <Link
-                      to={`/story/${story.slug}`}
+                      to={`/p/${story.slug}`}
                       className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-[#202026] transition-colors"
                       title="View Published Article"
                     >

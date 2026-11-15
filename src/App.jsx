@@ -21,9 +21,9 @@ import Chat from './pages/Chat';
 import Activity from './pages/Activity';
 import Explore from './pages/Explore';
 
-// Article Writing, Publishing & Reading (Phase 4)
+// Article Writing, Publishing & Reading (Phase 4 & 5)
 import Write from './pages/Write';
-import StoryView from './pages/StoryView';
+import ArticleReadingView from './pages/ArticleReadingView';
 import Dashboard from './pages/Dashboard';
 
 export default function App() {
@@ -120,9 +120,10 @@ export default function App() {
             }
           />
 
-          {/* Phase 4: Public/Authenticated Story Reading View */}
-          <Route path="/story/:slug" element={<StoryView />} />
-          <Route path="/post/:slug" element={<StoryView />} />
+          {/* Phase 5: Professional Article Reading Experience */}
+          <Route path="/p/:slug" element={<ArticleReadingView />} />
+          <Route path="/story/:slug" element={<ArticleReadingView />} />
+          <Route path="/post/:slug" element={<ArticleReadingView />} />
 
           {/* User Profile System (Phase 2) */}
           <Route path="/profile/:username" element={<PublicProfile />} />

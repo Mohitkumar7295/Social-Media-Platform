@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Feather, MapPin, Globe, Calendar, Users, Edit3, UserCheck, AlertCircle, Sparkles, BookOpen } from 'lucide-react';
 import { profileService } from '../services/profileService';
 import { followService } from '../services/followService';
+import { postService } from '../services/postService';
 import { useAuth } from '../hooks/useAuth';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
@@ -14,6 +15,7 @@ export default function PublicProfile() {
 
   const [profile, setProfile] = useState(null);
   const [followCounts, setFollowCounts] = useState({ followersCount: 0, followingCount: 0 });
+  const [authorPosts, setAuthorPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('home');
@@ -48,6 +50,12 @@ export default function PublicProfile() {
         const counts = await followService.getFollowCounts(authorProfile.id);
         if (isMounted) {
           setFollowCounts(counts);
+        }
+
+        // Load real published stories from PostgreSQL posts table
+        const { posts } = await postService.getAuthorPosts(authorProfile.id, 'published');
+        if (isMounted) {
+          setAuthorPosts(posts || []);
           setIsLoading(false);
         }
       } catch (err) {
@@ -274,28 +282,92 @@ export default function PublicProfile() {
                       </p>
                     </div>
 
-                    {/* Clean Empty State for Articles (Phase 5 will activate real articles) */}
-                    <div className="text-center py-12 px-4 rounded-2xl border border-dashed border-stone-200 bg-white/50">
-                      <BookOpen className="w-10 h-10 text-stone-300 mx-auto mb-3" />
-                      <h3 className="font-editorial text-lg font-bold text-stone-800">
-                        No published articles yet
-                      </h3>
-                      <p className="text-xs text-stone-500 max-w-sm mx-auto mt-1">
-                        When {profile.full_name} publishes an article on WriteSpace, it will appear here.
-                      </p>
-                    </div>
+                    {/* Published Articles List or Clean Empty State */}
+                    {authorPosts.length > 0 ? (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand-700 mb-2">
+                          <BookOpen className="w-3.5 h-3.5" />
+                          <span>Published Stories ({authorPosts.length})</span>
+                        </div>
+                        {authorPosts.map((post) => (
+                          <Link
+                            key={post.id}
+                            to={`/p/${post.slug}`}
+                            className="block p-5 rounded-2xl bg-white border border-stone-200/80 hover:border-brand-300 shadow-sm transition-all hover:-translate-y-0.5 group"
+                          >
+                            <div className="flex items-center gap-2 text-xs text-stone-500 mb-1.5">
+                              <span className="px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 font-semibold text-[10px]">
+                                {post.category || 'General'}
+                              </span>
+                              <span>•</span>
+                              <span>{new Date(post.published_at || post.created_at).toLocaleDateString()}</span>
+                              <span>•</span>
+                              <span>{post.reading_time || 1} min read</span>
+                            </div>
+                            <h4 className="font-editorial text-lg font-bold text-stone-900 group-hover:text-brand-700 transition-colors">
+                              {post.title}
+                            </h4>
+                            {post.excerpt && (
+                              <p className="text-xs text-stone-600 line-clamp-2 mt-1 leading-relaxed">
+                                {post.excerpt}
+                              </p>
+                            )}
+                          </Link>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12 px-4 rounded-2xl border border-dashed border-stone-200 bg-white/50">
+                        <BookOpen className="w-10 h-10 text-stone-300 mx-auto mb-3" />
+                        <h3 className="font-editorial text-lg font-bold text-stone-800">
+                          No published articles yet
+                        </h3>
+                        <p className="text-xs text-stone-500 max-w-sm mx-auto mt-1">
+                          When {profile.full_name} publishes an article on WriteSpace, it will appear here.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
 
                 {activeTab === 'posts' && (
-                  <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-stone-200 bg-white/50">
-                    <BookOpen className="w-10 h-10 text-stone-300 mx-auto mb-3" />
-                    <h3 className="font-editorial text-lg font-bold text-stone-800">
-                      No posts published yet
-                    </h3>
-                    <p className="text-xs text-stone-500 max-w-sm mx-auto mt-1">
-                      Articles published in upcoming Phase 5 will be displayed chronologically in this tab.
-                    </p>
+                  <div>
+                    {authorPosts.length > 0 ? (
+                      <div className="space-y-4">
+                        {authorPosts.map((post) => (
+                          <Link
+                            key={post.id}
+                            to={`/p/${post.slug}`}
+                            className="block p-5 rounded-2xl bg-white border border-stone-200/80 hover:border-brand-300 shadow-sm transition-all hover:-translate-y-0.5 group"
+                          >
+                            <div className="flex items-center gap-2 text-xs text-stone-500 mb-1.5">
+                              <span className="px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 font-semibold text-[10px]">
+                                {post.category || 'General'}
+                              </span>
+                              <span>•</span>
+                              <span>{new Date(post.published_at || post.created_at).toLocaleDateString()}</span>
+                            </div>
+                            <h4 className="font-editorial text-lg font-bold text-stone-900 group-hover:text-brand-700 transition-colors">
+                              {post.title}
+                            </h4>
+                            {post.excerpt && (
+                              <p className="text-xs text-stone-600 line-clamp-2 mt-1 leading-relaxed">
+                                {post.excerpt}
+                              </p>
+                            )}
+                          </Link>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-stone-200 bg-white/50">
+                        <BookOpen className="w-10 h-10 text-stone-300 mx-auto mb-3" />
+                        <h3 className="font-editorial text-lg font-bold text-stone-800">
+                          No posts published yet
+                        </h3>
+                        <p className="text-xs text-stone-500 max-w-sm mx-auto mt-1">
+                          Articles published by this writer will be displayed chronologically here.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
 

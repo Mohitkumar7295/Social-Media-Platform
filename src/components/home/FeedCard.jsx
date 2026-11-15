@@ -74,7 +74,7 @@ export default function FeedCard({ post }) {
         {/* Post Content */}
         <div className="mb-4">
           {post.title && (
-            <Link to={post.slug ? `/story/${post.slug}` : '#'}>
+            <Link to={post.slug ? `/p/${post.slug}` : '#'}>
               <h3 className="font-serif text-xl font-bold text-white mb-1.5 tracking-tight hover:text-[#FF6719] transition-colors leading-snug">
                 {post.title}
               </h3>
@@ -82,7 +82,7 @@ export default function FeedCard({ post }) {
           )}
 
           {(post.excerpt || post.content) && (
-            <Link to={post.slug ? `/story/${post.slug}` : '#'}>
+            <Link to={post.slug ? `/p/${post.slug}` : '#'}>
               <p className="text-sm text-zinc-300 leading-relaxed line-clamp-3">
                 {post.excerpt || post.content.replace(/<[^>]*>/g, ' ')}
               </p>
@@ -90,7 +90,7 @@ export default function FeedCard({ post }) {
           )}
 
           {post.cover_image_url && (
-            <Link to={post.slug ? `/story/${post.slug}` : '#'}>
+            <Link to={post.slug ? `/p/${post.slug}` : '#'}>
               <div className="mt-3 rounded-xl overflow-hidden border border-[#26262a] max-h-72">
                 <img
                   src={post.cover_image_url}

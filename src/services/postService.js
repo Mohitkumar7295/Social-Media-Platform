@@ -152,9 +152,12 @@ export const postService = {
 
   /**
    * Fetch a single post by unique slug with author profile join.
+   * If currentUserId is passed, allows author to view their own draft;
+   * otherwise strictly returns published articles only.
    * @param {string} slug
+   * @param {string|null} currentUserId
    */
-  async getPostBySlug(slug) {
+  async getPostBySlug(slug, currentUserId = null) {
     try {
       const { data, error } = await insforge.database
         .from('posts')
@@ -163,9 +166,70 @@ export const postService = {
         .maybeSingle();
 
       if (error) return { post: null, error };
+      if (!data) return { post: null, error: null };
+
+      // Privacy enforcement: If draft, allow only the author
+      if (data.status === 'draft' && data.author_id !== currentUserId) {
+        return { post: null, error: { status: 404, message: 'Story not found' } };
+      }
+
       return { post: data, error: null };
     } catch (err) {
       return { post: null, error: err };
+    }
+  },
+
+  /**
+   * Fetch related published articles for the reader recommendation section.
+   * Prefers same category, then recent published stories, excluding current article.
+   * @param {Object} options
+   * @param {string} options.currentPostId - ID of currently displayed post
+   * @param {string} options.category - Category of current post
+   * @param {number} options.limit - Max recommendations (default 3)
+   */
+  async getRelatedPosts({ currentPostId, category, limit = 3 }) {
+    try {
+      let related = [];
+
+      // 1. Try to fetch published posts in the same category (excluding current)
+      if (category) {
+        const { data: categoryPosts } = await insforge.database
+          .from('posts')
+          .select('*, author:profiles(*)')
+          .eq('status', 'published')
+          .eq('category', category)
+          .neq('id', currentPostId)
+          .order('published_at', { ascending: false })
+          .limit(limit);
+
+        if (categoryPosts && categoryPosts.length > 0) {
+          related.push(...categoryPosts);
+        }
+      }
+
+      // 2. If needed, backfill with recent published posts from any category
+      if (related.length < limit) {
+        const excludeIds = [currentPostId, ...related.map((p) => p.id)];
+        const needed = limit - related.length;
+
+        let backfillQuery = insforge.database
+          .from('posts')
+          .select('*, author:profiles(*)')
+          .eq('status', 'published')
+          .order('published_at', { ascending: false })
+          .limit(needed + 5);
+
+        const { data: backfillPosts } = await backfillQuery;
+        if (backfillPosts) {
+          const additional = backfillPosts.filter((p) => !excludeIds.includes(p.id)).slice(0, needed);
+          related.push(...additional);
+        }
+      }
+
+      return { posts: related.slice(0, limit), error: null };
+    } catch (err) {
+      console.error('Error fetching related posts:', err);
+      return { posts: [], error: err };
     }
   },
 
