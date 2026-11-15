@@ -69,7 +69,23 @@ export function AuthProvider({ children }) {
 
     if (data?.user) {
       setUser(data.user);
-      const userProfile = await loadProfile(data.user.id);
+      let userProfile = await loadProfile(data.user.id);
+
+      // If user profile does not exist yet in PostgreSQL, generate it gracefully
+      if (!userProfile) {
+        const fallbackUsername = (data.user.profile?.name || data.user.email.split('@')[0])
+          .toLowerCase()
+          .replace(/[^a-z0-9_]/g, '_')
+          .slice(0, 30);
+        const { profile: createdProfile } = await profileService.createProfile({
+          id: data.user.id,
+          username: fallbackUsername,
+          fullName: data.user.profile?.name || data.user.email.split('@')[0],
+        });
+        userProfile = createdProfile || null;
+        setProfile(userProfile);
+      }
+
       return { success: true, user: data.user, profile: userProfile };
     }
 
@@ -77,15 +93,31 @@ export function AuthProvider({ children }) {
   };
 
   // Register / Sign Up handler
-  const register = async ({ email, password, name }) => {
+  const register = async ({ email, password, name, username }) => {
     const { data, error } = await authService.signUp({ email, password, name });
     if (error) {
       return { success: false, error };
     }
+
+    const needsVerification = data?.requireEmailVerification || false;
+
+    // If verification is not required, session is active immediately
+    if (!needsVerification && data?.user) {
+      setUser(data.user);
+      if (username && name) {
+        const { profile: createdProfile } = await profileService.createProfile({
+          id: data.user.id,
+          username: username.trim(),
+          fullName: name.trim(),
+        });
+        setProfile(createdProfile || null);
+      }
+    }
+
     return {
       success: true,
       data,
-      requireEmailVerification: data?.requireEmailVerification || false,
+      requireEmailVerification: needsVerification,
     };
   };
 

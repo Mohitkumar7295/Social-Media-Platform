@@ -147,6 +147,7 @@ export default function Register() {
         email: formData.email,
         password: formData.password,
         name: formData.fullName,
+        username: formData.username.trim(),
       });
 
       if (!success || error) {
