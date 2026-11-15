@@ -46,15 +46,29 @@ This document details the phase-by-phase implementation schedule, deliverables, 
 
 ---
 
-### Phase 1: React Environment and InsForge Setup
-- **Status**: PENDING
-- **Objective**: Scaffold clean React 18 Single Page Application with Vite, Tailwind CSS, Lucide icons, and centralize `@insforge/sdk` client.
+### Phase 1: Landing Page Development
+- **Status**: **COMPLETED**
+- **Objective**: Full editorial marketing landing page with Substack/Medium aesthetic, responsive navbar, hero, featured stories preview modal, value propositions, and editorial design system.
+
+---
+
+### Phase 2: Authentication & User Profiles
+- **Status**: **COMPLETED**
+- **Objective**: InsForge Auth integration, PostgreSQL `profiles` and `follows` tables with RLS, public profiles (`/profile/:username`), profile editing (`/settings/profile`), avatar & cover storage uploads.
+
+---
+
+### Phase 3: Authenticated Home Page and Social Feed Development
+- **Status**: **COMPLETED**
+- **Objective**: Substack-inspired 3-column authenticated social feed at `/home`, navigation sidebar with orange Create button, user profile menu, post composer, tabs ("For You" & "Following"), real subscriptions panel from PostgreSQL `follows`, real recommended writers from PostgreSQL `profiles`, and clean empty states.
 - **Deliverables**:
-  - `package.json`, `vite.config.js`, `tailwind.config.js`, `postcss.config.js`
-  - Environment configuration (`.env.example`)
-  - `src/lib/insforge.js` singleton client
-  - Base routing and layout skeleton (`Navbar`, `Footer`, `AppLayout`)
-- **Validation**: `npm run build` passes with zero errors; dev server renders empty layout shell.
+  - `src/pages/Home.jsx`, `src/pages/Subscriptions.jsx`, `src/pages/Chat.jsx`, `src/pages/Activity.jsx`, `src/pages/Explore.jsx`
+  - `src/components/home/Sidebar.jsx`, `src/components/home/RightSidebar.jsx`, `src/components/home/AppLayout.jsx`
+  - `src/components/home/PostComposer.jsx`, `src/components/home/FeedTabs.jsx`, `src/components/home/FeedCard.jsx`, `src/components/home/EmptyFeedState.jsx`
+  - `src/components/common/UserAvatar.jsx`
+  - `src/services/subscriptionService.js`, `src/services/recommendationService.js`, `src/services/feedService.js`
+  - `scripts/test-phase3.mjs` integration test suite
+- **Validation**: All 5 integration tests pass with 0 failures; live build deployed.
 
 ---
 

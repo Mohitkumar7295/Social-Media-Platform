@@ -10,7 +10,7 @@ export default function Login() {
   const { login, isAuthenticated } = useAuth();
 
   // Redirect if already authenticated
-  const from = location.state?.from?.pathname || '/';
+  const from = location.state?.from?.pathname || '/home';
 
   useEffect(() => {
     if (isAuthenticated) {

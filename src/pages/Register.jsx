@@ -12,7 +12,7 @@ export default function Register() {
   // If already authenticated, redirect
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/', { replace: true });
+      navigate('/home', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -162,8 +162,8 @@ export default function Register() {
         setCountdown(60);
         setCanResend(false);
       } else {
-        // If email verification not required, finish profile creation and navigate
-        navigate('/', { replace: true });
+        // If email verification not required, finish profile creation and navigate to home feed
+        navigate('/home', { replace: true });
       }
     } catch (err) {
       setErrorMessage(err.message || 'An unexpected error occurred.');
@@ -201,7 +201,7 @@ export default function Register() {
 
       setOtpSuccess('Email verified successfully! Welcome to WriteSpace.');
       setTimeout(() => {
-        navigate(`/profile/${formData.username.trim().toLowerCase()}`, { replace: true });
+        navigate('/home', { replace: true });
       }, 1200);
     } catch (err) {
       setOtpError(err.message || 'Verification failed. Please try again.');

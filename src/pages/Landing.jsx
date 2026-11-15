@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import Navbar from '../components/layout/Navbar';
 import HeroSection from '../components/landing/HeroSection';
 import FeaturedArticles from '../components/articles/FeaturedArticles';
@@ -12,7 +13,15 @@ import StoryPreviewModal from '../components/articles/StoryPreviewModal';
 
 export default function Landing() {
   const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useAuth();
   const [selectedStory, setSelectedStory] = useState(null);
+
+  // If authenticated user visits '/', redirect them to authenticated home feed
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      navigate('/home', { replace: true });
+    }
+  }, [isAuthenticated, isLoading, navigate]);
 
   const handleOpenAuth = (mode = 'get-started') => {
     if (mode === 'sign-in') {

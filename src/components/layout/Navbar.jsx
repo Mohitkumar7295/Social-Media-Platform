@@ -70,6 +70,15 @@ export default function Navbar({ onOpenAuth }) {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-8">
+            {isAuthenticated && (
+              <Link
+                to="/home"
+                className="text-sm font-semibold text-brand-700 hover:text-brand-800 transition-colors flex items-center gap-1.5"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Home Feed</span>
+              </Link>
+            )}
             <Link
               to="/"
               className="text-sm font-medium text-stone-600 hover:text-brand-700 transition-colors"
@@ -161,6 +170,15 @@ export default function Navbar({ onOpenAuth }) {
                     </div>
 
                     <div className="py-1">
+                      <Link
+                        to="/home"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-brand-700 hover:bg-brand-50 transition-colors"
+                      >
+                        <Sparkles className="w-4 h-4 text-brand-700" />
+                        <span>Home Feed</span>
+                      </Link>
+
                       <Link
                         to={`/profile/${authorHandle}`}
                         onClick={() => setDropdownOpen(false)}

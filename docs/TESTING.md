@@ -81,7 +81,22 @@ Located in `src/utils/__tests__/`:
 
 ---
 
-## 5. End-to-End User Acceptance Test Scripts
+## 6. Phase 3 Authenticated Home Feed Integration Verification
+
+Executed via `scripts/test-phase3.mjs`:
+
+| Test # | Target Module | Test Description | Result | Status |
+|---|---|---|---|---|
+| **Test 1** | PostgreSQL `profiles` table | Verify `profiles` table accessibility and query execution | Returned profile records | **PASSED** |
+| **Test 2** | PostgreSQL `follows` table | Verify `follows` table accessibility and RLS read policy | Returned follows records | **PASSED** |
+| **Test 3** | `recommendationService` | Verify recommendations query strictly excludes `currentUserId` | Excluded self ID correctly | **PASSED** |
+| **Test 4** | `subscriptionService` | Verify followed user resolution through `follows` table | Query executed without error | **PASSED** |
+| **Test 5** | `feedService` | Verify feed handles empty or unmigrated `posts` table without crashing | Returned clean empty feed object | **PASSED** |
+
+Execution Summary:
+- **5 of 5 tests passed with 0 errors**.
+- Build: `npm run build` completed with exit code 0.
+- Production Deployment: Verified live on `https://u9367zk9.insforge.site`.
 
 ### Test Scenario: Complete Publishing & Engagement Lifecycle
 1. **Account Registration**:
