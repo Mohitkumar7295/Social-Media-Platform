@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import HeroSection from '../components/landing/HeroSection';
 import FeaturedArticles from '../components/articles/FeaturedArticles';
@@ -7,19 +8,18 @@ import HowItWorks from '../components/landing/HowItWorks';
 import CategoriesSection from '../components/landing/CategoriesSection';
 import CTASection from '../components/landing/CTASection';
 import Footer from '../components/layout/Footer';
-import Modal from '../components/common/Modal';
 import StoryPreviewModal from '../components/articles/StoryPreviewModal';
 
 export default function Landing() {
-  const [authModal, setAuthModal] = useState({ isOpen: false, mode: 'get-started' });
+  const navigate = useNavigate();
   const [selectedStory, setSelectedStory] = useState(null);
 
   const handleOpenAuth = (mode = 'get-started') => {
-    setAuthModal({ isOpen: true, mode });
-  };
-
-  const handleCloseAuth = () => {
-    setAuthModal({ isOpen: false, mode: 'get-started' });
+    if (mode === 'sign-in') {
+      navigate('/login');
+    } else {
+      navigate('/register');
+    }
   };
 
   const handleExploreClick = () => {
@@ -70,13 +70,6 @@ export default function Landing() {
 
       {/* Section H: Footer */}
       <Footer onOpenAuth={handleOpenAuth} />
-
-      {/* Auth Interaction Modal (Phase 1 Preview) */}
-      <Modal
-        isOpen={authModal.isOpen}
-        mode={authModal.mode}
-        onClose={handleCloseAuth}
-      />
 
       {/* Story Reader Preview Modal */}
       <StoryPreviewModal
