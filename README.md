@@ -206,18 +206,18 @@ writespace/
 
 ## 7. Documentation Index
 
-Detailed engineering and architecture documentation is available:
-- **[ARCHITECTURE.md](file:///c:/Users/mokum/Downloads/Social%20Media%20Platform/ARCHITECTURE.md)**: Full component, state, and BaaS interaction architecture.
-- **[DATABASE_SCHEMA.md](file:///c:/Users/mokum/Downloads/Social%20Media%20Platform/DATABASE_SCHEMA.md)**: Complete PostgreSQL tables, RLS policies, indexes, and triggers.
-- **[API_DOCUMENTATION.md](file:///c:/Users/mokum/Downloads/Social%20Media%20Platform/API_DOCUMENTATION.md)**: InsForge SDK client methods and data contracts.
-- **[FEATURES.md](file:///c:/Users/mokum/Downloads/Social%20Media%20Platform/FEATURES.md)**: Detailed feature catalogue and module specifications.
-- **[REQUIREMENTS.md](file:///c:/Users/mokum/Downloads/Social%20Media%20Platform/REQUIREMENTS.md)**: Functional, non-functional, and technical requirements.
-- **[USER_WORKFLOWS.md](file:///c:/Users/mokum/Downloads/Social%20Media%20Platform/USER_WORKFLOWS.md)**: Step-by-step user journey maps.
-- **[UI_UX_GUIDELINES.md](file:///c:/Users/mokum/Downloads/Social%20Media%20Platform/UI_UX_GUIDELINES.md)**: Design system, typography scale, and responsive layout rules.
-- **[SECURITY.md](file:///c:/Users/mokum/Downloads/Social%20Media%20Platform/SECURITY.md)**: Security matrix, RLS policy enforcement, and XSS prevention.
-- **[DEVELOPMENT_ROADMAP.md](file:///c:/Users/mokum/Downloads/Social%20Media%20Platform/DEVELOPMENT_ROADMAP.md)**: Phase 0 through Phase 15 step-by-step plan.
-- **[TESTING.md](file:///c:/Users/mokum/Downloads/Social%20Media%20Platform/TESTING.md)**: Test strategy, component testing, and RLS verification.
-- **[DEPLOYMENT.md](file:///c:/Users/mokum/Downloads/Social%20Media%20Platform/DEPLOYMENT.md)**: Production build, CDN hosting, and environment configuration.
+Comprehensive engineering and architectural documentation is maintained in the [`docs/`](docs/) directory:
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Full component, state, and BaaS interaction architecture.
+- **[DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md)**: Complete PostgreSQL tables, RLS policies, indexes, and triggers.
+- **[API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md)**: InsForge SDK client methods and data contracts.
+- **[FEATURES.md](docs/FEATURES.md)**: Detailed feature catalogue and module specifications.
+- **[REQUIREMENTS.md](docs/REQUIREMENTS.md)**: Functional, non-functional, and technical requirements.
+- **[USER_WORKFLOWS.md](docs/USER_WORKFLOWS.md)**: Step-by-step user journey maps.
+- **[UI_UX_GUIDELINES.md](docs/UI_UX_GUIDELINES.md)**: Design system, typography scale, and responsive layout rules.
+- **[SECURITY.md](docs/SECURITY.md)**: Security matrix, RLS policy enforcement, and XSS prevention.
+- **[DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md)**: Phase 0 through Phase 15 step-by-step plan.
+- **[TESTING.md](docs/TESTING.md)**: Test strategy, component testing, and RLS verification.
+- **[DEPLOYMENT.md](docs/DEPLOYMENT.md)**: Production build, CDN hosting, and environment configuration.
 
 ---
 
