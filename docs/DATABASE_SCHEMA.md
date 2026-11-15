@@ -1,409 +1,417 @@
-# WriteSpace: Database Architecture & Schema Specification
+# WriteSpace Database Schema & RLS Policies 🗄️
 
-> **Database Engine:** PostgreSQL 15+ (InsForge Managed)  
-> **Migration Engine:** Flyway Core  
-> **ORM Layer:** Hibernate 6.x / Spring Data JPA  
-> **Status:** Production Specification
+This document specifies the PostgreSQL relational schema, constraints, indexes, triggers, and Row Level Security (RLS) policies implemented on the **InsForge PostgreSQL** instance.
 
 ---
 
-## 1. Purpose
-This document provides the definitive database architecture, relational schema definition, data dictionary, constraint rules, index strategy, and migration management plan for the **WriteSpace** social publishing platform.
-
----
-
-## 2. Scope
-This specification covers:
-- Complete relational modeling for core entities (`users`, `posts`, `comments`, `likes`, `follows`, `bookmarks`) and future extensions (`notifications`).
-- Column definitions, PostgreSQL data types, primary and foreign key constraints, unique constraints, and check constraints.
-- Indexing strategies for high-frequency queries (feeds, lookups, sorting).
-- Complete Flyway migration scripts (`V1__init_schema.sql` and `V2__indexes.sql`).
-- Relational integrity invariants and cascade delete behaviors.
-
----
-
-## 3. Technical Explanation & Architecture
-WriteSpace utilizes a normalized relational schema hosted on **InsForge Managed PostgreSQL**. Relational databases are chosen over NoSQL stores because social publishing systems inherently model strict relational graphs:
-- Content ownership (Users $\rightarrow$ Posts)
-- Reader interactions (Users $\times$ Posts $\rightarrow$ Likes, Comments, Bookmarks)
-- Social graph topology (Users $\times$ Users $\rightarrow$ Follows)
-
-ACID guarantees ensure that operations like toggling a like or following an author execute atomically without race condition anomalies or orphan records.
-
----
-
-## 4. Entity-Relationship Diagram (ERD)
+## 1. Entity-Relationship Overview
 
 ```mermaid
 erDiagram
-    USERS ||--o{ POSTS : "authors (1:N)"
-    USERS ||--o{ COMMENTS : "writes (1:N)"
-    USERS ||--o{ LIKES : "submits (1:N)"
-    USERS ||--o{ BOOKMARKS : "creates (1:N)"
-    USERS ||--o{ FOLLOWS : "follower (1:N)"
-    USERS ||--o{ FOLLOWS : "followed (1:N)"
-    USERS ||--o{ NOTIFICATIONS : "receives (1:N)"
-
-    POSTS ||--o{ COMMENTS : "contains (1:N)"
-    POSTS ||--o{ LIKES : "accumulates (1:N)"
-    POSTS ||--o{ BOOKMARKS : "saved_in (1:N)"
-
-    USERS {
-        uuid id PK "DEFAULT gen_random_uuid()"
-        varchar username UK "3-30 chars, alphanumeric"
-        varchar email UK "RFC 5322 format"
-        varchar password_hash "BCrypt 60-char hash"
-        varchar display_name "Up to 80 chars"
-        text bio "Max 500 chars"
-        varchar avatar_url "CDN URL or null"
-        varchar role "ROLE_USER, ROLE_ADMIN"
-        timestamptz created_at "Audit creation timestamp"
-        timestamptz updated_at "Audit modification timestamp"
-    }
-
-    POSTS {
-        uuid id PK "DEFAULT gen_random_uuid()"
-        uuid author_id FK "References users(id) ON DELETE CASCADE"
-        varchar title "Article title"
-        varchar slug UK "URL slug, kebab-case"
-        text excerpt "Summary snippet"
-        text content "Article body (Markdown/text)"
-        varchar cover_image_url "Header banner image"
-        varchar status "DRAFT, PUBLISHED, ARCHIVED"
-        integer reading_time_minutes "Computed reading duration"
-        timestamptz published_at "Initial publication timestamp"
-        timestamptz created_at "Audit creation timestamp"
-        timestamptz updated_at "Audit modification timestamp"
-    }
-
-    COMMENTS {
-        uuid id PK "DEFAULT gen_random_uuid()"
-        uuid post_id FK "References posts(id) ON DELETE CASCADE"
-        uuid user_id FK "References users(id) ON DELETE CASCADE"
-        text content "Comment text (1-1000 chars)"
-        timestamptz created_at "Audit creation timestamp"
-        timestamptz updated_at "Audit modification timestamp"
-    }
-
-    LIKES {
-        uuid id PK "DEFAULT gen_random_uuid()"
-        uuid user_id FK "References users(id) ON DELETE CASCADE"
-        uuid post_id FK "References posts(id) ON DELETE CASCADE"
-        timestamptz created_at "Timestamp of like"
-    }
-
-    FOLLOWS {
-        uuid id PK "DEFAULT gen_random_uuid()"
-        uuid follower_id FK "References users(id) ON DELETE CASCADE"
-        uuid following_id FK "References users(id) ON DELETE CASCADE"
-        timestamptz created_at "Timestamp of follow"
-    }
-
-    BOOKMARKS {
-        uuid id PK "DEFAULT gen_random_uuid()"
-        uuid user_id FK "References users(id) ON DELETE CASCADE"
-        uuid post_id FK "References posts(id) ON DELETE CASCADE"
-        timestamptz created_at "Timestamp saved"
-    }
-
-    NOTIFICATIONS {
-        uuid id PK "DEFAULT gen_random_uuid()"
-        uuid recipient_id FK "References users(id) ON DELETE CASCADE"
-        uuid actor_id FK "References users(id) ON DELETE SET NULL"
-        varchar notification_type "LIKE, COMMENT, FOLLOW"
-        uuid entity_id "ID of post or comment"
-        boolean is_read "Read status boolean"
-        timestamptz created_at "Timestamp generated"
-    }
+    auth_users ||--|| profiles : "has profile (1:1)"
+    profiles ||--o{ posts : "authors"
+    profiles ||--o{ comments : "writes"
+    profiles ||--o{ likes : "gives"
+    profiles ||--o{ bookmarks : "saves"
+    profiles ||--o{ follows : "follower / following"
+    profiles ||--o{ notifications : "receives"
+    categories ||--o{ posts : "classifies"
+    posts ||--o{ comments : "has"
+    posts ||--o{ likes : "receives"
+    posts ||--o{ bookmarks : "bookmarked in"
 ```
 
 ---
 
-## 5. Detailed Table Specifications
+## 2. Table Definitions
 
-### 5.1 Table: `users`
-**Purpose:** Persists registered user identities, authentication hashes, and profile metadata.
-
-| Column | Type | Nullable | Default | Constraints | Description |
-|---|---|---|---|---|---|
-| `id` | `UUID` | No | `gen_random_uuid()` | `PRIMARY KEY` | Globally unique user identifier. |
-| `username` | `VARCHAR(30)` | No | — | `UNIQUE` | Unique user handle (alphanumeric + underscore). |
-| `email` | `VARCHAR(255)` | No | — | `UNIQUE` | Unique email address for login. |
-| `password_hash` | `VARCHAR(255)` | No | — | — | BCrypt cryptographic hash ($2a$12$). |
-| `display_name` | `VARCHAR(80)` | No | — | — | Public author display name. |
-| `bio` | `VARCHAR(500)` | Yes | `NULL` | — | Short author biography. |
-| `avatar_url` | `VARCHAR(512)` | Yes | `NULL` | — | Link to user avatar image. |
-| `role` | `VARCHAR(20)` | No | `'ROLE_USER'` | `CHECK (role IN ('ROLE_USER', 'ROLE_ADMIN'))` | Security authorization role. |
-| `created_at` | `TIMESTAMPTZ` | No | `NOW()` | — | Audit creation timestamp. |
-| `updated_at` | `TIMESTAMPTZ` | No | `NOW()` | — | Audit last update timestamp. |
-
----
-
-### 5.2 Table: `posts`
-**Purpose:** Stores long-form articles, drafts, publication metadata, and author links.
-
-| Column | Type | Nullable | Default | Constraints | Description |
-|---|---|---|---|---|---|
-| `id` | `UUID` | No | `gen_random_uuid()` | `PRIMARY KEY` | Unique article identifier. |
-| `author_id` | `UUID` | No | — | `FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE` | Creator of the article. |
-| `title` | `VARCHAR(255)` | No | — | `CHECK (length(trim(title)) > 0)` | Article headline. |
-| `slug` | `VARCHAR(280)` | No | — | `UNIQUE` | Clean URL identifier (e.g., `the-art-of-writing`). |
-| `excerpt` | `TEXT` | Yes | `NULL` | — | Short summary snippet for feed cards. |
-| `content` | `TEXT` | No | — | — | Full article body text or Markdown. |
-| `cover_image_url` | `VARCHAR(512)` | Yes | `NULL` | — | URL of optional header banner image. |
-| `status` | `VARCHAR(20)` | No | `'DRAFT'` | `CHECK (status IN ('DRAFT', 'PUBLISHED', 'ARCHIVED'))` | Publication lifecycle state. |
-| `reading_time_minutes`| `INTEGER` | No | `1` | `CHECK (reading_time_minutes >= 1)` | Estimated reading time. |
-| `published_at` | `TIMESTAMPTZ` | Yes | `NULL` | — | Timestamp of public release. |
-| `created_at` | `TIMESTAMPTZ` | No | `NOW()` | — | Creation audit timestamp. |
-| `updated_at` | `TIMESTAMPTZ` | No | `NOW()` | — | Last updated timestamp. |
-
----
-
-### 5.3 Table: `comments`
-**Purpose:** Stores reader responses linked to specific articles and users.
-
-| Column | Type | Nullable | Default | Constraints | Description |
-|---|---|---|---|---|---|
-| `id` | `UUID` | No | `gen_random_uuid()` | `PRIMARY KEY` | Unique comment identifier. |
-| `post_id` | `UUID` | No | — | `FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE` | Associated article. |
-| `user_id` | `UUID` | No | — | `FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE` | Comment author. |
-| `content` | `VARCHAR(1000)`| No | — | `CHECK (length(trim(content)) > 0)` | Comment body text. |
-| `created_at` | `TIMESTAMPTZ` | No | `NOW()` | — | Creation audit timestamp. |
-| `updated_at` | `TIMESTAMPTZ` | No | `NOW()` | — | Last update audit timestamp. |
-
----
-
-### 5.4 Table: `likes`
-**Purpose:** Records reader appreciation for articles.
-
-| Column | Type | Nullable | Default | Constraints | Description |
-|---|---|---|---|---|---|
-| `id` | `UUID` | No | `gen_random_uuid()` | `PRIMARY KEY` | Unique like identifier. |
-| `user_id` | `UUID` | No | — | `FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE` | Liking user. |
-| `post_id` | `UUID` | No | — | `FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE` | Liked article. |
-| `created_at` | `TIMESTAMPTZ` | No | `NOW()` | — | Timestamp when like was recorded. |
-
-> **Constraint:** `CONSTRAINT uq_likes_user_post UNIQUE (user_id, post_id)`  
-> *Rule: A user can like a given post only once.*
-
----
-
-### 5.5 Table: `follows`
-**Purpose:** Models the directed social graph between readers and writers.
-
-| Column | Type | Nullable | Default | Constraints | Description |
-|---|---|---|---|---|---|
-| `id` | `UUID` | No | `gen_random_uuid()` | `PRIMARY KEY` | Unique relationship identifier. |
-| `follower_id` | `UUID` | No | — | `FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE` | The user initiating the follow. |
-| `following_id` | `UUID` | No | — | `FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE CASCADE` | The writer being followed. |
-| `created_at` | `TIMESTAMPTZ` | No | `NOW()` | — | Relationship creation timestamp. |
-
-> **Constraints:**  
-> 1. `CONSTRAINT uq_follows_follower_following UNIQUE (follower_id, following_id)`  
->    *Rule: A user cannot follow the same writer multiple times.*  
-> 2. `CONSTRAINT chk_follows_no_self_follow CHECK (follower_id <> following_id)`  
->    *Rule: A user cannot follow themselves.*
-
----
-
-### 5.6 Table: `bookmarks`
-**Purpose:** Allows readers to save articles to a private personal library.
-
-| Column | Type | Nullable | Default | Constraints | Description |
-|---|---|---|---|---|---|
-| `id` | `UUID` | No | `gen_random_uuid()` | `PRIMARY KEY` | Unique bookmark identifier. |
-| `user_id` | `UUID` | No | — | `FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE` | User saving the post. |
-| `post_id` | `UUID` | No | — | `FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE` | Saved article. |
-| `created_at` | `TIMESTAMPTZ` | No | `NOW()` | — | Bookmark timestamp. |
-
-> **Constraint:** `CONSTRAINT uq_bookmarks_user_post UNIQUE (user_id, post_id)`  
-> *Rule: A user can bookmark an article only once.*
-
----
-
-### 5.7 Table: `notifications` (Phase 2 / Future)
-**Purpose:** Stores user alerts triggered by social events.
-
-| Column | Type | Nullable | Default | Constraints | Description |
-|---|---|---|---|---|---|
-| `id` | `UUID` | No | `gen_random_uuid()` | `PRIMARY KEY` | Notification identifier. |
-| `recipient_id` | `UUID` | No | — | `FOREIGN KEY (recipient_id) REFERENCES users(id) ON DELETE CASCADE` | User receiving alert. |
-| `actor_id` | `UUID` | Yes | `NULL` | `FOREIGN KEY (actor_id) REFERENCES users(id) ON DELETE SET NULL` | User who triggered the alert. |
-| `notification_type` | `VARCHAR(30)` | No | — | `CHECK (notification_type IN ('LIKE', 'COMMENT', 'FOLLOW'))` | Event category. |
-| `entity_id` | `UUID` | Yes | `NULL` | — | ID of related post or comment. |
-| `is_read` | `BOOLEAN` | No | `FALSE` | — | Read / unread status flag. |
-| `created_at` | `TIMESTAMPTZ` | No | `NOW()` | — | Timestamp of event. |
-
----
-
-## 6. Complete Flyway Migration Scripts
-
-### 6.1 `V1__init_schema.sql`
+### 2.1 `profiles`
+Stores extended user profile information linked to the authenticated user identity in `auth.users`.
 
 ```sql
--- =============================================================================
--- Flyway Migration: V1__init_schema.sql
--- Description: Baseline schema creation for WriteSpace platform
--- Author: Senior Database Architect
--- =============================================================================
-
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
--- 1. USERS TABLE
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    username VARCHAR(30) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    display_name VARCHAR(80) NOT NULL,
-    bio VARCHAR(500),
-    avatar_url VARCHAR(512),
-    role VARCHAR(20) NOT NULL DEFAULT 'ROLE_USER',
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT uq_users_username UNIQUE (username),
-    CONSTRAINT uq_users_email UNIQUE (email),
-    CONSTRAINT chk_users_role CHECK (role IN ('ROLE_USER', 'ROLE_ADMIN'))
+CREATE TABLE public.profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    bio TEXT,
+    avatar_url TEXT,
+    website VARCHAR(255),
+    followers_count INT NOT NULL DEFAULT 0 CHECK (followers_count >= 0),
+    following_count INT NOT NULL DEFAULT 0 CHECK (following_count >= 0),
+    articles_count INT NOT NULL DEFAULT 0 CHECK (articles_count >= 0),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    CONSTRAINT username_format CHECK (username ~* '^[a-zA-Z0-9_]{3,30}$')
 );
 
--- 2. POSTS TABLE
-CREATE TABLE posts (
+-- Indexing
+CREATE INDEX idx_profiles_username ON public.profiles(username);
+CREATE INDEX idx_profiles_created_at ON public.profiles(created_at DESC);
+```
+
+---
+
+### 2.2 `categories`
+Stores curated topical categories for article discovery (e.g., Technology, Design, Culture, Science).
+
+```sql
+CREATE TABLE public.categories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    author_id UUID NOT NULL,
+    name VARCHAR(50) UNIQUE NOT NULL,
+    slug VARCHAR(60) UNIQUE NOT NULL,
+    description TEXT,
+    icon VARCHAR(50),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+-- Indexing
+CREATE INDEX idx_categories_slug ON public.categories(slug);
+```
+
+---
+
+### 2.3 `posts`
+Stores published stories and private drafts created by authors.
+
+```sql
+CREATE TABLE public.posts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    author_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    category_id UUID REFERENCES public.categories(id) ON DELETE SET NULL,
     title VARCHAR(255) NOT NULL,
-    slug VARCHAR(280) NOT NULL,
-    excerpt TEXT,
+    slug VARCHAR(300) UNIQUE NOT NULL,
+    subtitle VARCHAR(350),
     content TEXT NOT NULL,
-    cover_image_url VARCHAR(512),
-    status VARCHAR(20) NOT NULL DEFAULT 'DRAFT',
-    reading_time_minutes INTEGER NOT NULL DEFAULT 1,
+    cover_image_url TEXT,
+    reading_time INT NOT NULL DEFAULT 1 CHECK (reading_time >= 1),
+    status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived')),
+    likes_count INT NOT NULL DEFAULT 0 CHECK (likes_count >= 0),
+    comments_count INT NOT NULL DEFAULT 0 CHECK (comments_count >= 0),
+    views_count INT NOT NULL DEFAULT 0 CHECK (views_count >= 0),
     published_at TIMESTAMPTZ,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT fk_posts_author FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT uq_posts_slug UNIQUE (slug),
-    CONSTRAINT chk_posts_status CHECK (status IN ('DRAFT', 'PUBLISHED', 'ARCHIVED')),
-    CONSTRAINT chk_posts_title_not_empty CHECK (length(trim(title)) > 0),
-    CONSTRAINT chk_posts_reading_time CHECK (reading_time_minutes >= 1)
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
--- 3. COMMENTS TABLE
-CREATE TABLE comments (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    post_id UUID NOT NULL,
-    user_id UUID NOT NULL,
-    content VARCHAR(1000) NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT fk_comments_post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    CONSTRAINT fk_comments_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT chk_comments_content_not_empty CHECK (length(trim(content)) > 0)
-);
-
--- 4. LIKES TABLE
-CREATE TABLE likes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL,
-    post_id UUID NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT fk_likes_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_likes_post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    CONSTRAINT uq_likes_user_post UNIQUE (user_id, post_id)
-);
-
--- 5. FOLLOWS TABLE
-CREATE TABLE follows (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    follower_id UUID NOT NULL,
-    following_id UUID NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT fk_follows_follower FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_follows_following FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT uq_follows_follower_following UNIQUE (follower_id, following_id),
-    CONSTRAINT chk_follows_no_self_follow CHECK (follower_id <> following_id)
-);
-
--- 6. BOOKMARKS TABLE
-CREATE TABLE bookmarks (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL,
-    post_id UUID NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT fk_bookmarks_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_bookmarks_post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    CONSTRAINT uq_bookmarks_user_post UNIQUE (user_id, post_id)
-);
+-- Indexing
+CREATE INDEX idx_posts_author ON public.posts(author_id);
+CREATE INDEX idx_posts_slug ON public.posts(slug);
+CREATE INDEX idx_posts_status_published_at ON public.posts(status, published_at DESC);
+CREATE INDEX idx_posts_category ON public.posts(category_id);
 ```
 
 ---
 
-### 6.2 `V2__add_performance_indexes.sql`
+### 2.4 `comments`
+Stores discussion comments left by users on articles.
 
 ```sql
--- =============================================================================
--- Flyway Migration: V2__add_performance_indexes.sql
--- Description: B-Tree and Composite Indexes for Read/Feed Optimization
--- =============================================================================
+CREATE TABLE public.comments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    post_id UUID NOT NULL REFERENCES public.posts(id) ON DELETE CASCADE,
+    author_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    parent_id UUID REFERENCES public.comments(id) ON DELETE CASCADE,
+    content TEXT NOT NULL CHECK (char_length(content) > 0),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
 
--- Indexes on Users
-CREATE INDEX idx_users_username_lower ON users (lower(username));
-CREATE INDEX idx_users_email_lower ON users (lower(email));
-
--- Indexes on Posts
-CREATE INDEX idx_posts_author_id ON posts (author_id);
-CREATE INDEX idx_posts_status_published_at ON posts (status, published_at DESC);
-CREATE INDEX idx_posts_slug ON posts (slug);
-
--- Indexes on Comments
-CREATE INDEX idx_comments_post_created ON comments (post_id, created_at ASC);
-CREATE INDEX idx_comments_user_id ON comments (user_id);
-
--- Indexes on Likes
-CREATE INDEX idx_likes_post_id ON likes (post_id);
-CREATE INDEX idx_likes_user_id ON likes (user_id);
-
--- Indexes on Follows
-CREATE INDEX idx_follows_follower_id ON follows (follower_id);
-CREATE INDEX idx_follows_following_id ON follows (following_id);
-
--- Indexes on Bookmarks
-CREATE INDEX idx_bookmarks_user_created ON bookmarks (user_id, created_at DESC);
+-- Indexing
+CREATE INDEX idx_comments_post ON public.comments(post_id);
+CREATE INDEX idx_comments_author ON public.comments(author_id);
+CREATE INDEX idx_comments_parent ON public.comments(parent_id);
 ```
 
 ---
 
-## 7. Performance & Index Optimization Strategy
+### 2.5 `likes`
+Stores article likes. Enforces an atomic unique constraint to prevent duplicate likes.
 
-1. **Covering Indexes for Feeds:**
-   - The query driving the follower feed filters by `following_id` in `follows` and sorts by `published_at DESC` in `posts`. The composite index `idx_posts_status_published_at` allows index scans without sequential heap reads.
-2. **Case-Insensitive Uniqueness:**
-   - User lookups query `lower(username)` and `lower(email)` to guarantee case-insensitive login without requiring expensive full-table conversions.
-3. **Foreign Key Indexing:**
-   - PostgreSQL does not automatically index foreign key columns. By explicitly indexing `post_id`, `user_id`, `author_id`, `follower_id`, and `following_id`, cascade deletions and JOIN operations avoid sequential scans.
+```sql
+CREATE TABLE public.likes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    post_id UUID NOT NULL REFERENCES public.posts(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    CONSTRAINT unique_post_user_like UNIQUE (post_id, user_id)
+);
 
----
-
-## 8. Data Migration & Rollback Strategy
-
-- Flyway maintains a schema history table `flyway_schema_history`.
-- In local development and staging environments, migration scripts are executed automatically on Spring Boot application boot.
-- If a migration fails during deployment:
-  - PostgreSQL transaction blocks automatically roll back DDL statements (PostgreSQL supports transactional DDL).
-  - The pipeline halts before routing live traffic.
-  - A corresponding undo/remedy migration (`V3__fix...sql`) is authored rather than mutating committed version scripts.
+-- Indexing
+CREATE INDEX idx_likes_post ON public.likes(post_id);
+CREATE INDEX idx_likes_user ON public.likes(user_id);
+```
 
 ---
 
-## 9. Testing Requirements
-- Constraint boundary tests:
-  - Attempting to insert duplicate `(user_id, post_id)` into `likes` must trigger `DataIntegrityViolationException`.
-  - Attempting to insert `follower_id = following_id` into `follows` must trigger check constraint violation.
-  - Deleting an author must cascade and delete all associated articles, comments, and likes.
+### 2.6 `follows`
+Implements the social graph. Prevents duplicate follows and self-following.
+
+```sql
+CREATE TABLE public.follows (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    follower_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    following_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    CONSTRAINT unique_follower_following UNIQUE (follower_id, following_id),
+    CONSTRAINT check_not_self_follow CHECK (follower_id <> following_id)
+);
+
+-- Indexing
+CREATE INDEX idx_follows_follower ON public.follows(follower_id);
+CREATE INDEX idx_follows_following ON public.follows(following_id);
+```
 
 ---
 
-## 10. Acceptance Criteria
-- [ ] Flyway executes `V1` and `V2` scripts cleanly against InsForge PostgreSQL with zero warnings.
-- [ ] All table primary keys use UUIDs generated via `gen_random_uuid()`.
-- [ ] Unique constraints and check constraints correctly reject invalid data.
-- [ ] JPA entities cleanly map to these table schemas with `spring.jpa.hibernate.ddl-auto=validate`.
+### 2.7 `bookmarks`
+Stores private saved reading lists for readers.
+
+```sql
+CREATE TABLE public.bookmarks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    post_id UUID NOT NULL REFERENCES public.posts(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    CONSTRAINT unique_user_post_bookmark UNIQUE (user_id, post_id)
+);
+
+-- Indexing
+CREATE INDEX idx_bookmarks_user ON public.bookmarks(user_id);
+CREATE INDEX idx_bookmarks_post ON public.bookmarks(post_id);
+```
+
+---
+
+### 2.8 `notifications`
+Stores in-app social activity alerts.
+
+```sql
+CREATE TABLE public.notifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    recipient_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    actor_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    type VARCHAR(30) NOT NULL CHECK (type IN ('like', 'comment', 'follow', 'mention')),
+    post_id UUID REFERENCES public.posts(id) ON DELETE CASCADE,
+    comment_id UUID REFERENCES public.comments(id) ON DELETE CASCADE,
+    read BOOLEAN NOT NULL DEFAULT false,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+-- Indexing
+CREATE INDEX idx_notifications_recipient_read ON public.notifications(recipient_id, read);
+CREATE INDEX idx_notifications_created_at ON public.notifications(created_at DESC);
+```
+
+---
+
+## 3. Row Level Security (RLS) Policies
+
+All tables have Row Level Security enabled (`ALTER TABLE ... ENABLE ROW LEVEL SECURITY;`).
+
+### 3.1 `profiles` RLS
+```sql
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can view profiles
+CREATE POLICY "Public profiles are viewable by everyone"
+ON public.profiles FOR SELECT
+USING (true);
+
+-- Authenticated users can insert their own profile
+CREATE POLICY "Users can insert their own profile"
+ON public.profiles FOR INSERT
+WITH CHECK (auth.uid() = id);
+
+-- Users can update only their own profile
+CREATE POLICY "Users can update their own profile"
+ON public.profiles FOR UPDATE
+USING (auth.uid() = id);
+```
+
+### 3.2 `categories` RLS
+```sql
+ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can read categories
+CREATE POLICY "Categories are readable by everyone"
+ON public.categories FOR SELECT
+USING (true);
+```
+
+### 3.3 `posts` RLS
+```sql
+ALTER TABLE public.posts ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can read published posts; authors can also read their own drafts
+CREATE POLICY "Published posts are viewable by everyone, drafts by author"
+ON public.posts FOR SELECT
+USING (status = 'published' OR auth.uid() = author_id);
+
+-- Authenticated users can create posts
+CREATE POLICY "Authenticated users can create posts"
+ON public.posts FOR INSERT
+WITH CHECK (auth.uid() = author_id);
+
+-- Only authors can update their own posts
+CREATE POLICY "Authors can update their own posts"
+ON public.posts FOR UPDATE
+USING (auth.uid() = author_id);
+
+-- Only authors can delete their own posts
+CREATE POLICY "Authors can delete their own posts"
+ON public.posts FOR DELETE
+USING (auth.uid() = author_id);
+```
+
+### 3.4 `comments` RLS
+```sql
+ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can view comments on published posts
+CREATE POLICY "Comments are viewable by everyone"
+ON public.comments FOR SELECT
+USING (true);
+
+-- Authenticated users can insert comments
+CREATE POLICY "Authenticated users can create comments"
+ON public.comments FOR INSERT
+WITH CHECK (auth.uid() = author_id);
+
+-- Only comment authors can update their comments
+CREATE POLICY "Comment authors can update their comments"
+ON public.comments FOR UPDATE
+USING (auth.uid() = author_id);
+
+-- Only comment authors can delete their comments
+CREATE POLICY "Comment authors can delete their comments"
+ON public.comments FOR DELETE
+USING (auth.uid() = author_id);
+```
+
+### 3.5 `likes` RLS
+```sql
+ALTER TABLE public.likes ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can read like counts and likes
+CREATE POLICY "Likes are viewable by everyone"
+ON public.likes FOR SELECT
+USING (true);
+
+-- Authenticated users can create their own likes
+CREATE POLICY "Authenticated users can insert likes"
+ON public.likes FOR INSERT
+WITH CHECK (auth.uid() = user_id);
+
+-- Users can remove only their own likes
+CREATE POLICY "Users can remove their own likes"
+ON public.likes FOR DELETE
+USING (auth.uid() = user_id);
+```
+
+### 3.6 `follows` RLS
+```sql
+ALTER TABLE public.follows ENABLE ROW LEVEL SECURITY;
+
+-- Follow relations are viewable by everyone
+CREATE POLICY "Follows are viewable by everyone"
+ON public.follows FOR SELECT
+USING (true);
+
+-- Authenticated users can follow others
+CREATE POLICY "Authenticated users can follow"
+ON public.follows FOR INSERT
+WITH CHECK (auth.uid() = follower_id);
+
+-- Users can unfollow
+CREATE POLICY "Users can delete their own follows"
+ON public.follows FOR DELETE
+USING (auth.uid() = follower_id);
+```
+
+### 3.7 `bookmarks` RLS
+```sql
+ALTER TABLE public.bookmarks ENABLE ROW LEVEL SECURITY;
+
+-- Strictly private: Users can ONLY view their own bookmarks
+CREATE POLICY "Users can view their own bookmarks only"
+ON public.bookmarks FOR SELECT
+USING (auth.uid() = user_id);
+
+-- Authenticated users can insert their own bookmarks
+CREATE POLICY "Users can insert their own bookmarks"
+ON public.bookmarks FOR INSERT
+WITH CHECK (auth.uid() = user_id);
+
+-- Users can delete their own bookmarks
+CREATE POLICY "Users can delete their own bookmarks"
+ON public.bookmarks FOR DELETE
+USING (auth.uid() = user_id);
+```
+
+### 3.8 `notifications` RLS
+```sql
+ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+
+-- Users can view only their own notifications
+CREATE POLICY "Users can view their own notifications"
+ON public.notifications FOR SELECT
+USING (auth.uid() = recipient_id);
+
+-- System/Authenticated users can insert notifications
+CREATE POLICY "Authenticated users can generate notifications"
+ON public.notifications FOR INSERT
+WITH CHECK (auth.uid() = actor_id);
+
+-- Users can mark their notifications as read (UPDATE)
+CREATE POLICY "Users can update their own notifications"
+ON public.notifications FOR UPDATE
+USING (auth.uid() = recipient_id);
+```
+
+---
+
+## 4. Automation Triggers
+
+### 4.1 Auto-Updated `updated_at` Timestamp
+```sql
+CREATE OR REPLACE FUNCTION public.handle_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = timezone('utc'::text, now());
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER on_profiles_update
+    BEFORE UPDATE ON public.profiles
+    FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+CREATE TRIGGER on_posts_update
+    BEFORE UPDATE ON public.posts
+    FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+CREATE TRIGGER on_comments_update
+    BEFORE UPDATE ON public.comments
+    FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+```
+
+### 4.2 Auto Profile Provisioning on User Signup
+```sql
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO public.profiles (id, username, full_name, avatar_url)
+    VALUES (
+        NEW.id,
+        COALESCE(NEW.raw_user_meta_data->>'username', 'writer_' || substr(NEW.id::text, 1, 8)),
+        COALESCE(NEW.raw_user_meta_data->>'full_name', 'WriteSpace Writer'),
+        COALESCE(NEW.raw_user_meta_data->>'avatar_url', NULL)
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_auth_user_created
+    AFTER INSERT ON auth.users
+    FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+```

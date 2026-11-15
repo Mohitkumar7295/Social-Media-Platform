@@ -1,35 +1,31 @@
-# Environment variables & secrets
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node modules & dependencies
+node_modules
+dist
+dist-ssr
+*.local
+
+# Environment variables
 .env
-*.env
+.env.local
+.env.*.local
 !.env.example
 
-# OS generated files
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-Thumbs.db
-desktop.ini
-
-# IDE & Editor files
-.idea/
-.vscode/
-*.iml
-*.iws
-*.ipr
-.settings/
-.project
-.classpath
-
-# Build directories
-target/
-build/
-dist/
-*.class
-
-# Log files
-*.log
-logs/
-
-# Node (if any tools used later)
-node_modules/
-package-lock.json
-
-# Maven wrapper jar if not needed, but usually keep wrapper
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

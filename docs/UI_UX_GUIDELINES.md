@@ -1,180 +1,108 @@
-# WriteSpace: UI/UX Guidelines & Visual Design System
+# WriteSpace UI/UX Design Guidelines 🎨
 
-> **Brand Identity:** WriteSpace  
-> **Aesthetic Archetype:** Modern Editorial Minimalism  
-> **Inspiration:** Substack & Medium editorial excellence, refined with an original digital identity  
-> **Status:** Approved Design System Specification
+This document defines the visual design system, typography scale, component standards, and user experience patterns for WriteSpace.
 
 ---
 
-## 1. Purpose
-This document provides the definitive visual design system, interaction guidelines, component patterns, and accessibility standards for the **WriteSpace** web platform. It establishes the design tokens, layout grids, typography hierarchies, and component styling required to deliver a cohesive, premium reading and writing experience.
+## 1. Design Philosophy
+
+WriteSpace embodies an **editorial-first, distraction-free** design philosophy inspired by high-caliber publications and modern writing platforms (such as Substack and Medium):
+
+- **Typography Over Chrome**: The written word is the centerpiece. Decorative UI clutter is minimized in favor of generous whitespace, balanced line lengths, and deliberate type hierarchy.
+- **Warm & Sophisticated Palette**: Crisp text on soft, eye-friendly backgrounds to prevent reading fatigue.
+- **Frictionless Creation**: The writing studio feels calm and spacious, removing cognitive load while drafting.
+- **Instant Tactile Feedback**: Micro-interactions (liking, bookmarking, following) provide immediate optimistic visual feedback.
 
 ---
 
-## 2. Scope
-This specification encompasses:
-- Brand identity, logo treatment, and visual personality.
-- Color palette with explicit hex codes, functional roles, and contrast ratios.
-- Typography scale, font pairings, reading column widths, and line-heights.
-- Spacing rhythm, grid system, and responsive breakpoints.
-- Component anatomy: Navigation bar, Article Cards, Editor Canvas, Profile Header, Buttons, Forms, Modals, and Toasts.
-- Accessibility standards (WCAG 2.1 AA) and mobile interaction design.
+## 2. Color System
 
----
-
-## 3. Brand Identity & Personality
-
-WriteSpace is designed as a **quiet sanctuary for written ideas**. Its identity avoids the aggressive color saturation, flashing indicators, and visual chaos typical of algorithmic microblogging platforms.
-
-### Personality Attributes
-- **Thoughtful & Dignified:** High-contrast serif typography for long-form text, generous whitespace, and muted accents.
-- **Distraction-Free:** The interface recedes into the background, ensuring author words and ideas command undivided attention.
-- **Fast & Responsive:** Snappy transitions ($150\text{--}200\text{ ms}$ ease-out), instant feedback, and zero layout shift.
-
----
-
-## 4. Color Palette & Functional Roles
-
-WriteSpace employs a disciplined neutral palette complemented by an intellectual cobalt accent:
-
-```
-+-----------------------------------------------------------------------------------+
-| Color Role             | Hex Code   | Usage                                       |
-|------------------------+------------+---------------------------------------------|
-| Primary Background     | #FFFFFF    | Main reading canvas, page background        |
-| Secondary Background   | #F9FAFB    | Cards, sidebars, code blocks, borders       |
-| Primary Text (Ink)     | #111827    | Headings, article body text, primary labels |
-| Secondary Text (Muted) | #6B7280    | Metadata, timestamps, read times, subtitles |
-| Accent (Cobalt)        | #2563EB    | Primary buttons, active tabs, author links  |
-| Accent Hover           | #1D4ED8    | Hover state for links and primary buttons   |
-| Accent Light           | #EFF6FF    | Tag pills, subtle badge backgrounds         |
-| Border / Divider       | #E5E7EB    | Card dividers, input borders, hairline rules|
-| Danger / Destructive   | #DC2626    | Delete actions, form error messages         |
-| Success                | #16A34A    | Success toasts, saved status badges         |
-+-----------------------------------------------------------------------------------+
-```
-
-### Contrast Ratios (WCAG AA Compliance)
-- Primary Text (`#111827`) on White (`#FFFFFF`): **16.1:1** (Exceeds WCAG AAA requirement of 7:1).
-- Secondary Text (`#6B7280`) on White (`#FFFFFF`): **4.6:1** (Passes WCAG AA requirement of 4.5:1).
-- Accent Button (`#FFFFFF` text on `#2563EB`): **4.6:1** (Passes WCAG AA).
-
----
-
-## 5. Typography System
-
-WriteSpace utilizes a dual-font pairing strategy:
-- **Serif Stack (The Reader):** For article titles, excerpts, and long-form narrative body text.
-- **Sans-Serif Stack (The Interface):** For navigation, metadata, buttons, labels, and forms.
-
-### Font Stacks
 ```css
-/* Editorial Narrative Typography */
---font-serif: "Charter", "Merriweather", "Georgia", serif;
+/* Color Palette Specifications */
+:root {
+  /* Canvas & Backgrounds */
+  --color-bg-primary: #FFFFFF;        /* Pure white for app cards */
+  --color-bg-canvas: #FAFAF9;         /* Warm stone/cream page background */
+  --color-bg-muted: #F5F5F4;          /* Stone 100 for pills and code blocks */
 
-/* Interface System Typography */
---font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  /* Typography */
+  --color-text-main: #1C1917;         /* Warm black (Stone 900) for headers and reading body */
+  --color-text-muted: #78716C;        /* Stone 500 for metadata, timestamps, counters */
+  --color-text-subtle: #A8A29E;       /* Stone 400 for placeholders */
 
-/* Code & Syntax */
---font-mono: "Fira Code", "Courier New", monospace;
+  /* Borders & Dividers */
+  --color-border-light: #E7E5E4;      /* Stone 200 for subtle borders and card separators */
+  --color-border-dark: #D6D3D1;       /* Stone 300 for active focus borders */
+
+  /* Brand Accent & Interactions */
+  --color-accent: #0F766E;            /* Editorial Deep Teal / Emerald (Teal 700) */
+  --color-accent-hover: #115E59;      /* Teal 800 */
+  --color-accent-light: #F0FDFA;      /* Teal 50 for badges and active pills */
+  
+  /* State Accents */
+  --color-like-heart: #E11D48;        /* Rose 600 for active likes */
+  --color-bookmark: #0284C7;          /* Sky 600 for active bookmarks */
+  --color-danger: #DC2626;            /* Red 600 for destructive actions */
+}
 ```
 
-### Type Scale Hierarchy
+---
 
-| Element | Font Stack | Size (rem / px) | Weight | Line Height | Letter Spacing |
-|---|---|---|---|---|---|
-| **Article Title (H1)** | Serif | `2.5rem` (40px) | 700 (Bold) | 1.2 | `-0.02em` |
-| **Section Heading (H2)**| Serif | `1.75rem` (28px)| 700 (Bold) | 1.3 | `-0.01em` |
-| **Sub-heading (H3)** | Sans-Serif | `1.25rem` (20px)| 600 (Semibold)| 1.4 | `normal` |
-| **Article Body Text** | Serif | `1.125rem` (18px)| 400 (Regular) | 1.7 | `0.005em` |
-| **Feed Card Title** | Serif | `1.25rem` (20px)| 700 (Bold) | 1.3 | `-0.01em` |
-| **Interface Body** | Sans-Serif | `0.9375rem` (15px)| 400 (Regular)| 1.5 | `normal` |
-| **Metadata & Badges** | Sans-Serif | `0.8125rem` (13px)| 500 (Medium) | 1.4 | `0.01em` |
+## 3. Typography Scale & Hierarchy
 
-### The Golden Reading Column
-To prevent eye fatigue during sustained reading, article body content is strictly constrained to a maximum width of **700px** (`--max-width-content`), yielding between **65 and 75 characters per line** at $18\text{px}$ font size.
+WriteSpace utilizes a dual-font strategy:
+1. **Editorial Serif** (e.g. `Merriweather`, `Charter`, or `Lora` via Tailwind `font-serif`): Reserved for article headlines, story subtitles, and long-form article body text.
+2. **System Sans-Serif** (e.g. `Inter`, `-apple-system`, `BlinkMacSystemFont`, `sans-serif`): Used for navigation, buttons, profile handles, metadata, and form controls.
+
+### Reading Text Rules
+- **Max Line Width**: 680px – 720px (`max-w-2xl` to `max-w-3xl`) for optimal human eye tracking.
+- **Body Font Size**: `text-lg` (18px) on mobile, `text-xl` (20px) on desktop.
+- **Line Height**: `leading-relaxed` (1.75 to 1.8) for effortless long-form reading.
+- **Letter Spacing**: `-0.011em` for editorial headings.
 
 ---
 
-## 6. Spacing Scale & Grid Layout
+## 4. Reusable Component Standards
 
-The spacing system is derived from an 8-point base grid:
-- `space-1`: $4\text{px}$ (Micro spacing, badge padding)
-- `space-2`: $8\text{px}$ (Button internal padding, icon gaps)
-- `space-3`: $12\text{px}$ (Input padding, compact card gaps)
-- `space-4`: $16\text{px}$ (Standard component spacing)
-- `space-6`: $24\text{px}$ (Card padding, feed gaps)
-- `space-8`: $32\text{px}$ (Section headers, form clusters)
-- `space-12`: $48\text{px}$ (Major layout block divisions)
-- `space-16`: $64\text{px}$ (Page hero and footer top margins)
+### 4.1 Buttons (`components/common/Button.jsx`)
+- **Primary**: Solid teal background, white text, subtle hover darkening, rounded-full or rounded-md.
+- **Secondary**: Stone-100 background, stone-800 text, hover:bg-stone-200.
+- **Outline**: 1px border stone-300, transparent background, text stone-700.
+- **Ghost**: Transparent background, text stone-600, hover:bg-stone-100.
+- **Destructive**: Red-600 text or red-600 solid for delete actions.
 
----
+### 4.2 Article Card (`components/articles/ArticleCard.jsx`)
+- Horizontal/Vertical layout with clear typographic separation.
+- **Author Row**: 24px circular avatar, author name, publish date, category pill.
+- **Title**: Serif or bold sans `text-xl font-bold hover:underline`.
+- **Excerpt**: 2-line truncated summary (`line-clamp-2`).
+- **Footer**: Reading time badge, like counter, comment counter, bookmark button.
+- **Thumbnail**: Aspect ratio 16:9 or 1:1, rounded-lg with subtle border.
 
-## 7. Component Anatomy & Design Guidelines
+### 4.3 Editorial Story Reader (`pages/ArticleDetails.jsx`)
+- **Sticky Engagement Bar**: Docked at bottom of viewport on mobile, floating on desktop margin.
+- **Author Bio Card**: Positioned beneath article body with author avatar, bio, follower count, and primary Follow button.
+- **Discussion Drawer / Section**: Clean comment inputs with instant appending.
 
-### 7.1 Global Navigation Bar
-- **Position:** Sticky top (`position: sticky; top: 0; z-index: 100`).
-- **Background:** Semi-transparent white with backdrop blur (`background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(8px)`).
-- **Border:** $1\text{px}$ solid `#E5E7EB` bottom border.
-- **Left:** Minimalist logo ("WriteSpace" in bold serif) + Explore / Feed links.
-- **Center:** Search input with search icon.
-- **Right (Anonymous):** "Sign In" link and "Get Started" primary pill button.
-- **Right (Authenticated):** "Write" button (pencil icon) + User Avatar with dropdown menu.
-
-### 7.2 Article Card Component
-```
-+---------------------------------------------------------------------------------+
-| [Avatar] Elena Rostova  ·  Nov 9, 2026  ·  6 min read                           |
-|                                                                                 |
-| Architecting Scalable Social Platforms with Spring Boot                         |
-| A deep dive into decoupled layered architectures, relational guarantees, and   |
-| zero-build web clients...                                                       |
-|                                                                                 |
-| [#Architecture]  [#Engineering]               [Heart Icon] 42   [Bookmark Icon] |
-+---------------------------------------------------------------------------------+
-```
-- Flat card on white background with $1\text{px}$ hairline border (`#E5E7EB`).
-- Hover state elevates card with a subtle shadow (`0 4px 12px rgba(0,0,0,0.06)`) and transitions smoothly over $150\text{ ms}$.
-
-### 7.3 Buttons & Actions
-- **Primary Button:** Background `#2563EB`, text `#FFFFFF`, border-radius $6\text{px}$, font-weight 500. Hover: `#1D4ED8`.
-- **Secondary Button:** Background `#FFFFFF`, text `#111827`, border $1\text{px}$ solid `#E5E7EB`. Hover: `#F9FAFB`.
-- **Text / Ghost Button:** Transparent background, text `#6B7280`. Hover: text `#111827`.
-- **Danger Button:** Background `#DC2626`, text `#FFFFFF`. Hover: `#B91C1C`.
-
-### 7.4 Input Forms
-- Border: $1\text{px}$ solid `#D1D5DB`, border-radius $6\text{px}$, font-size $15\text{px}$, padding $10\text{px} \times 14\text{px}$.
-- Focus State: Border color `#2563EB`, outline $2\text{px}$ ring with color `#BFDBFE`.
-- Error State: Border color `#DC2626`, descriptive error message below in red $13\text{px}$.
+### 4.4 Form Controls (`components/common/Input.jsx`, `Textarea.jsx`)
+- Smooth rounded borders with subtle focus ring (`focus:ring-2 focus:ring-teal-600 focus:border-transparent`).
+- Accessible `<label>` associations and inline validation error text in red-600.
 
 ---
 
-## 8. Responsive Breakpoints & Mobile Optimization
+## 5. Responsive Breakpoint Rules
 
-WriteSpace enforces three primary responsive viewports:
-1. **Mobile (`max-width: 640px`):**
-   - Navigation links collapse into an off-canvas drawer or simplified header.
-   - Article card cover images move to top rather than beside text.
-   - Font size for article body scales slightly from $18\text{px}$ to $17\text{px}$ with $1.65$ line-height.
-   - Touch targets for like buttons, bookmarks, and author links enforce a minimum size of $44\text{px} \times 44\text{px}$.
-2. **Tablet (`641px - 1024px`):**
-   - Two-column feed layout or single column with condensed sidebar.
-3. **Desktop (`min-width: 1025px`):**
-   - Main container centered at max-width $1140\text{px}$.
-   - Side rail displays trending articles, recommended writers to follow, and topic tags.
+| Breakpoint | Width | Layout Behavior |
+|---|---|---|
+| **Mobile** | `< 640px` | Single-column stack, full-width cards, compact bottom navigation bar or hamburger menu, sticky bottom engagement bar. |
+| **Tablet** | `640px – 1024px` | Standard top navbar, two-column grid on Explore page, centered article body (680px). |
+| **Desktop**| `> 1024px` | Three-column home layout (Nav / Main Feed / Trending Sidebar), sticky author actions, floating engagement bar. |
 
 ---
 
-## 9. Accessibility Invariants (WCAG 2.1 AA)
-- Focus rings (`:focus-visible`) are prominent and never stripped via `outline: none` without replacement.
-- Color is never used as the sole indicator of state (e.g., error messages include text icons and descriptive copy).
-- Semantic headings follow strict nesting (`<h1>` $\rightarrow$ `<h2>` $\rightarrow$ `<h3>`) without skipping levels.
+## 6. Accessibility (a11y) Standards
 
----
-
-## 10. Acceptance Criteria
-- [ ] Typography renders sharply across Retina, 4K, and standard DPI displays.
-- [ ] Contrast ratios for all text combinations meet or exceed 4.5:1.
-- [ ] Mobile viewports under $400\text{px}$ width render without horizontal overflow scrolling.
-- [ ] All interactive buttons and forms support full keyboard navigation (Tab, Enter, Space).
+1. **Semantic HTML**: `<article>`, `<main>`, `<header>`, `<footer>`, `<nav>`, and `<section>` tags used exclusively over arbitrary `<div>` nesting.
+2. **Keyboard Focus**: Visible high-contrast focus rings for keyboard tab traversal.
+3. **Screen Readers**: `aria-label` tags on all icon-only buttons (like, bookmark, search, menu).
+4. **Color Independence**: System states (such as active likes or follow status) are communicated via both color and iconography/text changes.
