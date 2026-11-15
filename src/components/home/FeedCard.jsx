@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Heart,
   MessageCircle,
   Share2,
   Bookmark,
@@ -10,10 +9,28 @@ import {
   Sparkles,
 } from 'lucide-react';
 import UserAvatar from '../common/UserAvatar';
+import LikeButton from '../interactions/LikeButton';
+import { commentService } from '../../services/commentService';
+import ShareButton from '../reading/ShareButton';
 
 export default function FeedCard({ post }) {
   const [showInteractionNotice, setShowInteractionNotice] = useState(false);
   const [interactionName, setInteractionName] = useState('');
+  const [commentsCount, setCommentsCount] = useState(post?.comments_count || 0);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (post?.id && post.comments_count === undefined) {
+      commentService.getCommentCount(post.id).then((res) => {
+        if (isMounted && !res.error && res.count !== undefined) {
+          setCommentsCount(res.count);
+        }
+      });
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [post?.id, post?.comments_count]);
 
   if (!post) return null;
 
@@ -118,32 +135,25 @@ export default function FeedCard({ post }) {
         {/* Footer: Interactions */}
         <div className="flex items-center justify-between pt-3 border-t border-[#202024] text-zinc-400 text-xs">
           <div className="flex items-center gap-5">
-            <button
-              type="button"
-              onClick={() => handleInteraction('Likes')}
-              className="flex items-center gap-1.5 hover:text-rose-400 transition-colors group"
-            >
-              <Heart className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span>Like</span>
-            </button>
+            <LikeButton postId={post.id} size="sm" />
 
-            <button
-              type="button"
-              onClick={() => handleInteraction('Comments')}
+            <Link
+              to={post.slug ? `/p/${post.slug}#responses` : '#'}
               className="flex items-center gap-1.5 hover:text-blue-400 transition-colors group"
+              title="View responses"
             >
               <MessageCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span>Comment</span>
-            </button>
+              <span className="tabular-nums">
+                {commentsCount > 0 ? commentsCount.toLocaleString() : 'Comment'}
+              </span>
+            </Link>
 
-            <button
-              type="button"
-              onClick={() => handleInteraction('Share')}
-              className="flex items-center gap-1.5 hover:text-emerald-400 transition-colors group"
-            >
-              <Share2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span>Share</span>
-            </button>
+            <ShareButton
+              title={post.title}
+              text={post.excerpt}
+              className="p-0 text-zinc-400 hover:text-emerald-400 hover:bg-transparent"
+              buttonText="Share"
+            />
           </div>
 
           <button

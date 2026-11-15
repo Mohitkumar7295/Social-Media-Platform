@@ -102,6 +102,24 @@ This document details the phase-by-phase implementation schedule, deliverables, 
 
 ---
 
+### Phase 6: Likes, Comments, Replies and Social Interactions
+- **Status**: **COMPLETED**
+- **Objective**: Implement real-time ready social interactions: article applauds/likes, unique one-like constraint, unlike functionality, total like count display, response discussion thread, 1-level nested replies, comment editing, comment deletion with confirmation, authorization checks, and defense-in-depth protection on private drafts and anonymous interactions.
+- **Deliverables**:
+  - `migrations/20261115073000_phase6-likes-and-comments.sql` (PostgreSQL `likes` and `comments` tables with RLS and constraints)
+  - `src/services/likeService.js` (like, unlike, toggle, status check, exact count queries)
+  - `src/services/commentService.js` (create response, create reply, get thread, update own comment, delete own comment)
+  - `src/components/interactions/LikeButton.jsx` (animated heart button with optimistic updates and rollback)
+  - `src/components/comments/CommentComposer.jsx` (response/reply composer with avatar, validation, and length tracking)
+  - `src/components/comments/CommentItem.jsx` (response item with author credentials, inline edit, delete modal, and replies)
+  - `src/components/comments/CommentSection.jsx` (full "Responses" discussion thread with empty states and skeletons)
+  - `src/pages/ArticleReadingView.jsx` (wired LikeButton and CommentSection with smooth scroll anchor)
+  - `src/components/home/FeedCard.jsx` (wired interactive LikeButton and comment count link)
+  - `scripts/test-phase6.mjs` integration test suite
+- **Validation**: 11 of 11 integration tests passed with 0 failures; regression test suites for Phases 3–5 all passed; Vite production build verified; live deployed to `https://u9367zk9.insforge.site`.
+
+---
+
 ### Phase 2: PostgreSQL Schema and RLS Policies
 - **Status**: PENDING
 - **Objective**: Apply relational database schema, indexes, constraints, triggers, and Row Level Security policies to InsForge PostgreSQL.

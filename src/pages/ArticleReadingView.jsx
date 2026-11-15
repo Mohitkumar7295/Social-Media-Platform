@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { postService } from '../services/postService';
+import { commentService } from '../services/commentService';
 import { updateArticleSEO, resetSEO } from '../utils/seoUtils';
 import ReadingProgressBar from '../components/reading/ReadingProgressBar';
 import ReadingNavbar from '../components/reading/ReadingNavbar';
@@ -26,6 +27,8 @@ import ArticleRenderer from '../components/reading/ArticleRenderer';
 import RelatedArticles from '../components/reading/RelatedArticles';
 import ShareButton from '../components/reading/ShareButton';
 import UserAvatar from '../components/common/UserAvatar';
+import LikeButton from '../components/interactions/LikeButton';
+import CommentSection from '../components/comments/CommentSection';
 
 export default function ArticleReadingView() {
   const { slug } = useParams();
@@ -43,8 +46,16 @@ export default function ArticleReadingView() {
   // UI state
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [socialNotice, setSocialNotice] = useState('');
+  const [commentsCount, setCommentsCount] = useState(0);
 
   const articleContentRef = useRef(null);
+
+  const scrollToResponses = () => {
+    const el = document.getElementById('responses');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   // Load article by slug
   const loadArticle = async () => {
@@ -347,22 +358,18 @@ export default function ArticleReadingView() {
           {/* Social Interaction Footer Bar */}
           <div className="flex items-center justify-between py-4 px-2 my-10 border-y border-[#202024] text-zinc-400 text-xs">
             <div className="flex items-center gap-6">
-              <button
-                type="button"
-                onClick={() => setSocialNotice('Likes')}
-                className="flex items-center gap-2 hover:text-rose-400 transition-colors group"
-              >
-                <Heart className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span className="font-medium">Applaud</span>
-              </button>
+              <LikeButton postId={post.id} size="md" />
 
               <button
                 type="button"
-                onClick={() => setSocialNotice('Comments')}
+                onClick={scrollToResponses}
                 className="flex items-center gap-2 hover:text-blue-400 transition-colors group"
+                title="View responses"
               >
                 <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span className="font-medium">Responses</span>
+                <span className="font-medium tabular-nums">
+                  {commentsCount > 0 ? `${commentsCount.toLocaleString()} Responses` : 'Responses'}
+                </span>
               </button>
 
               <ShareButton
@@ -438,6 +445,12 @@ export default function ArticleReadingView() {
               </Link>
             </div>
           </section>
+
+          {/* Discussion & Responses Section */}
+          <CommentSection
+            postId={post.id}
+            onCommentCountChange={(cnt) => setCommentsCount(cnt)}
+          />
 
           {/* Related Articles ("More stories you might enjoy") */}
           <RelatedArticles currentPostId={post.id} category={post.category} />

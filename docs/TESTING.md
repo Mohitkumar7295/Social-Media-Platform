@@ -130,6 +130,29 @@ Execution Summary:
 - Build: `npm run build` completed successfully (exit code 0).
 - Production Deployment: Live on `https://u9367zk9.insforge.site`.
 
+### Phase 6 Test Suite Results (Likes, Comments, Replies and Social Interactions)
+Executed via `scripts/test-phase6.mjs`:
+
+| Test # | Target Module | Test Description | Result | Status |
+|---|---|---|---|---|
+| **Test 1** | `likeService.likePost` | User A likes published article; verify record created in `likes` table | Like created, count = 1 | **PASSED** |
+| **Test 2** | Database Unique Constraint | Duplicate like attempt by User A on same article | Rejected by `unique_post_user_like` | **PASSED** |
+| **Test 3** | `likeService.unlikePost` | User A unlikes article; verify record deleted and count reverted to 0 | Record removed, count = 0 | **PASSED** |
+| **Test 4** | User State Isolation | User B likes article; verify independent like state (User B liked, User A not liked) | States properly isolated | **PASSED** |
+| **Test 5** | `commentService.createComment` | User A adds top-level response; verify record and profile join | Comment saved, author joined | **PASSED** |
+| **Test 6** | `commentService.createComment` | User B replies to User A; verify `parent_id` linked and total count = 2 | Reply nested under parent | **PASSED** |
+| **Test 7** | `commentService.updateComment` | User A edits own response; verify content and updated timestamp | Content updated in PostgreSQL | **PASSED** |
+| **Test 8** | RLS / Authorization | User B attempts to edit User A's response; verify modification denied | Unauthorized modification blocked | **PASSED** |
+| **Test 9** | `commentService.deleteComment` | User B deletes own reply; verify record removed and total count = 1 | Reply deleted cleanly, count = 1 | **PASSED** |
+| **Test 10** | Draft Protection | Non-author attempt to interact with unpublished private drafts | Blocked by draft status check | **PASSED** |
+| **Test 11** | Database Content Constraint | Empty/whitespace-only comment submission | Rejected by PostgreSQL check constraint | **PASSED** |
+
+Execution Summary:
+- **11 of 11 integration tests passed with 0 errors**.
+- Regression tests for Phase 3 (5/5), Phase 4 (6/6), Phase 5 (6/6) all passed with 0 errors.
+- Build: `npm run build` completed successfully (exit code 0).
+- Production Deployment: Live on `https://u9367zk9.insforge.site`.
+
 ### Test Scenario: Complete Publishing & Engagement Lifecycle
 1. **Account Registration**:
    - Navigate to `/register`.
