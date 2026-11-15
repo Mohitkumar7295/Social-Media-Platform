@@ -68,6 +68,19 @@ This document details the phase-by-phase implementation schedule, deliverables, 
   - `src/components/common/UserAvatar.jsx`
   - `src/services/subscriptionService.js`, `src/services/recommendationService.js`, `src/services/feedService.js`
   - `scripts/test-phase3.mjs` integration test suite
+
+---
+
+### Phase 4: Article Writing, Draft Management and Publishing System
+- **Status**: **COMPLETED**
+- **Objective**: Complete Substack/Medium editorial publishing suite: TipTap rich-text writing editor (`/write` & `/write/:id`), auto-saving drafts to PostgreSQL `posts` table, title & subtitle validation, cover image upload to InsForge Storage, reading time estimation, category selection, excerpt extraction, story publication & unpublish workflows, author story dashboard (`/dashboard` & `/stories`), and public reading view (`/story/:slug`).
+- **Deliverables**:
+  - `migrations/20261115065619_phase4-posts-schema.sql` applied to live PostgreSQL
+  - `src/pages/Write.jsx`, `src/pages/StoryView.jsx`, `src/pages/Dashboard.jsx`
+  - `src/components/editor/RichTextEditor.jsx`
+  - `src/services/postService.js`, `src/utils/editorUtils.js`
+  - `scripts/test-phase4.mjs` integration test suite
+- **Validation**: All 6 integration tests passed with 0 failures; build and live deployment verified.
 - **Validation**: All 5 integration tests pass with 0 failures; live build deployed.
 
 ---

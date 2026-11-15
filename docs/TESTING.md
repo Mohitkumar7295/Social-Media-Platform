@@ -93,10 +93,25 @@ Executed via `scripts/test-phase3.mjs`:
 | **Test 4** | `subscriptionService` | Verify followed user resolution through `follows` table | Query executed without error | **PASSED** |
 | **Test 5** | `feedService` | Verify feed handles empty or unmigrated `posts` table without crashing | Returned clean empty feed object | **PASSED** |
 
+---
+
+## 7. Phase 4 Article Writing & Publishing Integration Verification
+
+Executed via `scripts/test-phase4.mjs`:
+
+| Test # | Target Module | Test Description | Result | Status |
+|---|---|---|---|---|
+| **Test 1** | PostgreSQL `posts` table | Verify `posts` table schema and RLS query policies | Table verified | **PASSED** |
+| **Test 2** | `postService.createPost` | Create draft article with title, subtitle, slug, content | Created draft record | **PASSED** |
+| **Test 3** | `postService.getPostBySlug` | Fetch article by unique slug with author profile relation joined | Author relation joined | **PASSED** |
+| **Test 4** | `postService.publishPost` | Update status to `published` with `published_at` timestamp | Status updated to published | **PASSED** |
+| **Test 5** | `feedService.getForYouFeed` | Query global social feed to verify newly published story appears | Story retrieved in feed query | **PASSED** |
+| **Test 6** | `postService.unpublishPost` & `deletePost` | Revert to draft status and cleanly delete test record | Record deleted cleanly | **PASSED** |
+
 Execution Summary:
-- **5 of 5 tests passed with 0 errors**.
+- **6 of 6 tests passed with 0 errors**.
 - Build: `npm run build` completed with exit code 0.
-- Production Deployment: Verified live on `https://u9367zk9.insforge.site`.
+- Production Deployment: Live on `https://u9367zk9.insforge.site`.
 
 ### Test Scenario: Complete Publishing & Engagement Lifecycle
 1. **Account Registration**:

@@ -74,25 +74,31 @@ export default function FeedCard({ post }) {
         {/* Post Content */}
         <div className="mb-4">
           {post.title && (
-            <h3 className="font-serif text-lg font-bold text-white mb-1.5 tracking-tight hover:text-[#FF6719] transition-colors">
-              {post.title}
-            </h3>
+            <Link to={post.slug ? `/story/${post.slug}` : '#'}>
+              <h3 className="font-serif text-xl font-bold text-white mb-1.5 tracking-tight hover:text-[#FF6719] transition-colors leading-snug">
+                {post.title}
+              </h3>
+            </Link>
           )}
 
-          {post.content && (
-            <p className="text-sm text-zinc-300 leading-relaxed line-clamp-3">
-              {post.content}
-            </p>
+          {(post.excerpt || post.content) && (
+            <Link to={post.slug ? `/story/${post.slug}` : '#'}>
+              <p className="text-sm text-zinc-300 leading-relaxed line-clamp-3">
+                {post.excerpt || post.content.replace(/<[^>]*>/g, ' ')}
+              </p>
+            </Link>
           )}
 
           {post.cover_image_url && (
-            <div className="mt-3 rounded-xl overflow-hidden border border-[#26262a] max-h-72">
-              <img
-                src={post.cover_image_url}
-                alt={post.title || 'Post cover'}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <Link to={post.slug ? `/story/${post.slug}` : '#'}>
+              <div className="mt-3 rounded-xl overflow-hidden border border-[#26262a] max-h-72">
+                <img
+                  src={post.cover_image_url}
+                  alt={post.title || 'Post cover'}
+                  className="w-full h-full object-cover hover:scale-[1.01] transition-transform duration-200"
+                />
+              </div>
+            </Link>
           )}
 
           {/* Metadata pill */}
@@ -102,12 +108,10 @@ export default function FeedCard({ post }) {
                 {post.category}
               </span>
             )}
-            {post.reading_time_minutes && (
-              <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" />
-                {post.reading_time_minutes} min read
-              </span>
-            )}
+            <span className="flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5" />
+              {post.reading_time || 1} min read
+            </span>
           </div>
         </div>
 

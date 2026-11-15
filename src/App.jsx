@@ -10,16 +10,21 @@ import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 
-// User Profiles
+// User Profiles (Phase 2)
 import PublicProfile from './pages/PublicProfile';
 import EditProfile from './pages/EditProfile';
 
-// Phase 3: Authenticated Experience & Social Feed
+// Authenticated Experience & Social Feed (Phase 3)
 import Home from './pages/Home';
 import Subscriptions from './pages/Subscriptions';
 import Chat from './pages/Chat';
 import Activity from './pages/Activity';
 import Explore from './pages/Explore';
+
+// Article Writing, Publishing & Reading (Phase 4)
+import Write from './pages/Write';
+import StoryView from './pages/StoryView';
+import Dashboard from './pages/Dashboard';
 
 export default function App() {
   return (
@@ -78,6 +83,46 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* Phase 4: Article Writing Editor & Draft Management */}
+          <Route
+            path="/write"
+            element={
+              <ProtectedRoute>
+                <Write />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/write/:id"
+            element={
+              <ProtectedRoute>
+                <Write />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Phase 4: My Stories / Author Dashboard */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/stories"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Phase 4: Public/Authenticated Story Reading View */}
+          <Route path="/story/:slug" element={<StoryView />} />
+          <Route path="/post/:slug" element={<StoryView />} />
 
           {/* User Profile System (Phase 2) */}
           <Route path="/profile/:username" element={<PublicProfile />} />

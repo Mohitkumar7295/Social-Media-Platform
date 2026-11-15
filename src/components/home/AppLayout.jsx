@@ -104,7 +104,9 @@ export default function AppLayout({ children, activeNav = 'home' }) {
 
             <nav className="flex flex-col gap-2 mt-6">
               {[
+                { name: 'Write a Story', path: '/write', icon: Plus, highlight: true },
                 { name: 'Home Feed', path: '/home', icon: Home },
+                { name: 'My Stories & Drafts', path: '/dashboard', icon: Bookmark },
                 { name: 'Subscriptions', path: '/subscriptions', icon: Bookmark },
                 { name: 'Chat', path: '/chat', icon: MessageSquare },
                 { name: 'Activity', path: '/activity', icon: Bell },
@@ -122,9 +124,13 @@ export default function AppLayout({ children, activeNav = 'home' }) {
                     key={item.name}
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3.5 px-4 py-3 rounded-xl text-base font-medium text-zinc-200 hover:text-white hover:bg-[#1c1c22] transition-colors"
+                    className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-base font-medium transition-colors ${
+                      item.highlight
+                        ? 'bg-[#FF6719] text-white font-semibold'
+                        : 'text-zinc-200 hover:text-white hover:bg-[#1c1c22]'
+                    }`}
                   >
-                    <Icon className="w-5 h-5 text-zinc-400" />
+                    <Icon className={`w-5 h-5 ${item.highlight ? 'text-white' : 'text-zinc-400'}`} />
                     <span>{item.name}</span>
                   </Link>
                 );

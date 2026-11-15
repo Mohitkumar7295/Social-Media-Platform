@@ -55,6 +55,7 @@ export default function Sidebar({ className = '' }) {
   const navItems = [
     { name: 'Home', path: '/home', icon: Home },
     { name: 'Subscriptions', path: '/subscriptions', icon: Bookmark },
+    { name: 'Stories', path: '/dashboard', icon: FileText },
     { name: 'Chat', path: '/chat', icon: MessageSquare },
     { name: 'Activity', path: '/activity', icon: Bell },
     { name: 'Explore', path: '/explore', icon: Compass },
@@ -67,8 +68,7 @@ export default function Sidebar({ className = '' }) {
 
   const handleCreateClick = (type) => {
     setShowCreateMenu(false);
-    setCreateNoticeType(type);
-    setShowCreateNotice(true);
+    navigate('/write');
   };
 
   const handleLogout = async () => {
@@ -229,6 +229,18 @@ export default function Sidebar({ className = '' }) {
               >
                 <User className="w-4 h-4 text-zinc-400" />
                 <span>View Profile</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowUserMenu(false);
+                  navigate('/dashboard');
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-200 hover:text-white hover:bg-[#222228] transition-colors"
+              >
+                <FileText className="w-4 h-4 text-[#FF6719]" />
+                <span>My Stories & Drafts</span>
               </button>
 
               <button
