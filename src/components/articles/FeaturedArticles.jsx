@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, ArrowRight, BookOpen } from 'lucide-react';
+import { Sparkles, ArrowRight } from 'lucide-react';
 import ArticleCard from './ArticleCard';
 import { SAMPLE_ARTICLES } from '../../data/sampleArticles';
 

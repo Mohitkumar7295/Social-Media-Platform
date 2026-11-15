@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, MessageSquare, Bookmark, Clock, ArrowUpRight } from 'lucide-react';
+import { Heart, MessageSquare, Bookmark, Clock } from 'lucide-react';
 import Badge from '../common/Badge';
 
 export default function ArticleCard({ article, onReadStory }) {

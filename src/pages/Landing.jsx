@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import Navbar from '../components/layout/Navbar';
 import HeroSection from '../components/landing/HeroSection';
-import FeaturedArticles from '../components/landing/FeaturedArticles';
+import FeaturedArticles from '../components/articles/FeaturedArticles';
 import BenefitsSection from '../components/landing/BenefitsSection';
 import HowItWorks from '../components/landing/HowItWorks';
 import CategoriesSection from '../components/landing/CategoriesSection';
 import CTASection from '../components/landing/CTASection';
 import Footer from '../components/layout/Footer';
 import Modal from '../components/common/Modal';
-import StoryPreviewModal from '../components/landing/StoryPreviewModal';
+import StoryPreviewModal from '../components/articles/StoryPreviewModal';
 
 export default function Landing() {
   const [authModal, setAuthModal] = useState({ isOpen: false, mode: 'get-started' });
