@@ -12,6 +12,7 @@ import {
   Clock,
   X,
   Upload,
+  Globe,
   Feather,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -187,19 +188,24 @@ export default function Write() {
     };
   }, [title, subtitle, content, category, coverImageUrl, performSave]);
 
+  // Cover image URL modal state
+  const [coverUrlModalOpen, setCoverUrlModalOpen] = useState(false);
+  const [coverUrlInput, setCoverUrlInput] = useState('');
+
   // Cover image upload
   const handleCoverUpload = async (e) => {
     const file = e.target.files?.[0];
-    if (!file || !user?.id) return;
+    if (!file) return;
 
     setIsUploadingCover(true);
     setErrorMessage('');
 
     try {
-      const { url, key, error } = await postService.uploadCoverImage(file, user.id);
+      const authorId = user?.id || 'writer';
+      const { url, key, error } = await postService.uploadCoverImage(file, authorId);
       if (error) {
-        setErrorMessage('Failed to upload cover image. Please check file size (< 10MB).');
-      } else {
+        setErrorMessage(error.message || 'Failed to upload cover image. Max 10MB (JPG, PNG, WebP, GIF).');
+      } else if (url) {
         setCoverImageUrl(url);
         setCoverImageKey(key);
       }
@@ -208,6 +214,19 @@ export default function Write() {
     } finally {
       setIsUploadingCover(false);
     }
+  };
+
+  // Apply cover image from URL
+  const handleApplyCoverUrl = () => {
+    if (!coverUrlInput.trim()) return;
+    let url = coverUrlInput.trim();
+    if (!/^https?:\/\//i.test(url)) {
+      url = 'https://' + url;
+    }
+    setCoverImageUrl(url);
+    setCoverImageKey(null);
+    setCoverUrlInput('');
+    setCoverUrlModalOpen(false);
   };
 
   // Remove cover image
@@ -370,9 +389,10 @@ export default function Write() {
                 alt="Article Cover"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute top-3 right-3 flex items-center gap-2 bg-stone-900/70 backdrop-blur-md p-1.5 rounded-xl border border-white/20">
-                <label className="cursor-pointer text-xs font-semibold text-stone-200 hover:text-white px-2 py-1 rounded-lg hover:bg-white/10 transition-colors">
-                  Change Cover
+              <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-stone-900/75 backdrop-blur-md p-1.5 rounded-xl border border-white/20">
+                <label className="cursor-pointer text-xs font-semibold text-stone-200 hover:text-white px-2 py-1 rounded-lg hover:bg-white/10 transition-colors flex items-center gap-1">
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Upload File</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -381,6 +401,17 @@ export default function Write() {
                     disabled={isUploadingCover}
                   />
                 </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCoverUrlInput(coverImageUrl || '');
+                    setCoverUrlModalOpen(true);
+                  }}
+                  className="cursor-pointer text-xs font-semibold text-stone-200 hover:text-white px-2 py-1 rounded-lg hover:bg-white/10 transition-colors flex items-center gap-1"
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Image URL</span>
+                </button>
                 <button
                   type="button"
                   onClick={handleRemoveCover}
@@ -392,19 +423,99 @@ export default function Write() {
               </div>
             </div>
           ) : (
-            <label className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#555555] hover:text-[#0F8178] hover:bg-[#F0FAF8] w-fit cursor-pointer border border-dashed border-stone-300 hover:border-[#0F8178] transition-colors">
-              <ImageIcon className="w-4 h-4 text-[#0F8178]" />
-              <span>{isUploadingCover ? 'Uploading cover image...' : 'Add cover image'}</span>
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleCoverUpload}
-                disabled={isUploadingCover}
-              />
-            </label>
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#555555] hover:text-[#0F8178] hover:bg-[#F0FAF8] cursor-pointer border border-dashed border-[#E8EAE8] hover:border-[#0F8178] transition-colors">
+                {isUploadingCover ? (
+                  <RefreshCw className="w-4 h-4 animate-spin text-[#0F8178]" />
+                ) : (
+                  <Upload className="w-4 h-4 text-[#0F8178]" />
+                )}
+                <span>{isUploadingCover ? 'Uploading cover...' : 'Upload Cover Image'}</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleCoverUpload}
+                  disabled={isUploadingCover}
+                />
+              </label>
+
+              <button
+                type="button"
+                onClick={() => setCoverUrlModalOpen(true)}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold text-[#555555] hover:text-[#0F8178] hover:bg-[#F0FAF8] cursor-pointer border border-dashed border-[#E8EAE8] hover:border-[#0F8178] transition-colors"
+              >
+                <Globe className="w-4 h-4 text-[#0F8178]" />
+                <span>Add Cover via URL</span>
+              </button>
+            </div>
           )}
         </div>
+
+        {/* Cover Image URL Modal */}
+        {coverUrlModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+            <div className="w-full max-w-md bg-white border border-[#E8EAE8] rounded-2xl p-6 shadow-2xl">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-base font-serif font-bold text-[#201F1D]">Article Cover Image Link</h4>
+                <button
+                  type="button"
+                  onClick={() => setCoverUrlModalOpen(false)}
+                  className="p-1 rounded-lg text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8] transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <p className="text-xs text-[#777777] mb-3">
+                Paste any high-resolution public image URL (e.g. from Unsplash or image CDN).
+              </p>
+
+              <input
+                type="url"
+                value={coverUrlInput}
+                onChange={(e) => setCoverUrlInput(e.target.value)}
+                placeholder="https://images.unsplash.com/..."
+                className="w-full bg-[#F8FAF9] border border-[#E8EAE8] rounded-xl px-4 py-2.5 text-xs text-[#201F1D] placeholder:text-stone-400 focus:outline-none focus:border-[#0F8178] mb-4"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleApplyCoverUrl();
+                }}
+              />
+
+              {coverUrlInput.trim() && (
+                <div className="rounded-xl overflow-hidden border border-[#E8EAE8] max-h-44 bg-stone-50 flex items-center justify-center mb-4">
+                  <img
+                    src={coverUrlInput}
+                    alt="Cover preview"
+                    className="max-h-40 w-auto object-contain rounded-lg"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setCoverUrlModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8] transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={!coverUrlInput.trim()}
+                  onClick={handleApplyCoverUrl}
+                  className="px-5 py-2 rounded-xl bg-[#0F8178] hover:bg-[#086B64] disabled:opacity-40 disabled:pointer-events-none text-white text-xs font-semibold shadow-xs transition-colors"
+                >
+                  Set Cover Image
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Title Input */}
         <div>

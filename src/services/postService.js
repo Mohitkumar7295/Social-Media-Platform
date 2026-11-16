@@ -1,6 +1,6 @@
-import { insforge } from '../lib/insforge';
-import { generateSlug, estimateReadingTime, extractExcerpt } from '../utils/editorUtils';
-import { storageService } from './storageService';
+import { insforge } from '../lib/insforge.js';
+import { generateSlug, estimateReadingTime, extractExcerpt } from '../utils/editorUtils.js';
+import { storageService } from './storageService.js';
 
 /**
  * Post Service
