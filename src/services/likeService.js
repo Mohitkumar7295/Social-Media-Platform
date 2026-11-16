@@ -1,4 +1,5 @@
 import { insforge } from '../lib/insforge';
+import { notificationService } from './notificationService';
 
 /**
  * Like Service
@@ -126,6 +127,18 @@ export const likeService = {
         }
         console.error('likeService.likePost error:', error);
         return { success: false, error };
+      }
+
+      // Generate like notification for article author
+      if (targetPost.author_id && targetPost.author_id !== userId) {
+        notificationService
+          .createNotification({
+            recipientId: targetPost.author_id,
+            actorId: userId,
+            type: 'like',
+            postId: postId,
+          })
+          .catch((nErr) => console.warn('Could not create like notification:', nErr));
       }
 
       return { success: true, error: null };

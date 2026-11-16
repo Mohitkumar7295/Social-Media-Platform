@@ -157,6 +157,27 @@ This document details the phase-by-phase implementation schedule, deliverables, 
 
 ---
 
+### Phase 9: Notifications and Writer Dashboard
+- **Status**: **COMPLETED**
+- **Objective**: Complete activity & notifications center and professional writer dashboard. Backed by PostgreSQL `public.notifications` table with check constraints preventing self-alerts and strict RLS. Real-time event notifications for follows, story applauds/likes, comments, and nested replies. Interactive Activity view (`/activity`) with All/Unread filtering, individual/bulk mark as read, and unread notification badges across navigation. Comprehensive Writer Dashboard (`/dashboard`) featuring 6 real database metric cards (published articles, drafts, applauds, comments, followers, bookmarks), recent articles management with engagement analytics, and recent activity stream.
+- **Deliverables**:
+  - `migrations/20261116090000_phase9-notifications.sql` (PostgreSQL `public.notifications` table, indexes, check constraint `check_no_self_notification`, and 4 RLS policies)
+  - `src/services/notificationService.js` (createNotification, getNotifications, getUnreadCount, markAsRead, markAllAsRead, deleteNotification)
+  - `src/services/dashboardService.js` (getOverviewStats, getRecentArticles, getRecentActivity with zero mock numbers)
+  - `src/components/notifications/NotificationBadge.jsx` (auto-refreshing live unread counter badge)
+  - `src/components/notifications/NotificationItem.jsx` (rich notification item with actor avatar, event description, relative time, and mark read / delete actions)
+  - `src/components/dashboard/DashboardStatCard.jsx` (charcoal card with icons, metric values, and status subtitles)
+  - `src/components/dashboard/RecentArticles.jsx` (article management table with live applauds, comments, bookmarks, and status actions)
+  - `src/components/dashboard/RecentActivity.jsx` (recent social activity feed on writer studio)
+  - `src/pages/Activity.jsx` (complete Activity & Notifications page with All/Unread filtering and mark-all-as-read)
+  - `src/pages/Dashboard.jsx` (upgraded Writer Studio dashboard at `/dashboard`)
+  - `src/services/followService.js`, `likeService.js`, `commentService.js` (wired automatic non-blocking notification dispatches)
+  - `src/components/home/Sidebar.jsx` & `AppLayout.jsx` (wired live NotificationBadge on navigation items)
+  - `scripts/test-phase9.mjs` integration test suite
+- **Validation**: 10 of 10 integration tests passed with 0 failures; regression test suites for Phases 3–8 all passed; Vite production build verified; live deployed to `https://u9367zk9.insforge.site`.
+
+---
+
 ### Phase 2: PostgreSQL Schema and RLS Policies
 - **Status**: PENDING
 - **Objective**: Apply relational database schema, indexes, constraints, triggers, and Row Level Security policies to InsForge PostgreSQL.

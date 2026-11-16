@@ -18,6 +18,7 @@ import { useAuth } from '../../hooks/useAuth';
 import Sidebar from './Sidebar';
 import RightSidebar from './RightSidebar';
 import UserAvatar from '../common/UserAvatar';
+import NotificationBadge from '../notifications/NotificationBadge';
 
 export default function AppLayout({ children, activeNav = 'home' }) {
   const { user, profile, logout } = useAuth();
@@ -125,14 +126,17 @@ export default function AppLayout({ children, activeNav = 'home' }) {
                     key={item.name}
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-base font-medium transition-colors ${
+                    className={`flex items-center justify-between px-4 py-3 rounded-xl text-base font-medium transition-colors ${
                       item.highlight
                         ? 'bg-[#FF6719] text-white font-semibold'
                         : 'text-zinc-200 hover:text-white hover:bg-[#1c1c22]'
                     }`}
                   >
-                    <Icon className={`w-5 h-5 ${item.highlight ? 'text-white' : 'text-zinc-400'}`} />
-                    <span>{item.name}</span>
+                    <div className="flex items-center gap-3.5">
+                      <Icon className={`w-5 h-5 ${item.highlight ? 'text-white' : 'text-zinc-400'}`} />
+                      <span>{item.name}</span>
+                    </div>
+                    {item.path === '/activity' && <NotificationBadge />}
                   </Link>
                 );
               })}
@@ -180,7 +184,12 @@ export default function AppLayout({ children, activeNav = 'home' }) {
                 }`
               }
             >
-              <Icon className="w-5 h-5" />
+              <div className="relative">
+                <Icon className="w-5 h-5" />
+                {item.path === '/activity' && (
+                  <NotificationBadge className="absolute -top-1 -right-2 text-[9px] min-w-[14px] h-[14px] px-1" />
+                )}
+              </div>
               <span>{item.name}</span>
             </NavLink>
           );

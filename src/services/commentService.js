@@ -1,4 +1,5 @@
 import { insforge } from '../lib/insforge';
+import { notificationService } from './notificationService';
 
 /**
  * Comment Service
@@ -157,6 +158,39 @@ export const commentService = {
       if (error) {
         console.error('commentService.createComment error:', error);
         return { comment: null, error };
+      }
+
+      // Generate notifications (non-blocking)
+      if (parentId) {
+        // Reply notification for the parent comment's author
+        insforge.database
+          .from('comments')
+          .select('id, user_id')
+          .eq('id', parentId)
+          .maybeSingle()
+          .then(({ data: parentComment }) => {
+            if (parentComment?.user_id && parentComment.user_id !== userId) {
+              notificationService.createNotification({
+                recipientId: parentComment.user_id,
+                actorId: userId,
+                type: 'reply',
+                postId: postId,
+                commentId: data.id,
+              }).catch((nErr) => console.warn('Could not create reply notification:', nErr));
+            }
+          })
+          .catch((pErr) => console.warn('Could not resolve parent comment for notification:', pErr));
+      } else {
+        // Comment notification for the article's author
+        if (targetPost.author_id && targetPost.author_id !== userId) {
+          notificationService.createNotification({
+            recipientId: targetPost.author_id,
+            actorId: userId,
+            type: 'comment',
+            postId: postId,
+            commentId: data.id,
+          }).catch((nErr) => console.warn('Could not create comment notification:', nErr));
+        }
       }
 
       return { comment: data, error: null };

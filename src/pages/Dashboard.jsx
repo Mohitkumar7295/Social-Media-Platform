@@ -1,62 +1,83 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   FileText,
-  Plus,
-  Edit3,
-  Trash2,
-  Eye,
-  EyeOff,
-  Sparkles,
   Clock,
-  Send,
+  Heart,
+  MessageCircle,
+  Users,
+  Bookmark,
+  Plus,
+  RefreshCw,
   AlertCircle,
-  ExternalLink,
+  PenTool,
+  Sparkles,
 } from 'lucide-react';
 import AppLayout from '../components/home/AppLayout';
-import { useAuth } from '../hooks/useAuth';
+import DashboardStatCard from '../components/dashboard/DashboardStatCard';
+import RecentArticles from '../components/dashboard/RecentArticles';
+import RecentActivity from '../components/dashboard/RecentActivity';
+import { dashboardService } from '../services/dashboardService';
 import { postService } from '../services/postService';
+import { useAuth } from '../hooks/useAuth';
 
+/**
+ * Phase 9 Writer Dashboard
+ * Provides comprehensive real-time publication analytics, draft/article management,
+ * and recent reader activity. 100% database-backed with zero simulated metrics.
+ */
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('published'); // 'published' | 'drafts'
-  const [posts, setPosts] = useState([]);
+  const [stats, setStats] = useState({
+    publishedCount: 0,
+    draftCount: 0,
+    likesCount: 0,
+    commentsCount: 0,
+    followersCount: 0,
+    bookmarksCount: 0,
+  });
+
+  const [articles, setArticles] = useState([]);
+  const [activity, setActivity] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Deletion modal state
   const [deleteModalPost, setDeleteModalPost] = useState(null);
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  // Load user posts
-  const loadPosts = async () => {
+  const loadDashboardData = useCallback(async () => {
     if (!user?.id) return;
-    setIsLoading(true);
+
     try {
-      const { posts: data, error } = await postService.getAuthorPosts(user.id);
-      if (!error && data) {
-        setPosts(data);
-      } else {
-        setPosts([]);
-      }
+      const [statsRes, articlesRes, activityRes] = await Promise.all([
+        dashboardService.getOverviewStats(user.id),
+        dashboardService.getRecentArticles(user.id, { limit: 20 }),
+        dashboardService.getRecentActivity(user.id, { limit: 10 }),
+      ]);
+
+      if (statsRes.stats) setStats(statsRes.stats);
+      if (articlesRes.articles) setArticles(articlesRes.articles);
+      if (activityRes.activity) setActivity(activityRes.activity);
     } catch (err) {
-      console.error('Error loading author posts:', err);
-      setPosts([]);
+      console.error('Error loading dashboard data:', err);
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
-  };
+  }, [user?.id]);
 
   useEffect(() => {
-    loadPosts();
-  }, [user?.id]);
+    loadDashboardData();
+  }, [loadDashboardData]);
 
   // Handle Unpublish
   const handleUnpublish = async (postId) => {
     const { error } = await postService.unpublishPost(postId);
     if (!error) {
-      await loadPosts();
+      await loadDashboardData();
     }
   };
 
@@ -64,14 +85,15 @@ export default function Dashboard() {
   const handlePublish = async (postId) => {
     const { error } = await postService.publishPost(postId);
     if (!error) {
-      await loadPosts();
+      await loadDashboardData();
     }
   };
 
-  // Handle Delete
+  // Handle Confirm Delete
   const confirmDelete = async () => {
     if (!deleteModalPost) return;
-    setDeleteLoading(true);
+    setIsDeleting(true);
+
     try {
       const { success } = await postService.deletePost(
         deleteModalPost.id,
@@ -79,218 +101,163 @@ export default function Dashboard() {
       );
       if (success) {
         setDeleteModalPost(null);
-        await loadPosts();
+        await loadDashboardData();
       }
     } catch (err) {
       console.error('Delete error:', err);
     } finally {
-      setDeleteLoading(false);
+      setIsDeleting(false);
     }
   };
 
-  const publishedPosts = posts.filter((p) => p.status === 'published');
-  const draftPosts = posts.filter((p) => p.status === 'draft');
-  const displayedPosts = activeTab === 'published' ? publishedPosts : draftPosts;
-
   return (
     <AppLayout activeNav="profile">
-      {/* Dashboard Top Header */}
-      <div className="flex items-center justify-between pb-6 border-b border-[#242428] mb-6">
-        <div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            Story Management
-          </h1>
-          <p className="text-xs text-zinc-400 mt-1">
-            Manage your drafts, editorial posts, and published articles.
-          </p>
-        </div>
-
-        <Link
-          to="/write"
-          className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#FF6719] hover:bg-[#e8590c] active:scale-[0.98] text-white text-xs font-semibold shadow-md shadow-orange-950/40 transition-all"
-        >
-          <Plus className="w-4 h-4 stroke-[2.5]" />
-          <span>Write Story</span>
-        </Link>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex items-center gap-6 border-b border-[#242428] mb-6">
-        <button
-          type="button"
-          onClick={() => setActiveTab('published')}
-          className={`pb-3 text-sm font-semibold relative transition-colors ${
-            activeTab === 'published' ? 'text-white' : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          <span>Published ({publishedPosts.length})</span>
-          {activeTab === 'published' && (
-            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF6719] rounded-full" />
-          )}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('drafts')}
-          className={`pb-3 text-sm font-semibold relative transition-colors ${
-            activeTab === 'drafts' ? 'text-white' : 'text-zinc-400 hover:text-zinc-200'
-          }`}
-        >
-          <span>Drafts ({draftPosts.length})</span>
-          {activeTab === 'drafts' && (
-            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF6719] rounded-full" />
-          )}
-        </button>
-      </div>
-
-      {/* Posts List */}
-      {isLoading ? (
-        <div className="space-y-3 py-4">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="bg-[#141416] border border-[#242428] rounded-2xl p-5 animate-pulse"
-            >
-              <div className="h-4 bg-zinc-800 rounded w-2/3 mb-2" />
-              <div className="h-3 bg-zinc-800/60 rounded w-1/3" />
+      {/* Dashboard Top Welcome Banner */}
+      <div className="bg-[#141416] border border-[#242428] rounded-2xl p-6 sm:p-7 mb-6 relative overflow-hidden shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative z-10">
+          <div>
+            <div className="flex items-center gap-2 mb-1.5">
+              <Sparkles className="w-4 h-4 text-[#FF6719]" />
+              <span className="text-xs font-semibold text-[#FF6719] uppercase tracking-wider">
+                Writer Studio
+              </span>
             </div>
-          ))}
-        </div>
-      ) : displayedPosts.length > 0 ? (
-        <div className="space-y-3">
-          {displayedPosts.map((story) => (
-            <div
-              key={story.id}
-              className="bg-[#141416] border border-[#242428] rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-[#32323a] transition-all"
-            >
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 font-semibold border border-zinc-700/50">
-                    {story.category || 'General'}
-                  </span>
-                  <span className="text-zinc-500 text-xs">•</span>
-                  <span className="text-xs text-zinc-400">
-                    {activeTab === 'published'
-                      ? `Published ${new Date(story.published_at || story.created_at).toLocaleDateString()}`
-                      : `Edited ${new Date(story.updated_at || story.created_at).toLocaleDateString()}`}
-                  </span>
-                </div>
-
-                <h3 className="font-serif font-bold text-base text-zinc-100 hover:text-white truncate">
-                  {story.title}
-                </h3>
-
-                {story.subtitle && (
-                  <p className="text-xs text-zinc-400 mt-1 line-clamp-1 italic">
-                    {story.subtitle}
-                  </p>
-                )}
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[#222226]">
-                {story.status === 'published' ? (
-                  <>
-                    <Link
-                      to={`/p/${story.slug}`}
-                      className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-[#202026] transition-colors"
-                      title="View Published Article"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </Link>
-
-                    <button
-                      type="button"
-                      onClick={() => handleUnpublish(story.id)}
-                      className="px-3 py-1.5 rounded-xl text-xs font-medium text-amber-400 hover:bg-amber-500/10 transition-colors"
-                      title="Revert to Draft"
-                    >
-                      Unpublish
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => handlePublish(story.id)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FF6719]/10 text-[#FF6719] hover:bg-[#FF6719] hover:text-white text-xs font-semibold transition-colors"
-                    title="Publish Draft"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                    <span>Publish</span>
-                  </button>
-                )}
-
-                <Link
-                  to={`/write/${story.id}`}
-                  className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-[#202026] transition-colors"
-                  title="Edit Story"
-                >
-                  <Edit3 className="w-4 h-4" />
-                </Link>
-
-                <button
-                  type="button"
-                  onClick={() => setDeleteModalPost(story)}
-                  className="p-2 rounded-xl text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors"
-                  title="Delete Story"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="bg-[#141416] border border-[#242428] rounded-2xl p-10 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-[#FF6719] flex items-center justify-center mx-auto mb-4">
-            <FileText className="w-7 h-7" />
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              Welcome back, {profile?.full_name || 'Writer'}
+            </h1>
+            <p className="text-xs sm:text-sm text-zinc-400 mt-1 max-w-xl">
+              Track your publication engagement, manage your stories, and review recent reader interactions.
+            </p>
           </div>
-          <h3 className="font-serif text-xl font-bold text-white mb-2">
-            {activeTab === 'published' ? 'No Published Stories Yet' : 'No Drafts Saved'}
-          </h3>
-          <p className="text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed mb-6">
-            {activeTab === 'published'
-              ? 'Start sharing your knowledge, ideas, and stories with readers across WriteSpace.'
-              : 'Drafts you write and auto-save will appear here for easy access and publishing.'}
-          </p>
-          <Link
-            to="/write"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FF6719] hover:bg-[#e8590c] active:scale-[0.98] text-white text-xs font-semibold shadow-md transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Write a Story</span>
-          </Link>
-        </div>
-      )}
 
-      {/* Deletion Confirmation Modal */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                setIsRefreshing(true);
+                loadDashboardData();
+              }}
+              title="Refresh metrics"
+              className="p-2.5 rounded-xl text-zinc-400 hover:text-white hover:bg-[#202026] border border-[#2a2a30] transition-colors"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            </button>
+
+            <Link
+              to="/write"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FF6719] hover:bg-[#e8590c] text-white text-xs font-semibold shadow-md shadow-orange-950/40 transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Write Story</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Overview Statistics Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
+        <DashboardStatCard
+          label="Published Stories"
+          value={stats.publishedCount}
+          icon={FileText}
+          iconColor="text-emerald-400"
+          iconBg="bg-emerald-500/10 border-emerald-500/20"
+          subText="Live on public feed"
+        />
+
+        <DashboardStatCard
+          label="Drafts in Progress"
+          value={stats.draftCount}
+          icon={Clock}
+          iconColor="text-amber-400"
+          iconBg="bg-amber-500/10 border-amber-500/20"
+          subText="Unpublished works"
+        />
+
+        <DashboardStatCard
+          label="Total Applauds"
+          value={stats.likesCount}
+          icon={Heart}
+          iconColor="text-rose-500"
+          iconBg="bg-rose-500/10 border-rose-500/20"
+          subText="Across all publications"
+        />
+
+        <DashboardStatCard
+          label="Reader Responses"
+          value={stats.commentsCount}
+          icon={MessageCircle}
+          iconColor="text-blue-400"
+          iconBg="bg-blue-500/10 border-blue-500/20"
+          subText="Comments & replies"
+        />
+
+        <DashboardStatCard
+          label="Subscribers / Followers"
+          value={stats.followersCount}
+          icon={Users}
+          iconColor="text-purple-400"
+          iconBg="bg-purple-500/10 border-purple-500/20"
+          subText="Reader network"
+        />
+
+        <DashboardStatCard
+          label="Stories Bookmarked"
+          value={stats.bookmarksCount}
+          icon={Bookmark}
+          iconColor="text-amber-400"
+          iconBg="bg-amber-500/10 border-amber-500/20"
+          subText="In readers' reading lists"
+        />
+      </div>
+
+      {/* Main Content Area: Articles Management & Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column (2 cols on lg): Recent Articles Management */}
+        <div className="lg:col-span-2">
+          <RecentArticles
+            articles={articles}
+            onPublish={handlePublish}
+            onUnpublish={handleUnpublish}
+            onDeleteRequest={(article) => setDeleteModalPost(article)}
+          />
+        </div>
+
+        {/* Right Column (1 col on lg): Recent Activity Feed */}
+        <div className="lg:col-span-1">
+          <RecentActivity activity={activity} />
+        </div>
+      </div>
+
+      {/* Delete Confirmation Modal */}
       {deleteModalPost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
-          <div className="w-full max-w-md bg-[#161619] border border-[#2a2a30] rounded-2xl p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-[#18181c] border border-[#2e2e36] rounded-2xl p-6 shadow-2xl">
             <div className="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-center justify-center mb-4">
-              <Trash2 className="w-6 h-6" />
+              <AlertCircle className="w-6 h-6" />
             </div>
             <h3 className="font-serif text-xl font-bold text-white mb-2">
-              Delete "{deleteModalPost.title}"?
+              Delete Article Permanently?
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed mb-6">
-              This action cannot be undone. The story and its uploaded cover image will be permanently removed from WriteSpace.
+              Are you sure you want to delete <span className="text-zinc-200 font-semibold italic">"{deleteModalPost.title}"</span>? This will permanently remove the article, comments, likes, and any uploaded cover image. This action cannot be undone.
             </p>
             <div className="flex justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setDeleteModalPost(null)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                disabled={isDeleting}
+                className="px-4 py-2 rounded-xl bg-[#222228] hover:bg-[#2c2c34] text-zinc-300 font-medium text-xs transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={confirmDelete}
-                disabled={deleteLoading}
-                className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow transition-colors disabled:opacity-50"
+                disabled={isDeleting}
+                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs transition-colors"
               >
-                {deleteLoading ? 'Deleting...' : 'Delete Forever'}
+                {isDeleting ? 'Deleting...' : 'Delete Article'}
               </button>
             </div>
           </div>

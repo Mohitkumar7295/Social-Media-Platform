@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import UserAvatar from '../common/UserAvatar';
+import NotificationBadge from '../notifications/NotificationBadge';
 
 export default function Sidebar({ className = '' }) {
   const { user, profile, logout } = useAuth();
@@ -113,12 +114,17 @@ export default function Sidebar({ className = '' }) {
                     : 'text-zinc-400 hover:text-zinc-100 hover:bg-[#161619]'
                 }`}
               >
-                <Icon
-                  className={`w-5 h-5 transition-colors ${
-                    isActive ? 'text-[#FF6719]' : 'text-zinc-400 group-hover:text-zinc-200'
-                  }`}
-                />
+                <div className="relative">
+                  <Icon
+                    className={`w-5 h-5 transition-colors ${
+                      isActive ? 'text-[#FF6719]' : 'text-zinc-400 group-hover:text-zinc-200'
+                    }`}
+                  />
+                </div>
                 <span>{item.name}</span>
+                {item.path === '/activity' && (
+                  <NotificationBadge className="ml-auto" />
+                )}
               </NavLink>
             );
           })}

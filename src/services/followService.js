@@ -1,4 +1,5 @@
 import { insforge } from '../lib/insforge';
+import { notificationService } from './notificationService';
 
 /**
  * Follow Service
@@ -108,6 +109,15 @@ export const followService = {
         console.error('followService.followUser error:', error);
         return { success: false, error };
       }
+
+      // Generate follow notification for recipient
+      notificationService
+        .createNotification({
+          recipientId: followingId,
+          actorId: followerId,
+          type: 'follow',
+        })
+        .catch((nErr) => console.warn('Could not create follow notification:', nErr));
 
       return { success: true, error: null };
     } catch (err) {

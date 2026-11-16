@@ -196,6 +196,28 @@ Execution Summary:
 - Build: `npm run build` completed successfully (exit code 0).
 - Production Deployment: Live on `https://u9367zk9.insforge.site`.
 
+### Phase 9 Test Suite Results (Notifications System & Writer Dashboard)
+Executed via `scripts/test-phase9.mjs`:
+
+| Test # | Target Module | Test Description | Result | Status |
+|---|---|---|---|---|
+| **Test 1** | `followService.followUser` | User B follows User A; verify follow notification created in PostgreSQL | Record created for User A with actor User B | **PASSED** |
+| **Test 2** | `likeService.likePost` | User B likes User A's article; verify like notification created with post ID | Record created with post_id reference | **PASSED** |
+| **Test 3** | `commentService.createComment` | User B comments on story; verify comment notification created for author | Record created with comment and post IDs | **PASSED** |
+| **Test 4** | Comment Reply Notifications | User A replies to User B's comment; verify notification sent to User B | Reply notification routed to comment author | **PASSED** |
+| **Test 5** | Database Check Constraint | Self-notification attempt (User A notifies User A) | Rejected by `check_no_self_notification` | **PASSED** |
+| **Test 6** | `notificationService.getNotifications` | Fetch notifications stream with joined actor and post metadata | Resolved with username, full_name, and story | **PASSED** |
+| **Test 7** | `notificationService.markAsRead` | Mark single notification as read; verify `is_read = true` in PostgreSQL | Notification status updated | **PASSED** |
+| **Test 8** | `notificationService.markAllAsRead` | Mark all notifications as read; verify unread counter returns to 0 | All alerts marked; unread count = 0 | **PASSED** |
+| **Test 9** | `dashboardService.getOverviewStats` | Verify published, draft, and follower counts match database records | Real metrics verified against schema | **PASSED** |
+| **Test 10** | Engagement Aggregates | Verify aggregate likes and comments across author's articles | Real engagement sums computed accurately | **PASSED** |
+
+Execution Summary:
+- **10 of 10 integration tests passed with 0 errors**.
+- Full regression suite for Phases 3–8 (47 tests total) all passed with 0 errors.
+- Build: `npm run build` completed successfully (exit code 0).
+- Production Deployment: Live on `https://u9367zk9.insforge.site`.
+
 ### Test Scenario: Complete Publishing & Engagement Lifecycle
 1. **Account Registration**:
    - Navigate to `/register`.
