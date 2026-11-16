@@ -1,6 +1,6 @@
 # WriteSpace ✍️
 
-> A modern, distraction-free social publishing and content platform built for writers and engaged readers. Inspired by the editorial elegance of Substack and Medium, backed by React, Tailwind CSS, and InsForge Backend-as-a-Service (BaaS).
+> A modern, distraction-free social publishing and content platform built for writers and engaged readers. Inspired by the editorial elegance of Substack and Medium, engineered with React 18, Tailwind CSS, and InsForge Backend-as-a-Service (BaaS).
 
 [![React](https://img.shields.io/badge/React-18.x-61DAFB?logo=react&logoColor=black)](#)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.x-38B2AC?logo=tailwind-css&logoColor=white)](#)
@@ -12,215 +12,236 @@
 
 ## 1. Project Overview
 
-**WriteSpace** is a complete, production-minded social media and content publishing web application. It combines long-form editorial publishing with modern social networking primitives:
+**WriteSpace** is a complete, production-grade social publishing platform combining long-form editorial storytelling with modern social networking primitives:
 
-- **For Writers**: A distraction-free editorial interface, draft/publish lifecycle, cover image uploads, tag and category assignment, estimated reading time, and reader feedback metrics.
-- **For Readers**: Personalized chronological home feeds, following feeds, explore streams, category browsing, full-text article search, responsive mobile-first typography, bookmarks, likes, and nested commentary.
-- **For the Architecture**: A pure, decoupled, serverless frontend-to-BaaS architecture using **React** and **Tailwind CSS** communicating directly with **InsForge** (managed PostgreSQL, Row Level Security, InsForge Auth, S3-compatible Storage, and Realtime).
+- **For Writers**: A distraction-free editorial studio, autosaved drafts, instant publishing, custom slugs, cover image uploads, category classification, estimated reading time, and an analytics-driven Writer Dashboard.
+- **For Readers**: Clean three-column authenticated home feed, personalized following feed, explore hub, dynamic category filter pills, instant debounced search for stories and writers, typography-optimized reading view, applauds, discussion responses, nested replies, and private bookmark collections.
+- **Pure Serverless Architecture**: Direct client-to-BaaS architecture using **React 18** and **Tailwind CSS** communicating directly with **InsForge** (managed PostgreSQL with Row Level Security, InsForge Auth, and S3-compatible Object Storage).
 
-No traditional monolithic backends (Spring Boot, Django, Express.js) are used. Security and access controls are enforced at the database layer via PostgreSQL **Row Level Security (RLS)** and InsForge Auth session tokens.
+Live Production URL: **https://u9367zk9.insforge.site**
 
 ---
 
-## 2. Key Features
+## 2. Platform Architecture & Features (Phases 1–10)
 
-| Category | Features |
-|---|---|
-| **Authentication** | Email & password registration, secure login, persistent session management, user profile bootstrap trigger, logout, password recovery. |
-| **User Profiles** | Custom handles (`@username`), full name, bio, avatar upload via InsForge Storage, follower/following counts, author tabs (Published / Liked / Saved). |
-| **Article Management** | Markdown/Rich editor, draft saving, instant publishing, auto-calculated reading time, cover image uploads, category tags, slug generation, edit/delete controls. |
-| **Social Graph** | One-click author follow/unfollow, mutual follower tracking, non-self-following database constraints. |
-| **Engagement** | One-click post likes (atomic unique constraint), nested comment threads, personal bookmark library with private reading list access. |
-| **Feeds & Discovery** | Chronological home feed, subscriber-only following feed, explore trending stream, category filters, real-time keyword search for articles and writers. |
-| **Notifications** | Real-time event notifications for new followers, comments on authored posts, and likes. |
-| **Security & Privacy** | Rigorous PostgreSQL Row Level Security (RLS) guaranteeing that private drafts and personal bookmarks remain inaccessible to other users. |
+| Phase | Module | Key Features & Implementation |
+|---|---|---|
+| **Phase 1** | **Public Landing Page** | Public homepage at `/`, hero section, featured articles, benefits showcase, category previews, and guest navigation. Redirects logged-in users to `/home`. |
+| **Phase 2** | **Authentication & Profiles** | Email OTP registration, username availability checker, password-only login, session persistence, public profile views (`/profile/:username`), profile editing, avatar uploads, and cover image management. |
+| **Phase 3** | **Authenticated Home Feed** | Substack-inspired 3-column layout at `/home` (Left Navigation Sidebar, Center Editorial Feed, Right Discovery Sidebar) with responsive mobile drawer and bottom navigation. |
+| **Phase 4** | **Article Writing Studio** | Rich text writing studio at `/write` with TipTap editor, debounced autosave, cover image uploads, modal publishing workflows, slug generation, and draft management. |
+| **Phase 5** | **Article Reading View** | Dedicated reading page at `/p/:slug` with DOMPurify sanitization, dynamic reading progress bar, table of contents with scrollspy, author credentials, and responsive typography. |
+| **Phase 6** | **Social Interactions** | Post applauds/likes with optimistic updates, unique constraints preventing duplicates, threaded comments, nested replies, author-only editing, and deletion. |
+| **Phase 7** | **Social Graph & Feeds** | Author follow/unfollow, check constraints preventing self-following, follower/following counts and modal lists, chronological "For You" feed, and personalized "Following" stream. |
+| **Phase 8** | **Search, Explore & Bookmarks** | Real-time 250ms debounced global search dialog across stories and writers, curated `/explore` hub with category filter pills, and private `/bookmarks` reading list. |
+| **Phase 9** | **Notifications & Writer Dashboard** | Real-time event notifications for follows, applauds, comments, and replies with unread badge indicators. Comprehensive Writer Studio at `/dashboard` with 6 real database metric cards. |
+| **Phase 10** | **Audit, Security & Production** | End-to-end multi-actor security audit, RLS policy verification, XSS prevention, optimized Rollup code splitting, automated regression test suite, and production deployment. |
 
 ---
 
 ## 3. Technology Stack
 
 ### Frontend Tier
-- **Framework**: React.js (v18+) with Functional Components & Hooks
-- **Styling**: Tailwind CSS with custom editorial typography plugins (`@tailwindcss/typography`)
-- **Routing**: React Router (v6+)
+- **Framework**: React.js (v18.3.1) with Functional Components & Hooks
+- **Styling**: Tailwind CSS (v3.4.16) with `@tailwindcss/typography`
+- **Routing**: React Router (v6.28.0)
+- **Editor**: TipTap StarterKit with Image, Link, and Underline extensions
+- **Sanitization**: DOMPurify (v3.4.18) for strict XSS prevention
 - **Icons**: Lucide React
-- **Client Integration**: Official `@insforge/sdk`
-- **Build Tooling**: Vite for lightning-fast HMR and optimized production bundles
+- **Client SDK**: `@insforge/sdk` (v1.5.2)
+- **Build Tooling**: Vite (v6.0.1) with custom Rollup code-splitting chunks
 
-### Backend & Persistence Tier (InsForge BaaS)
-- **Platform**: InsForge Backend-as-a-Service
-- **Database**: PostgreSQL 15+ with Row Level Security (RLS)
-- **Identity & Auth**: InsForge Auth (JWT-based session management, bcrypt password hashing, secure cookie/bearer token exchange)
-- **Object Storage**: InsForge Storage (S3-compatible buckets for avatars and article cover images)
-- **Realtime**: InsForge Realtime (WebSockets/Socket.io event bus for notifications and live interactions)
-- **API Gateway**: PostgREST / InsForge Data Layer
-
----
-
-## 4. Architecture Summary
-
-```
-┌───────────────────────────────────────────────────────────┐
-│                    WriteSpace Client                      │
-│     (React 18 + Tailwind CSS + React Router + Vite)       │
-└──────────────┬─────────────────────────────┬──────────────┘
-               │                             │
-    [InsForge Auth SDK]           [@insforge/sdk Data]
-               │                             │
-               ▼                             ▼
-┌───────────────────────────────────────────────────────────┐
-│                 InsForge BaaS Platform                    │
-│                                                           │
-│  ┌─────────────────┐  ┌────────────────┐  ┌─────────────┐ │
-│  │  InsForge Auth  │  │ Storage Bucket │  │  Realtime   │ │
-│  │ (JWT & Sessions)│  │ (Cover/Avatars)│  │ (WebSocket) │ │
-│  └────────┬────────┘  └───────┬────────┘  └──────┬──────┘ │
-│           │                   │                  │        │
-│           ▼                   ▼                  ▼        │
-│  ┌─────────────────────────────────────────────────────┐  │
-│  │             InsForge Managed PostgreSQL             │  │
-│  │                                                     │  │
-│  │  • profiles    • posts       • comments   • likes   │  │
-│  │  • follows     • bookmarks   • categories • notifs  │  │
-│  │                                                     │  │
-│  │  [Row Level Security (RLS) & Relational Integrity]  │  │
-│  └─────────────────────────────────────────────────────┘  │
-└───────────────────────────────────────────────────────────┘
-```
+### Backend Tier (InsForge BaaS)
+- **Platform**: InsForge Backend-as-a-Service (Project ID: `7bc81dc8-fa55-4593-92e4-75e1232f9362`)
+- **Database**: PostgreSQL with Row Level Security (RLS) enabled on all 7 tables
+- **Authentication**: InsForge Auth (JWT session management, bcrypt password hashing, email OTP verification)
+- **Object Storage**: InsForge Storage (S3-compatible buckets: `avatars`, `covers`, `article-images`)
+- **CLI**: `@insforge/cli` for migrations, queries, and deployments
 
 ---
 
-## 5. Directory Structure
+## 4. Database Schema & Row Level Security
+
+The application uses 7 primary tables in PostgreSQL, all secured with strict Row Level Security (24 policies total):
 
 ```
-writespace/
-├── README.md
-├── ARCHITECTURE.md
-├── DATABASE_SCHEMA.md
-├── API_DOCUMENTATION.md
-├── FEATURES.md
-├── REQUIREMENTS.md
-├── USER_WORKFLOWS.md
-├── UI_UX_GUIDELINES.md
-├── SECURITY.md
-├── DEVELOPMENT_ROADMAP.md
-├── TESTING.md
-├── DEPLOYMENT.md
-├── package.json
-├── vite.config.js
-├── tailwind.config.js
-├── postcss.config.js
-├── index.html
-├── .env.example
-├── public/
-│   └── favicon.svg
-└── src/
-    ├── main.jsx
-    ├── App.jsx
-    ├── index.css
-    ├── assets/
-    ├── lib/
-    │   └── insforge.js             # Centralized InsForge SDK client
-    ├── context/
-    │   ├── AuthContext.jsx          # User session & profile state
-    │   └── ToastContext.jsx         # Global notifications & alerts
-    ├── hooks/
-    │   ├── useAuth.js
-    │   ├── useArticles.js
-    │   ├── useArticle.js
-    │   ├── useComments.js
-    │   ├── useProfile.js
-    │   └── useFollow.js
-    ├── services/
-    │   ├── authService.js
-    │   ├── postService.js
-    │   ├── profileService.js
-    │   ├── commentService.js
-    │   ├── socialService.js
-    │   └── storageService.js
-    ├── components/
-    │   ├── common/                  # Buttons, Inputs, Loaders, Badges, Modals
-    │   ├── layout/                  # Navbar, Footer, Sidebar, Container
-    │   ├── articles/                # ArticleCard, ArticleList, Editor, ReadingProgress
-    │   ├── profile/                 # ProfileHeader, EditProfileModal, FollowButton
-    │   ├── comments/                # CommentItem, CommentSection, CommentForm
-    │   └── navigation/              # NavTabs, CategoryFilter, SearchBar
-    ├── pages/
-    │   ├── Landing.jsx              # Hero & editorial preview
-    │   ├── Home.jsx                 # Personalized home feed
-    │   ├── Explore.jsx              # Trending articles & categories
-    │   ├── Following.jsx            # Articles from followed creators
-    │   ├── Login.jsx                # Authentication entry
-    │   ├── Register.jsx             # New account onboarding
-    │   ├── ArticleDetails.jsx       # Long-form article reading view
-    │   ├── CreateArticle.jsx        # Story composer & draft editor
-    │   ├── EditArticle.jsx          # Edit existing story
-    │   ├── Profile.jsx              # Author page & public portfolio
-    │   ├── Dashboard.jsx            # Writer analytics & story management
-    │   ├── Bookmarks.jsx            # Personal saved stories
-    │   ├── Notifications.jsx        # Activity feed
-    │   └── Settings.jsx             # Account & preferences
-    └── utils/
-        ├── readingTime.js
-        ├── formatDate.js
-        └── slugify.js
+┌──────────────────────────────────────────────────────────┐
+│                   PostgreSQL Database                    │
+├───────────────┬──────────────────────────────────────────┤
+│ profiles      │ User profile, username, bio, avatar      │
+│ posts         │ Editorial articles & drafts (status)     │
+│ likes         │ Post applauds (unique user + post)       │
+│ comments      │ Discussions & nested replies (parent_id) │
+│ follows       │ Social graph (non-self-following check)  │
+│ bookmarks     │ Private reading list (unique user + post)│
+│ notifications │ Event alerts for follows, likes, replies │
+└───────────────┴──────────────────────────────────────────┘
+```
+
+### Security Highlights
+- **Draft Isolation**: Unpublished articles (`status = 'draft'`) are queryable exclusively by their author. Public queries strictly enforce `status = 'published'`.
+- **Private Bookmarks**: Bookmarks are strictly private (`auth.uid() = user_id`). Other users cannot query or enumerate saved reading lists.
+- **Private Notifications**: Users can only query, mark as read, or delete notifications where `recipient_id = auth.uid()`.
+- **Constraint-Enforced Integrity**:
+  - `check_not_self_follow`: Rejects attempts by a user to follow themselves.
+  - `check_no_self_notification`: Prevents self-alerts when author interacts with own content.
+  - `unique_user_post_bookmark`: Prevents duplicate bookmarks.
+  - `unique_post_user_like`: Prevents duplicate applauds.
+  - `unique_follower_following`: Prevents duplicate follow records.
+
+---
+
+## 5. Project Directory Structure
+
+```
+Social Media Platform/
+├── migrations/                           # PostgreSQL DDL migrations
+│   ├── 20261116080000_phase8-bookmarks.sql
+│   └── 20261116090000_phase9-notifications.sql
+├── public/                               # Static web assets
+├── scripts/                              # Automated integration test suites
+│   ├── test-phase3.mjs                   # Authenticated feed tests
+│   ├── test-phase4.mjs                   # Article publishing tests
+│   ├── test-phase5.mjs                   # Article reading view tests
+│   ├── test-phase6.mjs                   # Likes and comments tests
+│   ├── test-phase7.mjs                   # Follows and personalized feeds tests
+│   ├── test-phase8.mjs                   # Search, explore, and bookmarks tests
+│   ├── test-phase9.mjs                   # Notifications and dashboard tests
+│   └── test-phase10-master.mjs           # Master end-to-end platform audit
+├── src/
+│   ├── components/
+│   │   ├── articles/                     # FeaturedArticles, StoryPreviewModal
+│   │   ├── comments/                     # CommentSection, CommentComposer, CommentItem
+│   │   ├── common/                       # Button, UserAvatar, ProtectedRoute
+│   │   ├── dashboard/                    # DashboardStatCard, RecentArticles, RecentActivity
+│   │   ├── editor/                       # RichTextEditor
+│   │   ├── home/                         # AppLayout, Sidebar, RightSidebar, FeedCard, FeedTabs
+│   │   ├── interactions/                 # LikeButton, BookmarkButton, ShareButton
+│   │   ├── landing/                      # HeroSection, BenefitsSection, CategoriesSection
+│   │   ├── layout/                       # Navbar, Footer
+│   │   ├── notifications/                # NotificationBadge, NotificationItem
+│   │   ├── profile/                      # ProfileHeader, FollowButton, UserFollowList
+│   │   ├── reading/                      # ArticleRenderer, TableOfContents, ReadingProgressBar
+│   │   └── search/                       # SearchModal
+│   ├── context/                          # AuthContext (session state)
+│   ├── hooks/                            # useAuth
+│   ├── lib/                              # insforge.js (SDK initialization)
+│   ├── pages/                            # Landing, Login, Register, Home, Write, Dashboard, etc.
+│   ├── services/                         # Database service modules
+│   │   ├── authService.js
+│   │   ├── bookmarkService.js
+│   │   ├── commentService.js
+│   │   ├── dashboardService.js
+│   │   ├── feedService.js
+│   │   ├── followService.js
+│   │   ├── likeService.js
+│   │   ├── notificationService.js
+│   │   ├── postService.js
+│   │   ├── profileService.js
+│   │   ├── recommendationService.js
+│   │   ├── searchService.js
+│   │   ├── storageService.js
+│   │   └── subscriptionService.js
+│   └── utils/                            # editorUtils, slugify, readingTime
+├── .env.example                          # Example environment configuration
+├── insforge.toml                         # InsForge deployment configuration
+├── package.json                          # Dependencies and npm scripts
+├── tailwind.config.js                    # Tailwind theme customization
+└── vite.config.js                        # Vite build & chunking configuration
 ```
 
 ---
 
-## 6. Quick Start & Setup
+## 6. Getting Started & Local Development
 
 ### Prerequisites
-- Node.js 18.x or 20.x+
-- npm 9+ or pnpm
-- An active InsForge Project URL and Anonymous Public Key
+- Node.js (v18 or higher)
+- npm or pnpm
 
-### Installation
+### 1. Clone Repository & Install Dependencies
+```bash
+git clone https://github.com/Mohitkumar7295/Social-Media-Platform.git
+cd "Social Media Platform"
+npm install
+```
 
-1. **Clone & Install Dependencies**:
-   ```bash
-   git clone <repo-url>
-   cd writespace
-   npm install
-   ```
+### 2. Configure Environment Variables
+Copy `.env.example` to `.env.local` and add your InsForge project credentials:
+```bash
+cp .env.example .env.local
+```
 
-2. **Configure Environment Variables**:
-   Create a `.env` file based on `.env.example`:
-   ```bash
-   VITE_INSFORGE_URL=https://your-project.insforge.app
-   VITE_INSFORGE_ANON_KEY=your-insforge-anon-key
-   ```
+Inside `.env.local`:
+```env
+VITE_INSFORGE_URL=https://u9367zk9.us-east.insforge.app
+VITE_INSFORGE_ANON_KEY=ik_7a92c79e83bf37e2f2791602c71bb359
+VITE_APP_NAME=WriteSpace
+VITE_APP_URL=http://localhost:5173
+```
 
-3. **Start Local Development Server**:
-   ```bash
-   npm run dev
-   ```
-
-4. **Build for Production**:
-   ```bash
-   npm run build
-   npm run preview
-   ```
-
----
-
-## 7. Documentation Index
-
-Comprehensive engineering and architectural documentation is maintained in the [`docs/`](docs/) directory:
-- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Full component, state, and BaaS interaction architecture.
-- **[DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md)**: Complete PostgreSQL tables, RLS policies, indexes, and triggers.
-- **[API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md)**: InsForge SDK client methods and data contracts.
-- **[FEATURES.md](docs/FEATURES.md)**: Detailed feature catalogue and module specifications.
-- **[REQUIREMENTS.md](docs/REQUIREMENTS.md)**: Functional, non-functional, and technical requirements.
-- **[USER_WORKFLOWS.md](docs/USER_WORKFLOWS.md)**: Step-by-step user journey maps.
-- **[UI_UX_GUIDELINES.md](docs/UI_UX_GUIDELINES.md)**: Design system, typography scale, and responsive layout rules.
-- **[SECURITY.md](docs/SECURITY.md)**: Security matrix, RLS policy enforcement, and XSS prevention.
-- **[DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md)**: Phase 0 through Phase 15 step-by-step plan.
-- **[TESTING.md](docs/TESTING.md)**: Test strategy, component testing, and RLS verification.
-- **[DEPLOYMENT.md](docs/DEPLOYMENT.md)**: Production build, CDN hosting, and environment configuration.
+### 3. Start Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-## 8. License
+## 7. Automated Testing Suite
 
-This project is licensed under the MIT License.
+WriteSpace includes comprehensive integration test suites verifying all database operations, constraints, RLS policies, and workflows against the live InsForge backend:
+
+```bash
+# Run the Master End-to-End Audit (Phase 10)
+node scripts/test-phase10-master.mjs
+
+# Run individual phase test suites
+node scripts/test-phase3.mjs   # Authenticated home feed & recommendations
+node scripts/test-phase4.mjs   # Article writing, autosave & publishing
+node scripts/test-phase5.mjs   # Article reading view & 404 isolation
+node scripts/test-phase6.mjs   # Applauds, discussion threads & nested replies
+node scripts/test-phase7.mjs   # Social graph & personalized feeds
+node scripts/test-phase8.mjs   # Search, explore & private bookmarks
+node scripts/test-phase9.mjs   # Notifications & writer dashboard
+```
+
+All test scripts execute against real InsForge PostgreSQL tables and clean up test records automatically upon completion.
+
+---
+
+## 8. Production Build & Deployment
+
+### Production Build
+Compile optimized production assets with Rollup code-splitting:
+```bash
+npm run build
+```
+
+### Production Deployment (InsForge Hosting)
+Deploy directly to InsForge's global CDN:
+```bash
+npx -y @insforge/cli deployments deploy .
+```
+
+Verified live production URL: **https://u9367zk9.insforge.site**
+
+---
+
+## 9. Security & Production Checklist
+
+- [x] All database tables protected by Row Level Security (RLS).
+- [x] Passwords hashed with bcrypt via InsForge Auth; never stored in application tables.
+- [x] Anonymous API key used on client; zero privileged or service-role keys exposed.
+- [x] User-generated HTML sanitized with DOMPurify before rendering to prevent stored XSS.
+- [x] File uploads validated for MIME type and size limits (< 50MB).
+- [x] Unique constraints prevent duplicate likes, bookmarks, and follows.
+- [x] Check constraints prevent self-following and self-notification.
+- [x] Drafts strictly isolated from public queries and search results.
+- [x] Optimized code-splitting eliminates large JavaScript bundle warnings.
+- [x] Zero mock or fabricated metrics displayed on feeds or dashboards.
+
+---
+
+## 10. License
+
+This project is licensed under the MIT License. Built with ❤️ for writers and readers worldwide.
