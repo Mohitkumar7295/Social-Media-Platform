@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Bookmark, Compass, Sparkles, UserCheck } from 'lucide-react';
+import { Bookmark, Compass, UserCheck } from 'lucide-react';
 import AppLayout from '../components/home/AppLayout';
 import UserAvatar from '../components/common/UserAvatar';
 import FollowButton from '../components/profile/FollowButton';
@@ -122,14 +122,6 @@ export default function Subscriptions() {
           </Link>
         </div>
       )}
-
-      {/* Phase 5 Notice Box */}
-      <div className="mt-8 p-4 rounded-2xl bg-[#F8FAF9] border border-[#E8EAE8] flex items-start gap-3 text-xs text-[#555555]">
-        <Sparkles className="w-4 h-4 text-[#0F8178] shrink-0 mt-0.5" />
-        <div>
-          <span className="font-semibold text-[#201F1D]">Scheduled for Phase 5:</span> Substack-style paid tiers, newsletter subscriptions, and email deliverability preferences will be fully configured in Phase 5.
-        </div>
-      </div>
     </AppLayout>
   );
 }
