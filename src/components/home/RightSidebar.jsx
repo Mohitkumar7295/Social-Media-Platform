@@ -6,6 +6,7 @@ import { subscriptionService } from '../../services/subscriptionService';
 import { recommendationService } from '../../services/recommendationService';
 import UserAvatar from '../common/UserAvatar';
 import FollowButton from '../profile/FollowButton';
+import SearchModal from '../search/SearchModal';
 
 export default function RightSidebar({ className = '' }) {
   const { user } = useAuth();
@@ -13,7 +14,7 @@ export default function RightSidebar({ className = '' }) {
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchNotice, setSearchNotice] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Subscriptions state (Real PostgreSQL follows)
   const [subscriptions, setSubscriptions] = useState([]);
@@ -70,9 +71,7 @@ export default function RightSidebar({ className = '' }) {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      setSearchNotice(true);
-    }
+    setIsSearchOpen(true);
   };
 
   return (
@@ -84,36 +83,18 @@ export default function RightSidebar({ className = '' }) {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onClick={() => setIsSearchOpen(true)}
           placeholder="Search WriteSpace"
-          className="w-full bg-[#161619] border border-[#242428] rounded-full pl-10 pr-4 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#FF6719] focus:ring-1 focus:ring-[#FF6719] transition-all"
+          className="w-full bg-[#161619] border border-[#242428] rounded-full pl-10 pr-4 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#FF6719] focus:ring-1 focus:ring-[#FF6719] transition-all cursor-pointer"
         />
       </form>
 
-      {/* Search feature notice modal */}
-      {searchNotice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="w-full max-w-sm bg-[#18181c] border border-[#2e2e36] rounded-2xl p-6 shadow-2xl">
-            <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 text-[#FF6719] flex items-center justify-center mb-3">
-              <Search className="w-5 h-5" />
-            </div>
-            <h4 className="text-lg font-serif font-bold text-white mb-1.5">
-              Full-Text Search in Phase 9
-            </h4>
-            <p className="text-xs text-zinc-400 leading-relaxed mb-5">
-              PostgreSQL full-text search and discovery indexing will be implemented in Phase 9. No mock search results are displayed.
-            </p>
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => setSearchNotice(false)}
-                className="px-4 py-2 rounded-xl bg-[#FF6719] hover:bg-[#e8590c] text-white font-medium text-xs transition-colors"
-              >
-                Okay
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Global Interactive Search Modal */}
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        initialQuery={searchQuery}
+      />
 
       {/* 2. Subscriptions Panel */}
       <div className="bg-[#141416] border border-[#242428] rounded-2xl p-4 shadow-sm">

@@ -54,11 +54,12 @@ export default function Sidebar({ className = '' }) {
 
   const navItems = [
     { name: 'Home', path: '/home', icon: Home },
-    { name: 'Subscriptions', path: '/subscriptions', icon: Bookmark },
+    { name: 'Explore', path: '/explore', icon: Compass },
+    { name: 'Saved', path: '/bookmarks', icon: Bookmark },
+    { name: 'Subscriptions', path: '/subscriptions', icon: Sparkles },
     { name: 'Stories', path: '/dashboard', icon: FileText },
     { name: 'Chat', path: '/chat', icon: MessageSquare },
     { name: 'Activity', path: '/activity', icon: Bell },
-    { name: 'Explore', path: '/explore', icon: Compass },
     {
       name: 'Profile',
       path: profileUsername ? `/profile/${profileUsername}` : '/login',
@@ -241,6 +242,18 @@ export default function Sidebar({ className = '' }) {
               >
                 <FileText className="w-4 h-4 text-[#FF6719]" />
                 <span>My Stories & Drafts</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowUserMenu(false);
+                  navigate('/bookmarks');
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-200 hover:text-white hover:bg-[#222228] transition-colors"
+              >
+                <Bookmark className="w-4 h-4 text-amber-400" />
+                <span>Saved Stories</span>
               </button>
 
               <button

@@ -28,6 +28,7 @@ import RelatedArticles from '../components/reading/RelatedArticles';
 import ShareButton from '../components/reading/ShareButton';
 import UserAvatar from '../components/common/UserAvatar';
 import LikeButton from '../components/interactions/LikeButton';
+import BookmarkButton from '../components/interactions/BookmarkButton';
 import CommentSection from '../components/comments/CommentSection';
 import FollowButton from '../components/profile/FollowButton';
 
@@ -330,6 +331,8 @@ export default function ArticleReadingView() {
                 className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-[#1a1a20]"
                 buttonText=""
               />
+
+              <BookmarkButton postId={post.id} size="sm" />
             </div>
           </div>
 
@@ -381,14 +384,7 @@ export default function ArticleReadingView() {
               />
             </div>
 
-            <button
-              type="button"
-              onClick={() => setSocialNotice('Bookmarks')}
-              className="hover:text-amber-400 transition-colors"
-              title="Bookmark story"
-            >
-              <Bookmark className="w-5 h-5" />
-            </button>
+            <BookmarkButton postId={post.id} size="md" />
           </div>
 
           {/* Author Information Bio Card */}

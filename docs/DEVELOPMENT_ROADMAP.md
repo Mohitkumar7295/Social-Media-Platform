@@ -138,6 +138,25 @@ This document details the phase-by-phase implementation schedule, deliverables, 
 
 ---
 
+### Phase 8: Search, Explore and Bookmarks
+- **Status**: **COMPLETED**
+- **Objective**: Real-time debounced global search across published stories and writer profiles, strict draft exclusion from search queries, curated Explore page with published stories, dynamic topic category filter pills, recommended writers with functional FollowButtons, PostgreSQL bookmarks schema (`public.bookmarks`) with unique constraint and strict RLS, private `/bookmarks` reading list page, and interactive BookmarkButtons across FeedCard, Explore, reading view, and Search.
+- **Deliverables**:
+  - `migrations/20261116080000_phase8-bookmarks.sql` (PostgreSQL `public.bookmarks` table, unique constraint `(user_id, post_id)`, indexes, and RLS policies)
+  - `src/services/bookmarkService.js` (isBookmarked, bookmarkPost, unbookmarkPost, toggleBookmark, getUserBookmarks, getUserBookmarkedPostIds)
+  - `src/services/searchService.js` (searchArticles, searchWriters, searchAll with parallel execution, sanitization, and strict status='published' filter)
+  - `src/components/interactions/BookmarkButton.jsx` (interactive bookmark button with optimistic toggle, amber fill, and auth redirect)
+  - `src/components/search/SearchModal.jsx` (global search dialog with debounced query, tabs for Stories & Writers, and keyboard shortcuts)
+  - `src/pages/Bookmarks.jsx` (dedicated `/bookmarks` reading list with empty state, reading time, and direct removal)
+  - `src/pages/Explore.jsx` (upgraded Explore hub with Stories/Writers tabs, category chips, FollowButtons, and Like/Bookmark actions)
+  - `src/components/home/RightSidebar.jsx` (wired SearchModal trigger for quick search)
+  - `src/components/home/FeedCard.jsx` (integrated BookmarkButton on feed stories)
+  - `src/pages/ArticleReadingView.jsx` (integrated BookmarkButtons in top action bar and bottom engagement footer)
+  - `scripts/test-phase8.mjs` integration test suite
+- **Validation**: 10 of 10 integration tests passed with 0 failures; regression test suites for Phases 3–7 all passed; Vite production build verified; live deployed to `https://u9367zk9.insforge.site`.
+
+---
+
 ### Phase 2: PostgreSQL Schema and RLS Policies
 - **Status**: PENDING
 - **Objective**: Apply relational database schema, indexes, constraints, triggers, and Row Level Security policies to InsForge PostgreSQL.

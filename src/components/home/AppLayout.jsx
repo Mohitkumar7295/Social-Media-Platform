@@ -106,6 +106,7 @@ export default function AppLayout({ children, activeNav = 'home' }) {
               {[
                 { name: 'Write a Story', path: '/write', icon: Plus, highlight: true },
                 { name: 'Home Feed', path: '/home', icon: Home },
+                { name: 'Saved Stories', path: '/bookmarks', icon: Bookmark },
                 { name: 'My Stories & Drafts', path: '/dashboard', icon: Bookmark },
                 { name: 'Subscriptions', path: '/subscriptions', icon: Bookmark },
                 { name: 'Chat', path: '/chat', icon: MessageSquare },

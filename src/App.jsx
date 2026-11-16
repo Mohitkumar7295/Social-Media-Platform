@@ -20,6 +20,7 @@ import Subscriptions from './pages/Subscriptions';
 import Chat from './pages/Chat';
 import Activity from './pages/Activity';
 import Explore from './pages/Explore';
+import Bookmarks from './pages/Bookmarks';
 
 // Article Writing, Publishing & Reading (Phase 4 & 5)
 import Write from './pages/Write';
@@ -80,6 +81,22 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <Explore />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/bookmarks"
+            element={
+              <ProtectedRoute>
+                <Bookmarks />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/saved"
+            element={
+              <ProtectedRoute>
+                <Bookmarks />
               </ProtectedRoute>
             }
           />

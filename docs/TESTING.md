@@ -174,6 +174,28 @@ Execution Summary:
 - Build: `npm run build` completed successfully (exit code 0).
 - Production Deployment: Live on `https://u9367zk9.insforge.site`.
 
+### Phase 8 Test Suite Results (Search, Explore, and Bookmarks)
+Executed via `scripts/test-phase8.mjs`:
+
+| Test # | Target Module | Test Description | Result | Status |
+|---|---|---|---|---|
+| **Test 1** | `searchService.searchArticles` | Search published story by keyword; verify title match and joined author details | Article found with author profile | **PASSED** |
+| **Test 2** | `searchService.searchWriters` | Search writer profile by full name / username | Writer profiles found accurately | **PASSED** |
+| **Test 3** | Draft Isolation in Search | Search query testing unpublished draft keywords | Drafts strictly excluded from results | **PASSED** |
+| **Test 4** | `bookmarkService.bookmarkPost` | Insert bookmark record into PostgreSQL `public.bookmarks` | Record created with user & post IDs | **PASSED** |
+| **Test 5** | Database Unique Constraint | Duplicate bookmark insertion attempt on same post | Rejected by `unique_user_post_bookmark` | **PASSED** |
+| **Test 6** | `bookmarkService.getUserBookmarks` | Fetch saved articles with joined post and author profiles | Reading list retrieved with metadata | **PASSED** |
+| **Test 7** | `bookmarkService.unbookmarkPost` | Delete bookmark record from `public.bookmarks` | Record deleted, reading list empty | **PASSED** |
+| **Test 8** | Category Filtering | Filter published stories by category on Explore | Accurate category subset returned | **PASSED** |
+| **Test 9** | Draft Bookmark Prevention | Attempt to bookmark an unpublished draft | Blocked / guarded by status rule | **PASSED** |
+| **Test 10** | Schema Authentication Guard | Anonymous / null user bookmark attempt | Rejected by database NOT NULL constraint | **PASSED** |
+
+Execution Summary:
+- **10 of 10 integration tests passed with 0 errors**.
+- Full regression suite for Phases 3–7 (37 tests total) all passed with 0 errors.
+- Build: `npm run build` completed successfully (exit code 0).
+- Production Deployment: Live on `https://u9367zk9.insforge.site`.
+
 ### Test Scenario: Complete Publishing & Engagement Lifecycle
 1. **Account Registration**:
    - Navigate to `/register`.

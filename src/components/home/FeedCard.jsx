@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import UserAvatar from '../common/UserAvatar';
 import LikeButton from '../interactions/LikeButton';
+import BookmarkButton from '../interactions/BookmarkButton';
 import { commentService } from '../../services/commentService';
 import ShareButton from '../reading/ShareButton';
 
@@ -156,13 +157,7 @@ export default function FeedCard({ post }) {
             />
           </div>
 
-          <button
-            type="button"
-            onClick={() => handleInteraction('Save Bookmark')}
-            className="hover:text-amber-400 transition-colors"
-          >
-            <Bookmark className="w-4 h-4" />
-          </button>
+          <BookmarkButton postId={post.id} size="sm" />
         </div>
       </article>
 
