@@ -94,30 +94,60 @@ export function AuthProvider({ children }) {
 
   // Register / Sign Up handler
   const register = async ({ email, password, name, username }) => {
-    const { data, error } = await authService.signUp({ email, password, name });
-    if (error) {
-      return { success: false, error };
+    const cleanEmail = email.trim().toLowerCase();
+    let authResult = await authService.signUp({ email: cleanEmail, password, name });
+
+    // If user already exists in Auth from a previous attempt, attempt to sign in with password
+    if (
+      authResult.error &&
+      (authResult.error.message?.includes('already registered') ||
+        authResult.error.message?.includes('already exists') ||
+        authResult.error.statusCode === 409 ||
+        authResult.error.code === 'USER_ALREADY_EXISTS')
+    ) {
+      const signInResult = await authService.signIn({ email: cleanEmail, password });
+      if (!signInResult.error) {
+        authResult = signInResult;
+      }
     }
 
-    const needsVerification = data?.requireEmailVerification || false;
+    if (authResult.error) {
+      return { success: false, error: authResult.error };
+    }
 
-    // If verification is not required, session is active immediately
-    if (!needsVerification && data?.user) {
+    const data = authResult.data;
+
+    // Persist session token immediately
+    if (data?.accessToken) {
+      insforge.auth.saveSessionFromResponse(data);
+    }
+
+    // Direct registration without OTP requirement
+    if (data?.user) {
       setUser(data.user);
       if (username && name) {
-        const { profile: createdProfile } = await profileService.createProfile({
-          id: data.user.id,
-          username: username.trim(),
-          fullName: name.trim(),
-        });
-        setProfile(createdProfile || null);
+        try {
+          const existingProfile = await loadProfile(data.user.id);
+          if (!existingProfile) {
+            const { profile: createdProfile } = await profileService.createProfile({
+              id: data.user.id,
+              username: username.trim(),
+              fullName: name.trim(),
+            });
+            setProfile(createdProfile || null);
+          } else {
+            setProfile(existingProfile);
+          }
+        } catch (pErr) {
+          console.error('Error creating user profile during signup:', pErr);
+        }
       }
     }
 
     return {
       success: true,
       data,
-      requireEmailVerification: needsVerification,
+      requireEmailVerification: false,
     };
   };
 

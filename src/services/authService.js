@@ -14,6 +14,9 @@ export const authService = {
         password,
         name: name.trim(),
       });
+      if (data?.accessToken) {
+        insforge.auth.saveSessionFromResponse(data);
+      }
       return { data, error };
     } catch (err) {
       return { data: null, error: err };

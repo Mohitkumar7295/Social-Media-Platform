@@ -33,6 +33,7 @@ export default function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [usernameStatus, setUsernameStatus] = useState({ checking: false, available: null, message: '' });
 
   // OTP state
@@ -143,7 +144,7 @@ export default function Register() {
       }
 
       // Step 4 & 5: Initiate InsForge Auth signup
-      const { success, requireEmailVerification, error } = await register({
+      const { success, error } = await register({
         email: formData.email,
         password: formData.password,
         name: formData.fullName,
@@ -156,15 +157,10 @@ export default function Register() {
         return;
       }
 
-      // If email verification is required, advance to Step 2 OTP Screen
-      if (requireEmailVerification) {
-        setStep(2);
-        setCountdown(60);
-        setCanResend(false);
-      } else {
-        // If email verification not required, finish profile creation and navigate to home feed
+      setSuccessMessage('Account created successfully! Welcome to WriteSpace.');
+      setTimeout(() => {
         navigate('/home', { replace: true });
-      }
+      }, 700);
     } catch (err) {
       setErrorMessage(err.message || 'An unexpected error occurred.');
     } finally {
@@ -260,6 +256,13 @@ export default function Register() {
                 <div className="mb-5 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2 animate-in fade-in">
                   <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600" />
                   <span>{errorMessage}</span>
+                </div>
+              )}
+
+              {successMessage && (
+                <div className="mb-5 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2 animate-in fade-in">
+                  <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-600" />
+                  <span className="font-medium">{successMessage}</span>
                 </div>
               )}
 
@@ -406,10 +409,14 @@ export default function Register() {
                   type="submit"
                   variant="primary"
                   size="md"
-                  disabled={isSubmitting || usernameStatus.available === false}
+                  disabled={isSubmitting || usernameStatus.available === false || !!successMessage}
                   className="w-full justify-center mt-3 shadow-md"
                 >
-                  {isSubmitting ? 'Creating Account...' : 'Continue to Verification'}
+                  {isSubmitting
+                    ? 'Creating Account...'
+                    : successMessage
+                    ? 'Success! Entering WriteSpace...'
+                    : 'Create Account'}
                 </Button>
               </form>
 
@@ -481,6 +488,20 @@ export default function Register() {
                   {isVerifying ? 'Verifying Code...' : 'Verify Email & Complete Registration'}
                 </Button>
               </form>
+
+              {/* Direct Entry Button (for platforms without email delivery) */}
+              <div className="mt-4 p-3 rounded-xl bg-[#F0FAF8] border border-[#0F8178]/20 text-center">
+                <p className="text-xs text-[#0F8178] font-medium mb-2">
+                  Email verification is optional. You can enter WriteSpace directly.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => navigate('/home', { replace: true })}
+                  className="w-full py-2 px-3 rounded-xl bg-[#0F8178] hover:bg-[#086B64] text-white text-xs font-semibold shadow-xs transition-colors"
+                >
+                  Enter WriteSpace Directly →
+                </button>
+              </div>
 
               {/* Resend and change email options */}
               <div className="mt-6 pt-4 border-t border-stone-100 flex flex-col items-center gap-3 text-xs text-stone-500">
