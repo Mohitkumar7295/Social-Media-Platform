@@ -53,7 +53,7 @@ export default function ShareButton({ title, text, url, className = '', buttonTe
         title="Share article link"
       >
         {copied ? (
-          <Check className="w-4 h-4 text-emerald-400" />
+          <Check className="w-4 h-4 text-[#0F8178]" />
         ) : (
           <Share2 className="w-4 h-4" />
         )}
@@ -62,7 +62,7 @@ export default function ShareButton({ title, text, url, className = '', buttonTe
 
       {/* Toast confirmation */}
       {copied && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-[#1a1a1e] border border-[#2e2e36] text-white text-xs font-semibold rounded-lg shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-150 z-50">
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-[#201F1D] border border-stone-800 text-white text-xs font-semibold rounded-xl shadow-lg whitespace-nowrap animate-in fade-in zoom-in-95 duration-150 z-50">
           Article link copied to clipboard!
         </div>
       )}

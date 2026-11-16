@@ -1,7 +1,12 @@
 import React, { useMemo, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 
-export default function ArticleRenderer({ content = '', onHeadingsExtracted }) {
+export default function ArticleRenderer({
+  content = '',
+  onHeadingsExtracted,
+  fontSize = 'normal', // 'small' | 'normal' | 'large'
+  fontFamily = 'serif', // 'serif' | 'sans'
+}) {
   // Process and sanitize HTML, generating stable IDs for headings
   const { sanitizedHtml, extractedHeadings } = useMemo(() => {
     if (!content) {
@@ -53,10 +58,20 @@ export default function ArticleRenderer({ content = '', onHeadingsExtracted }) {
     }
   }, [extractedHeadings, onHeadingsExtracted]);
 
+  // Dynamic Typography Classes
+  const sizeClasses =
+    fontSize === 'small'
+      ? 'text-base sm:text-lg leading-[1.75]'
+      : fontSize === 'large'
+      ? 'text-xl sm:text-[22px] leading-[1.95]'
+      : 'text-lg sm:text-[19px] leading-[1.85]';
+
+  const fontClass = fontFamily === 'sans' ? 'font-sans' : 'font-serif';
+
   return (
     <article
-      className="prose max-w-none font-serif text-lg sm:text-[19px] leading-[1.8] sm:leading-[1.85] text-[#292524] selection:bg-[#E9F8F5] selection:text-[#0F8178]
-        prose-headings:font-serif prose-headings:font-bold prose-headings:text-[#201F1D] prose-headings:tracking-tight
+      className={`prose max-w-none ${fontClass} ${sizeClasses} text-[#292524] selection:bg-[#E9F8F5] selection:text-[#0F8178]
+        prose-headings:font-bold prose-headings:text-[#201F1D] prose-headings:tracking-tight
         prose-h1:text-3xl sm:prose-h1:text-4xl prose-h1:mt-12 prose-h1:mb-4
         prose-h2:text-2xl sm:prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-3
         prose-h3:text-xl sm:prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-2
@@ -67,7 +82,9 @@ export default function ArticleRenderer({ content = '', onHeadingsExtracted }) {
         prose-li:text-[#292524]
         prose-a:text-[#0F8178] prose-a:underline prose-a:underline-offset-4 hover:prose-a:text-[#086B64]
         prose-hr:border-[#E8EAE8] prose-hr:my-10
-        prose-img:rounded-2xl prose-img:border prose-img:border-[#E8EAE8] prose-img:my-8 prose-img:mx-auto prose-img:shadow-md"
+        prose-code:text-[#0F8178] prose-code:bg-[#F0FAF8] prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none prose-code:font-mono prose-code:text-sm
+        prose-pre:bg-[#201F1D] prose-pre:text-stone-200 prose-pre:p-4 prose-pre:rounded-2xl prose-pre:overflow-x-auto
+        prose-img:rounded-2xl prose-img:border prose-img:border-[#E8EAE8] prose-img:my-8 prose-img:mx-auto prose-img:shadow-md`}
       dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
     />
   );

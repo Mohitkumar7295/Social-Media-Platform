@@ -45,6 +45,20 @@ export default function ArticleReadingView() {
   const [headings, setHeadings] = useState([]);
   const [activeHeadingId, setActiveHeadingId] = useState('');
 
+  // Reader Customization State
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('writespace_reader_font_size') || 'normal');
+  const [fontFamily, setFontFamily] = useState(() => localStorage.getItem('writespace_reader_font_family') || 'serif');
+
+  const updateFontSize = (size) => {
+    setFontSize(size);
+    localStorage.setItem('writespace_reader_font_size', size);
+  };
+
+  const updateFontFamily = (family) => {
+    setFontFamily(family);
+    localStorage.setItem('writespace_reader_font_family', family);
+  };
+
   // UI state
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [socialNotice, setSocialNotice] = useState('');
@@ -89,6 +103,7 @@ export default function ArticleReadingView() {
   };
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
     loadArticle();
 
     return () => {
@@ -106,20 +121,22 @@ export default function ArticleReadingView() {
         setShowScrollTop(false);
       }
 
-      // Track active heading
+      // Track active heading using precise viewport position
       if (headings.length > 0) {
         const headingElements = headings
           .map((h) => document.getElementById(h.id))
           .filter(Boolean);
 
-        const scrollPosition = window.scrollY + 120;
+        let currentActive = headings[0]?.id || '';
         for (let i = headingElements.length - 1; i >= 0; i--) {
           const el = headingElements[i];
-          if (el.offsetTop <= scrollPosition) {
-            setActiveHeadingId(el.id);
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 140) {
+            currentActive = el.id;
             break;
           }
         }
+        setActiveHeadingId(currentActive);
       }
     };
 
@@ -234,8 +251,14 @@ export default function ArticleReadingView() {
       {/* Dynamic Reading Progress Bar at the very top */}
       <ReadingProgressBar targetRef={articleContentRef} />
 
-      {/* Reading Minimal Navigation */}
-      <ReadingNavbar post={post} />
+      {/* Reading Minimal Navigation with Reader Display Controls */}
+      <ReadingNavbar
+        post={post}
+        fontSize={fontSize}
+        setFontSize={updateFontSize}
+        fontFamily={fontFamily}
+        setFontFamily={updateFontFamily}
+      />
 
       {/* Main Layout Container with Optional Desktop Table of Contents Sidebar */}
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex justify-center gap-12">
@@ -351,10 +374,12 @@ export default function ArticleReadingView() {
             <TableOfContents headings={headings} activeId={activeHeadingId} isMobile={true} />
           )}
 
-          {/* Sanitized Article Body with Typography */}
+          {/* Sanitized Article Body with Dynamic Reader Typography */}
           <ArticleRenderer
             content={post.content}
             onHeadingsExtracted={(h) => setHeadings(h)}
+            fontSize={fontSize}
+            fontFamily={fontFamily}
           />
 
           {/* Social Interaction Footer Bar */}

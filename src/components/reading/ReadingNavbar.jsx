@@ -10,22 +10,35 @@ import {
   LogOut,
   FileText,
   ChevronDown,
+  Type,
+  Check,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import UserAvatar from '../common/UserAvatar';
 import ShareButton from './ShareButton';
 
-export default function ReadingNavbar({ post }) {
+export default function ReadingNavbar({
+  post,
+  fontSize = 'normal',
+  setFontSize,
+  fontFamily = 'serif',
+  setFontFamily,
+}) {
   const { user, profile, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [fontMenuOpen, setFontMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const fontMenuRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
+      }
+      if (fontMenuRef.current && !fontMenuRef.current.contains(event.target)) {
+        setFontMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -65,8 +78,8 @@ export default function ReadingNavbar({ post }) {
         </Link>
       </div>
 
-      {/* Right: Actions, Share & Profile */}
-      <div className="flex items-center gap-3 sm:gap-4">
+      {/* Right: Actions, Text Appearance, Share & Profile */}
+      <div className="flex items-center gap-2.5 sm:gap-4">
         {/* Explore link */}
         <Link
           to="/explore"
@@ -75,6 +88,104 @@ export default function ReadingNavbar({ post }) {
           <Compass className="w-3.5 h-3.5" />
           <span>Explore</span>
         </Link>
+
+        {/* Text Appearance Customizer */}
+        {setFontSize && (
+          <div className="relative" ref={fontMenuRef}>
+            <button
+              type="button"
+              onClick={() => setFontMenuOpen((prev) => !prev)}
+              className={`p-2 rounded-xl text-xs font-semibold border transition-colors flex items-center gap-1 ${
+                fontMenuOpen
+                  ? 'bg-[#E9F8F5] text-[#0F8178] border-[#0F8178]/30'
+                  : 'bg-[#F8FAF9] hover:bg-[#F0FAF8] text-[#555555] hover:text-[#201F1D] border-[#E8EAE8]'
+              }`}
+              title="Text appearance & size"
+            >
+              <Type className="w-3.5 h-3.5" />
+              <span className="text-[11px] font-sans font-bold">Aa</span>
+            </button>
+
+            {fontMenuOpen && (
+              <div className="absolute right-0 mt-2 w-64 bg-white border border-[#E8EAE8] rounded-2xl shadow-xl p-3.5 z-50 animate-in fade-in duration-150">
+                <div className="text-xs font-semibold text-[#201F1D] mb-2.5">
+                  Reader Display
+                </div>
+
+                {/* Font Size Toggle */}
+                <div className="mb-3">
+                  <div className="text-[11px] text-[#777777] mb-1.5 font-medium">Text Size</div>
+                  <div className="grid grid-cols-3 gap-1 bg-[#F8FAF9] p-1 rounded-xl border border-[#E8EAE8]">
+                    <button
+                      type="button"
+                      onClick={() => setFontSize('small')}
+                      className={`py-1 text-xs font-medium rounded-lg transition-colors ${
+                        fontSize === 'small'
+                          ? 'bg-white text-[#0F8178] shadow-2xs font-semibold'
+                          : 'text-[#777777] hover:text-[#201F1D]'
+                      }`}
+                    >
+                      Small
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFontSize('normal')}
+                      className={`py-1 text-xs font-medium rounded-lg transition-colors ${
+                        fontSize === 'normal'
+                          ? 'bg-white text-[#0F8178] shadow-2xs font-semibold'
+                          : 'text-[#777777] hover:text-[#201F1D]'
+                      }`}
+                    >
+                      Default
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFontSize('large')}
+                      className={`py-1 text-xs font-medium rounded-lg transition-colors ${
+                        fontSize === 'large'
+                          ? 'bg-white text-[#0F8178] shadow-2xs font-semibold'
+                          : 'text-[#777777] hover:text-[#201F1D]'
+                      }`}
+                    >
+                      Large
+                    </button>
+                  </div>
+                </div>
+
+                {/* Font Family Toggle */}
+                {setFontFamily && (
+                  <div>
+                    <div className="text-[11px] text-[#777777] mb-1.5 font-medium">Font Family</div>
+                    <div className="grid grid-cols-2 gap-1 bg-[#F8FAF9] p-1 rounded-xl border border-[#E8EAE8]">
+                      <button
+                        type="button"
+                        onClick={() => setFontFamily('serif')}
+                        className={`py-1.5 text-xs font-serif rounded-lg transition-colors ${
+                          fontFamily === 'serif'
+                            ? 'bg-white text-[#0F8178] shadow-2xs font-bold'
+                            : 'text-[#777777] hover:text-[#201F1D]'
+                        }`}
+                      >
+                        Serif (Editorial)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFontFamily('sans')}
+                        className={`py-1.5 text-xs font-sans rounded-lg transition-colors ${
+                          fontFamily === 'sans'
+                            ? 'bg-white text-[#0F8178] shadow-2xs font-bold'
+                            : 'text-[#777777] hover:text-[#201F1D]'
+                        }`}
+                      >
+                        Sans (Modern)
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Quick Share Button */}
         <ShareButton
