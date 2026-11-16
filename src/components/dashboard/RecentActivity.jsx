@@ -28,18 +28,20 @@ function formatRelative(isoDate) {
  */
 export default function RecentActivity({ activity = [] }) {
   return (
-    <div className="bg-[#141416] border border-[#242428] rounded-2xl p-5 shadow-sm">
-      <div className="flex items-center justify-between pb-4 border-b border-[#242428] mb-4">
+    <div className="bg-white border border-[#E8EAE8] rounded-2xl p-5 shadow-xs">
+      <div className="flex items-center justify-between pb-4 border-b border-[#E8EAE8] mb-4">
         <div className="flex items-center gap-2">
-          <Bell className="w-4 h-4 text-[#FF6719]" />
-          <h2 className="font-serif font-bold text-lg text-white tracking-tight">
+          <div className="w-6 h-6 rounded-md bg-[#E9F8F5] text-[#0F8178] flex items-center justify-center">
+            <Bell className="w-3.5 h-3.5" />
+          </div>
+          <h2 className="font-serif font-bold text-lg text-[#201F1D] tracking-tight">
             Recent Activity
           </h2>
         </div>
 
         <Link
           to="/activity"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-[#FF6719] hover:text-orange-400 transition-colors"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-[#0F8178] hover:text-[#086B64] transition-colors"
         >
           <span>View All</span>
           <ArrowRight className="w-3 h-3" />
@@ -53,32 +55,32 @@ export default function RecentActivity({ activity = [] }) {
 
             let Icon = Heart;
             let iconColor = 'text-rose-500';
-            let iconBg = 'bg-rose-500/10 border-rose-500/20';
+            let iconBg = 'bg-rose-50 border-rose-200/60';
             let description = '';
             let targetUrl = '#';
 
             if (type === 'like') {
               Icon = Heart;
               iconColor = 'text-rose-500';
-              iconBg = 'bg-rose-500/10 border-rose-500/20';
+              iconBg = 'bg-rose-50 border-rose-200/60';
               description = `liked "${post?.title || 'your story'}"`;
               targetUrl = post?.slug ? `/p/${post.slug}` : '#';
             } else if (type === 'comment') {
               Icon = MessageCircle;
-              iconColor = 'text-blue-400';
-              iconBg = 'bg-blue-500/10 border-blue-500/20';
+              iconColor = 'text-sky-600';
+              iconBg = 'bg-sky-50 border-sky-200/60';
               description = `commented on "${post?.title || 'your story'}"`;
               targetUrl = post?.slug ? `/p/${post.slug}#responses` : '#';
             } else if (type === 'reply') {
               Icon = CornerDownRight;
-              iconColor = 'text-purple-400';
-              iconBg = 'bg-purple-500/10 border-purple-500/20';
+              iconColor = 'text-purple-600';
+              iconBg = 'bg-purple-50 border-purple-200/60';
               description = `replied to your comment on "${post?.title || 'your story'}"`;
               targetUrl = post?.slug ? `/p/${post.slug}#responses` : '#';
             } else {
               Icon = UserPlus;
-              iconColor = 'text-emerald-400';
-              iconBg = 'bg-emerald-500/10 border-emerald-500/20';
+              iconColor = 'text-[#0F8178]';
+              iconBg = 'bg-[#E9F8F5] border-[#0F8178]/30';
               description = 'started following your publication';
               targetUrl = actor?.username ? `/profile/${actor.username}` : '#';
             }
@@ -86,7 +88,7 @@ export default function RecentActivity({ activity = [] }) {
             return (
               <div
                 key={id}
-                className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-[#18181c] transition-colors group"
+                className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-[#F0FAF8] transition-colors group"
               >
                 <div className="relative shrink-0 mt-0.5">
                   <UserAvatar
@@ -103,13 +105,13 @@ export default function RecentActivity({ activity = [] }) {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-zinc-300 leading-snug line-clamp-2">
-                    <span className="font-semibold text-white">
+                  <p className="text-xs text-[#201F1D] leading-snug line-clamp-2">
+                    <span className="font-semibold text-[#201F1D]">
                       {actor?.full_name || actor?.username || 'A reader'}{' '}
                     </span>
-                    <span className="text-zinc-400">{description}</span>
+                    <span className="text-[#555555]">{description}</span>
                   </p>
-                  <span className="inline-flex items-center gap-1 text-[11px] text-zinc-500 mt-1">
+                  <span className="inline-flex items-center gap-1 text-[11px] text-[#777777] mt-1">
                     <Clock className="w-2.5 h-2.5" />
                     {formatRelative(created_at)}
                   </span>
@@ -119,7 +121,7 @@ export default function RecentActivity({ activity = [] }) {
           })}
         </div>
       ) : (
-        <div className="py-8 text-center text-xs text-zinc-400">
+        <div className="py-8 text-center text-xs text-[#777777]">
           No recent activity on your stories yet.
         </div>
       )}

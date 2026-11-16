@@ -57,15 +57,17 @@ export default function Bookmarks() {
       {/* Page Header */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-1">
-          <Bookmark className="w-5 h-5 text-amber-400 fill-amber-400" />
-          <h1 className="font-serif text-2xl font-bold text-white tracking-tight">
+          <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 border border-amber-200/60 flex items-center justify-center">
+            <Bookmark className="w-4 h-4 fill-amber-500" />
+          </div>
+          <h1 className="font-serif text-2xl font-bold text-[#201F1D] tracking-tight">
             Saved Stories{' '}
-            <span className="font-sans text-sm font-normal text-zinc-400">
+            <span className="font-sans text-sm font-normal text-[#777777]">
               ({bookmarks.length})
             </span>
           </h1>
         </div>
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-[#777777]">
           Your private reading list. Stories you bookmark are stored here for easy access.
         </p>
       </div>
@@ -76,17 +78,17 @@ export default function Bookmarks() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="bg-[#141416] border border-[#242428] rounded-2xl p-5 animate-pulse flex flex-col sm:flex-row gap-5"
+              className="bg-white border border-[#E8EAE8] rounded-2xl p-5 animate-pulse flex flex-col sm:flex-row gap-5"
             >
               <div className="flex-1 space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-zinc-800" />
-                  <div className="h-3.5 bg-zinc-800 rounded w-28" />
+                  <div className="w-8 h-8 rounded-full bg-stone-100" />
+                  <div className="h-3.5 bg-stone-100 rounded w-28" />
                 </div>
-                <div className="h-5 bg-zinc-800 rounded w-3/4" />
-                <div className="h-3 bg-zinc-800/60 rounded w-full" />
+                <div className="h-5 bg-stone-100 rounded w-3/4" />
+                <div className="h-3 bg-stone-100/70 rounded w-full" />
               </div>
-              <div className="w-full sm:w-32 h-24 bg-zinc-800/40 rounded-xl shrink-0" />
+              <div className="w-full sm:w-32 h-24 bg-stone-100/50 rounded-xl shrink-0" />
             </div>
           ))}
         </div>
@@ -100,7 +102,7 @@ export default function Bookmarks() {
             return (
               <article
                 key={bookmark.id}
-                className="bg-[#141416] border border-[#242428] rounded-2xl p-5 hover:border-[#303038] transition-all group flex flex-col sm:flex-row gap-5 justify-between"
+                className="bg-white border border-[#E8EAE8] rounded-2xl p-5 hover:border-[#0F8178]/30 hover:shadow-xs transition-all group flex flex-col sm:flex-row gap-5 justify-between"
               >
                 <div className="flex-1 min-w-0">
                   {/* Author Header */}
@@ -118,12 +120,12 @@ export default function Bookmarks() {
                     </Link>
                     <Link
                       to={`/profile/${author.username || ''}`}
-                      className="text-xs font-semibold text-zinc-300 hover:text-white transition-colors"
+                      className="text-xs font-semibold text-[#201F1D] hover:text-[#0F8178] transition-colors"
                     >
                       {author.full_name || author.username}
                     </Link>
-                    <span className="text-zinc-600 text-xs">•</span>
-                    <span className="text-[11px] text-zinc-500">
+                    <span className="text-stone-300 text-xs">•</span>
+                    <span className="text-[11px] text-[#777777]">
                       {new Date(post.published_at || post.created_at).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -133,22 +135,22 @@ export default function Bookmarks() {
 
                   {/* Title & Excerpt */}
                   <Link to={`/p/${post.slug}`}>
-                    <h3 className="font-serif text-lg sm:text-xl font-bold text-white group-hover:text-[#FF6719] transition-colors leading-snug mb-1.5 line-clamp-2">
+                    <h3 className="font-serif text-lg sm:text-xl font-bold text-[#201F1D] group-hover:text-[#0F8178] transition-colors leading-snug mb-1.5 line-clamp-2">
                       {post.title}
                     </h3>
                   </Link>
 
                   {(post.excerpt || post.subtitle) && (
-                    <p className="text-xs sm:text-sm text-zinc-400 line-clamp-2 leading-relaxed mb-3">
+                    <p className="text-xs sm:text-sm text-[#555555] line-clamp-2 leading-relaxed mb-3">
                       {post.excerpt || post.subtitle}
                     </p>
                   )}
 
                   {/* Metadata and actions */}
-                  <div className="flex items-center justify-between text-xs text-zinc-500 pt-2 border-t border-[#202024]/60">
+                  <div className="flex items-center justify-between text-xs text-[#777777] pt-2 border-t border-[#E8EAE8]">
                     <div className="flex items-center gap-3">
                       {post.category && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-[#1e1e24] text-zinc-300 text-[11px] font-medium">
+                        <span className="px-2.5 py-0.5 rounded-full bg-[#E9F8F5] text-[#0F8178] text-[11px] font-medium border border-[#0F8178]/20">
                           {post.category}
                         </span>
                       )}
@@ -173,7 +175,7 @@ export default function Bookmarks() {
                 {post.cover_image_url && (
                   <Link
                     to={`/p/${post.slug}`}
-                    className="w-full sm:w-40 sm:h-28 rounded-xl overflow-hidden border border-[#26262a] shrink-0"
+                    className="w-full sm:w-40 sm:h-28 rounded-xl overflow-hidden border border-[#E8EAE8] shrink-0"
                   >
                     <img
                       src={post.cover_image_url}
@@ -187,19 +189,19 @@ export default function Bookmarks() {
           })}
         </div>
       ) : (
-        <div className="bg-[#141416] border border-[#242428] rounded-2xl p-10 text-center my-4">
-          <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-4">
-            <Bookmark className="w-7 h-7" />
+        <div className="bg-white border border-[#E8EAE8] rounded-2xl p-10 text-center my-4">
+          <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200/60 text-amber-600 flex items-center justify-center mx-auto mb-4">
+            <Bookmark className="w-7 h-7 fill-amber-400" />
           </div>
-          <h3 className="font-serif text-xl font-bold text-white mb-2">
+          <h3 className="font-serif text-xl font-bold text-[#201F1D] mb-2">
             No saved stories yet
           </h3>
-          <p className="text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed mb-6">
+          <p className="text-xs text-[#777777] max-w-sm mx-auto leading-relaxed mb-6">
             When you find stories you love on the home feed or explore, click the bookmark icon to save them to your private reading list.
           </p>
           <Link
             to="/explore"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FF6719] hover:bg-[#e8590c] text-white text-xs font-semibold shadow transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0F8178] hover:bg-[#086B64] text-white text-xs font-semibold shadow-xs transition-colors"
           >
             <Compass className="w-4 h-4" />
             <span>Explore Stories</span>

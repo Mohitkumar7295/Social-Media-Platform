@@ -106,8 +106,8 @@ export default function BookmarkButton({
       disabled={isSubmitting}
       className={`inline-flex items-center gap-1.5 transition-colors group ${
         isBookmarked
-          ? 'text-amber-400 hover:text-amber-300'
-          : 'text-zinc-400 hover:text-amber-400'
+          ? 'text-amber-500 hover:text-amber-600'
+          : 'text-[#777777] hover:text-[#0F8178]'
       } ${className}`}
       title={isBookmarked ? 'Remove from saved stories' : 'Save story'}
       aria-label={isBookmarked ? 'Saved' : 'Save'}
@@ -115,7 +115,7 @@ export default function BookmarkButton({
       <Bookmark
         className={`${iconSizes[size] || iconSizes.md} transition-all duration-200 ${
           animating ? 'scale-125' : 'group-hover:scale-110'
-        } ${isBookmarked ? 'fill-amber-400 text-amber-400' : ''}`}
+        } ${isBookmarked ? 'fill-amber-500 text-amber-500' : ''}`}
       />
       {showText && (
         <span className="text-xs font-medium">

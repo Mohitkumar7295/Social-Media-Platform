@@ -54,7 +54,7 @@ export default function UserAvatar({
         src={src}
         alt={displayName}
         onError={() => setImgError(true)}
-        className={`rounded-full object-cover shrink-0 border border-zinc-800/80 ${currentSizeClass} ${className}`}
+        className={`rounded-full object-cover shrink-0 border border-stone-200/90 shadow-xs ${currentSizeClass} ${className}`}
       />
     );
   }

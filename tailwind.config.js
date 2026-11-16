@@ -8,19 +8,41 @@ export default {
     extend: {
       colors: {
         canvas: {
-          light: '#FAFAF9', // warm editorial background
+          light: '#FFFFFF',
           card: '#FFFFFF',
-          subtle: '#F5F5F4',
+          subtle: '#F8FAF9',
+          border: '#E8EAE8',
+        },
+        teal: {
+          50: '#F0FAF8',
+          100: '#E9F8F5',
+          200: '#C7EFE8',
+          300: '#8CD8CC',
+          500: '#0F8178',
+          600: '#086B64',
+          700: '#075A54',
+          800: '#064B46',
+          900: '#043632',
+          primary: '#0F8178',
+          dark: '#086B64',
+          mint: '#E9F8F5',
+          pale: '#F0FAF8',
+        },
+        ink: {
+          primary: '#201F1D',
+          secondary: '#777777',
+          muted: '#999999',
+          light: '#CCCCCC',
         },
         brand: {
-          50: '#F0FDFA',
-          100: '#CCFBF1',
-          200: '#99F6E4',
-          500: '#14B8A6',
-          600: '#0D9488',
-          700: '#0F766E', // primary accent
-          800: '#115E59',
-          900: '#134E4A',
+          50: '#F0FAF8',
+          100: '#E9F8F5',
+          200: '#C7EFE8',
+          500: '#0F8178',
+          600: '#086B64',
+          700: '#0F8178', // primary accent
+          800: '#086B64',
+          900: '#043632',
         },
       },
       fontFamily: {

@@ -37,12 +37,14 @@ export default function Subscriptions() {
     <AppLayout activeNav="subscriptions">
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-1">
-          <Bookmark className="w-5 h-5 text-[#FF6719]" />
-          <h1 className="font-serif text-2xl font-bold text-white tracking-tight">
+          <div className="w-8 h-8 rounded-lg bg-[#E9F8F5] text-[#0F8178] flex items-center justify-center">
+            <Bookmark className="w-4 h-4" />
+          </div>
+          <h1 className="font-serif text-2xl font-bold text-[#201F1D] tracking-tight">
             Subscriptions & Following
           </h1>
         </div>
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-[#777777]">
           Writers and publications you follow across WriteSpace.
         </p>
       </div>
@@ -52,12 +54,12 @@ export default function Subscriptions() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="bg-[#141416] border border-[#242428] rounded-2xl p-4 flex items-center gap-4 animate-pulse"
+              className="bg-white border border-[#E8EAE8] rounded-2xl p-4 flex items-center gap-4 animate-pulse"
             >
-              <div className="w-12 h-12 rounded-full bg-zinc-800" />
+              <div className="w-12 h-12 rounded-full bg-stone-100" />
               <div className="flex-1 space-y-2">
-                <div className="h-4 bg-zinc-800 rounded w-36" />
-                <div className="h-3 bg-zinc-800/60 rounded w-24" />
+                <div className="h-4 bg-stone-100 rounded w-36" />
+                <div className="h-3 bg-stone-100/70 rounded w-24" />
               </div>
             </div>
           ))}
@@ -67,7 +69,7 @@ export default function Subscriptions() {
           {subscriptions.map((sub) => (
             <div
               key={sub.id}
-              className="bg-[#141416] border border-[#242428] rounded-2xl p-4 flex items-center justify-between hover:border-[#32323a] transition-colors"
+              className="bg-white border border-[#E8EAE8] rounded-2xl p-4 flex items-center justify-between hover:border-[#0F8178]/30 hover:bg-[#F0FAF8]/40 transition-colors"
             >
               <Link to={`/profile/${sub.username}`} className="flex items-center gap-3.5 min-w-0">
                 <UserAvatar
@@ -77,12 +79,12 @@ export default function Subscriptions() {
                   size="lg"
                 />
                 <div className="min-w-0">
-                  <h4 className="font-semibold text-sm text-zinc-100 hover:text-white truncate">
+                  <h4 className="font-semibold text-sm text-[#201F1D] hover:text-[#0F8178] truncate transition-colors">
                     {sub.full_name}
                   </h4>
-                  <p className="text-xs text-zinc-500 truncate">@{sub.username}</p>
+                  <p className="text-xs text-[#777777] truncate">@{sub.username}</p>
                   {sub.bio && (
-                    <p className="text-xs text-zinc-400 mt-1 line-clamp-1">{sub.bio}</p>
+                    <p className="text-xs text-[#555555] mt-1 line-clamp-1">{sub.bio}</p>
                   )}
                 </div>
               </Link>
@@ -101,19 +103,19 @@ export default function Subscriptions() {
           ))}
         </div>
       ) : (
-        <div className="bg-[#141416] border border-[#242428] rounded-2xl p-10 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-[#FF6719] flex items-center justify-center mx-auto mb-4">
+        <div className="bg-white border border-[#E8EAE8] rounded-2xl p-10 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-[#E9F8F5] border border-[#0F8178]/20 text-[#0F8178] flex items-center justify-center mx-auto mb-4">
             <Bookmark className="w-7 h-7" />
           </div>
-          <h3 className="font-serif text-xl font-bold text-white mb-2">
+          <h3 className="font-serif text-xl font-bold text-[#201F1D] mb-2">
             No Subscriptions Yet
           </h3>
-          <p className="text-zinc-400 text-xs max-w-sm mx-auto leading-relaxed mb-5">
+          <p className="text-[#777777] text-xs max-w-sm mx-auto leading-relaxed mb-5">
             Follow authors and publications on WriteSpace to curate your reading feed.
           </p>
           <Link
             to="/explore"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FF6719] hover:bg-[#e8590c] text-white text-xs font-semibold shadow transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0F8178] hover:bg-[#086B64] text-white text-xs font-semibold shadow-xs transition-colors"
           >
             <Compass className="w-4 h-4" />
             <span>Discover Writers</span>
@@ -122,10 +124,10 @@ export default function Subscriptions() {
       )}
 
       {/* Phase 5 Notice Box */}
-      <div className="mt-8 p-4 rounded-2xl bg-[#141416] border border-[#282830] flex items-start gap-3 text-xs text-zinc-400">
-        <Sparkles className="w-4 h-4 text-[#FF6719] shrink-0 mt-0.5" />
+      <div className="mt-8 p-4 rounded-2xl bg-[#F8FAF9] border border-[#E8EAE8] flex items-start gap-3 text-xs text-[#555555]">
+        <Sparkles className="w-4 h-4 text-[#0F8178] shrink-0 mt-0.5" />
         <div>
-          <span className="font-semibold text-zinc-200">Scheduled for Phase 5:</span> Substack-style paid tiers, newsletter subscriptions, and email deliverability preferences will be fully configured in Phase 5.
+          <span className="font-semibold text-[#201F1D]">Scheduled for Phase 5:</span> Substack-style paid tiers, newsletter subscriptions, and email deliverability preferences will be fully configured in Phase 5.
         </div>
       </div>
     </AppLayout>

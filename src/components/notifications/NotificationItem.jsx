@@ -59,39 +59,39 @@ export default function NotificationItem({
   // Type-specific badge and copy
   let TypeIcon = Heart;
   let iconColor = 'text-rose-500';
-  let iconBg = 'bg-rose-500/10 border-rose-500/20';
+  let iconBg = 'bg-rose-50 border-rose-200/60';
   let messageText = '';
 
   switch (type) {
     case 'like':
       TypeIcon = Heart;
       iconColor = 'text-rose-500';
-      iconBg = 'bg-rose-500/10 border-rose-500/20';
+      iconBg = 'bg-rose-50 border-rose-200/60';
       messageText = (
         <span>
-          liked your story <span className="font-serif font-bold text-zinc-100 italic">"{post?.title || 'your story'}"</span>
+          liked your story <span className="font-serif font-bold text-[#201F1D] italic">"{post?.title || 'your story'}"</span>
         </span>
       );
       break;
 
     case 'comment':
       TypeIcon = MessageCircle;
-      iconColor = 'text-blue-500';
-      iconBg = 'bg-blue-500/10 border-blue-500/20';
+      iconColor = 'text-sky-600';
+      iconBg = 'bg-sky-50 border-sky-200/60';
       messageText = (
         <span>
-          commented on <span className="font-serif font-bold text-zinc-100 italic">"{post?.title || 'your story'}"</span>
+          commented on <span className="font-serif font-bold text-[#201F1D] italic">"{post?.title || 'your story'}"</span>
         </span>
       );
       break;
 
     case 'reply':
       TypeIcon = CornerDownRight;
-      iconColor = 'text-purple-400';
-      iconBg = 'bg-purple-500/10 border-purple-500/20';
+      iconColor = 'text-purple-600';
+      iconBg = 'bg-purple-50 border-purple-200/60';
       messageText = (
         <span>
-          replied to your comment on <span className="font-serif font-bold text-zinc-100 italic">"{post?.title || 'your story'}"</span>
+          replied to your comment on <span className="font-serif font-bold text-[#201F1D] italic">"{post?.title || 'your story'}"</span>
         </span>
       );
       break;
@@ -99,8 +99,8 @@ export default function NotificationItem({
     case 'follow':
     default:
       TypeIcon = UserPlus;
-      iconColor = 'text-emerald-500';
-      iconBg = 'bg-emerald-500/10 border-emerald-500/20';
+      iconColor = 'text-[#0F8178]';
+      iconBg = 'bg-[#E9F8F5] border-[#0F8178]/30';
       messageText = <span>started following your publication and writing</span>;
       break;
   }
@@ -117,14 +117,14 @@ export default function NotificationItem({
       onMouseLeave={() => setIsHovered(false)}
       className={`group relative flex items-start gap-3.5 p-4 rounded-2xl border transition-all ${
         is_read
-          ? 'bg-[#141416]/60 border-[#222226] text-zinc-400 hover:border-[#2f2f36]'
-          : 'bg-[#18181c] border-[#2e2e38] text-zinc-200 hover:border-[#FF6719]/50 shadow-sm'
+          ? 'bg-white border-[#E8EAE8] text-[#555555] hover:border-stone-300'
+          : 'bg-[#F0FAF8] border-[#0F8178]/25 text-[#201F1D] hover:border-[#0F8178]/50 shadow-2xs'
       }`}
     >
       {/* Unread dot */}
       {!is_read && (
         <span
-          className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#FF6719] shadow-sm shadow-orange-500"
+          className="absolute left-2.5 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#0F8178]"
           title="Unread alert"
         />
       )}
@@ -140,7 +140,7 @@ export default function NotificationItem({
           />
         </Link>
         <div
-          className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border flex items-center justify-center ${iconBg} shadow-sm`}
+          className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border flex items-center justify-center ${iconBg} shadow-2xs`}
         >
           <TypeIcon className={`w-3 h-3 ${iconColor}`} />
         </div>
@@ -151,15 +151,15 @@ export default function NotificationItem({
         <div className="text-xs sm:text-sm leading-relaxed">
           <Link
             to={`/profile/${actor?.username || ''}`}
-            className="font-semibold text-zinc-200 hover:text-white mr-1.5 transition-colors"
+            className="font-semibold text-[#201F1D] hover:text-[#0F8178] mr-1.5 transition-colors"
           >
             {actor?.full_name || actor?.username || 'Someone'}
           </Link>
-          <span className="text-zinc-400">{messageText}</span>
+          <span className="text-[#555555]">{messageText}</span>
         </div>
 
         {/* Timestamp & Target Link */}
-        <div className="flex items-center gap-3 mt-1.5 text-[11px] text-zinc-500">
+        <div className="flex items-center gap-3 mt-1.5 text-[11px] text-[#777777]">
           <span className="flex items-center gap-1">
             <Clock className="w-3 h-3" />
             {formatTimeAgo(created_at)}
@@ -168,7 +168,7 @@ export default function NotificationItem({
           <Link
             to={targetUrl}
             onClick={handleItemClick}
-            className="inline-flex items-center gap-1 text-[#FF6719] hover:text-orange-400 font-medium transition-colors"
+            className="inline-flex items-center gap-1 text-[#0F8178] hover:text-[#086B64] font-medium transition-colors"
           >
             <span>View {type === 'follow' ? 'Profile' : 'Story'}</span>
             <ExternalLink className="w-2.5 h-2.5" />
@@ -183,7 +183,7 @@ export default function NotificationItem({
             type="button"
             onClick={() => onMarkAsRead(id)}
             title="Mark as read"
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-[#24242c] transition-colors"
+            className="p-1.5 rounded-lg text-stone-400 hover:text-[#0F8178] hover:bg-[#E9F8F5] transition-colors"
           >
             <Check className="w-3.5 h-3.5" />
           </button>
@@ -194,7 +194,7 @@ export default function NotificationItem({
             type="button"
             onClick={() => onDelete(id)}
             title="Remove notification"
-            className="p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 opacity-0 group-hover:opacity-100 transition-all"
+            className="p-1.5 rounded-lg text-stone-400 hover:text-rose-500 hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>

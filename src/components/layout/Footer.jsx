@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Feather, Twitter, Github, Linkedin, Rss, Heart } from 'lucide-react';
 
 export default function Footer({ onOpenAuth }) {
@@ -78,24 +79,24 @@ export default function Footer({ onOpenAuth }) {
             </h4>
             <ul className="space-y-2 text-sm text-stone-400">
               <li>
-                <a href="#hero" className="hover:text-white transition-colors">
+                <Link to="/" className="hover:text-white transition-colors">
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#explore" className="hover:text-white transition-colors">
+                <Link to="/explore" className="hover:text-white transition-colors">
                   Explore Stories
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#categories" className="hover:text-white transition-colors">
-                  Topic Categories
-                </a>
+                <Link to="/about" className="hover:text-white transition-colors">
+                  About WriteSpace
+                </Link>
               </li>
               <li>
-                <a href="#how-it-works" className="hover:text-white transition-colors">
-                  How It Works
-                </a>
+                <Link to="/write" className="hover:text-white transition-colors">
+                  Start Writing
+                </Link>
               </li>
             </ul>
           </div>

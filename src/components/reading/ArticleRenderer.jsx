@@ -55,19 +55,19 @@ export default function ArticleRenderer({ content = '', onHeadingsExtracted }) {
 
   return (
     <article
-      className="prose prose-invert max-w-none font-serif text-lg sm:text-[19px] leading-[1.8] sm:leading-[1.85] text-zinc-200 selection:bg-orange-950/60 selection:text-orange-200
-        prose-headings:font-serif prose-headings:font-bold prose-headings:text-white prose-headings:tracking-tight
+      className="prose max-w-none font-serif text-lg sm:text-[19px] leading-[1.8] sm:leading-[1.85] text-[#292524] selection:bg-[#E9F8F5] selection:text-[#0F8178]
+        prose-headings:font-serif prose-headings:font-bold prose-headings:text-[#201F1D] prose-headings:tracking-tight
         prose-h1:text-3xl sm:prose-h1:text-4xl prose-h1:mt-12 prose-h1:mb-4
         prose-h2:text-2xl sm:prose-h2:text-3xl prose-h2:mt-10 prose-h2:mb-3
         prose-h3:text-xl sm:prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-2
-        prose-p:mb-6 prose-p:text-zinc-200
-        prose-blockquote:border-l-4 prose-blockquote:border-[#FF6719] prose-blockquote:pl-5 prose-blockquote:italic prose-blockquote:text-zinc-400 prose-blockquote:my-8
+        prose-p:mb-6 prose-p:text-[#292524]
+        prose-blockquote:border-l-4 prose-blockquote:border-[#0F8178] prose-blockquote:pl-5 prose-blockquote:italic prose-blockquote:text-[#555555] prose-blockquote:my-8
         prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-6 prose-ul:space-y-2
         prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-6 prose-ol:space-y-2
-        prose-li:text-zinc-300
-        prose-a:text-[#FF6719] prose-a:underline prose-a:underline-offset-4 hover:prose-a:text-orange-400
-        prose-hr:border-[#26262a] prose-hr:my-10
-        prose-img:rounded-2xl prose-img:border prose-img:border-[#26262a] prose-img:my-8 prose-img:mx-auto prose-img:shadow-xl"
+        prose-li:text-[#292524]
+        prose-a:text-[#0F8178] prose-a:underline prose-a:underline-offset-4 hover:prose-a:text-[#086B64]
+        prose-hr:border-[#E8EAE8] prose-hr:my-10
+        prose-img:rounded-2xl prose-img:border prose-img:border-[#E8EAE8] prose-img:my-8 prose-img:mx-auto prose-img:shadow-md"
       dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
     />
   );

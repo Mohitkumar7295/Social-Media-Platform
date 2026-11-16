@@ -157,40 +157,42 @@ export default function Explore() {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2">
-            <Compass className="w-5 h-5 text-[#FF6719]" />
-            <h1 className="font-serif text-2xl font-bold text-white tracking-tight">
+            <div className="w-8 h-8 rounded-lg bg-[#E9F8F5] flex items-center justify-center text-[#0F8178]">
+              <Compass className="w-5 h-5" />
+            </div>
+            <h1 className="font-serif text-2xl font-bold text-[#201F1D] tracking-tight">
               Explore WriteSpace
             </h1>
           </div>
           <button
             type="button"
             onClick={() => setIsSearchModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#18181c] hover:bg-[#202026] text-zinc-300 hover:text-white text-xs border border-[#2a2a30] transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-[#F0FAF8] text-[#201F1D] hover:text-[#0F8178] text-xs font-medium border border-[#E8EAE8] shadow-2xs transition-colors"
           >
-            <Search className="w-3.5 h-3.5 text-[#FF6719]" />
+            <Search className="w-3.5 h-3.5 text-[#0F8178]" />
             <span>Global Search</span>
           </button>
         </div>
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-[#777777]">
           Discover stories, emerging ideas, and inspiring writers across the network.
         </p>
       </div>
 
-      {/* Quick Search Bar (Clicks open modal, or user types to filter page results) */}
+      {/* Quick Search Bar */}
       <div className="relative mb-5">
-        <Search className="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         <input
           type="text"
           value={clientFilter}
           onChange={(e) => setClientFilter(e.target.value)}
           placeholder="Filter stories and writers on this page (or click Global Search)..."
-          className="w-full bg-[#141416] border border-[#242428] rounded-xl pl-10 pr-10 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#FF6719] transition-all"
+          className="w-full bg-white border border-[#E8EAE8] rounded-xl pl-10 pr-10 py-2.5 text-sm text-[#201F1D] placeholder:text-stone-400 focus:outline-none focus:border-[#0F8178] shadow-2xs transition-all"
         />
         {clientFilter && (
           <button
             type="button"
             onClick={() => setClientFilter('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400 hover:text-white"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#777777] hover:text-[#201F1D]"
           >
             Clear
           </button>
@@ -198,19 +200,19 @@ export default function Explore() {
       </div>
 
       {/* Navigation Tabs: Stories vs Writers */}
-      <div className="flex items-center justify-between border-b border-[#222226] mb-5">
+      <div className="flex items-center justify-between border-b border-[#E8EAE8] mb-5">
         <div className="flex gap-6">
           <button
             type="button"
             onClick={() => setActiveTab('stories')}
             className={`pb-3 text-sm font-semibold transition-colors flex items-center gap-2 relative ${
-              activeTab === 'stories' ? 'text-white' : 'text-zinc-400 hover:text-zinc-200'
+              activeTab === 'stories' ? 'text-[#0F8178]' : 'text-[#777777] hover:text-[#201F1D]'
             }`}
           >
             <BookOpen className="w-4 h-4" />
             <span>Stories</span>
             {activeTab === 'stories' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF6719] rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0F8178] rounded-full" />
             )}
           </button>
 
@@ -218,25 +220,25 @@ export default function Explore() {
             type="button"
             onClick={() => setActiveTab('writers')}
             className={`pb-3 text-sm font-semibold transition-colors flex items-center gap-2 relative ${
-              activeTab === 'writers' ? 'text-white' : 'text-zinc-400 hover:text-zinc-200'
+              activeTab === 'writers' ? 'text-[#0F8178]' : 'text-[#777777] hover:text-[#201F1D]'
             }`}
           >
             <Users className="w-4 h-4" />
             <span>Writers to Follow</span>
             {activeTab === 'writers' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF6719] rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0F8178] rounded-full" />
             )}
           </button>
         </div>
 
         {activeTab === 'stories' && (
-          <span className="text-xs text-zinc-500 pb-3">
+          <span className="text-xs text-[#777777] pb-3">
             {filteredArticles.length} published {filteredArticles.length === 1 ? 'story' : 'stories'}
           </span>
         )}
       </div>
 
-      {/* Category Pills (Visible when viewing Stories tab) */}
+      {/* Category Pills */}
       {activeTab === 'stories' && (
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-3 mb-5">
           {categories.map((cat) => {
@@ -248,8 +250,8 @@ export default function Explore() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                   isSelected
-                    ? 'bg-[#FF6719] text-white shadow-sm'
-                    : 'bg-[#18181c] hover:bg-[#202026] text-zinc-400 hover:text-zinc-200 border border-[#242428]'
+                    ? 'bg-[#0F8178] text-white shadow-xs'
+                    : 'bg-white hover:bg-[#F0FAF8] text-[#555555] hover:text-[#201F1D] border border-[#E8EAE8]'
                 }`}
               >
                 {cat}
@@ -267,15 +269,15 @@ export default function Explore() {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="bg-[#141416] border border-[#242428] rounded-2xl p-5 animate-pulse"
+                  className="bg-white border border-[#E8EAE8] rounded-2xl p-5 animate-pulse"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-full bg-zinc-800" />
-                    <div className="h-3.5 bg-zinc-800 rounded w-28" />
+                    <div className="w-8 h-8 rounded-full bg-stone-100" />
+                    <div className="h-3.5 bg-stone-100 rounded w-28" />
                   </div>
-                  <div className="h-5 bg-zinc-800 rounded w-3/4 mb-2" />
-                  <div className="h-3 bg-zinc-800/60 rounded w-full mb-3" />
-                  <div className="h-3 bg-zinc-800/40 rounded w-1/4" />
+                  <div className="h-5 bg-stone-100 rounded w-3/4 mb-2" />
+                  <div className="h-3 bg-stone-100/70 rounded w-full mb-3" />
+                  <div className="h-3 bg-stone-100/50 rounded w-1/4" />
                 </div>
               ))}
             </div>
@@ -287,7 +289,7 @@ export default function Explore() {
                 return (
                   <article
                     key={article.id}
-                    className="bg-[#141416] border border-[#242428] rounded-2xl p-5 hover:border-[#303038] transition-all group flex flex-col sm:flex-row gap-5 justify-between"
+                    className="bg-white border border-[#E8EAE8] rounded-2xl p-5 hover:border-[#0F8178]/30 hover:shadow-xs transition-all group flex flex-col sm:flex-row gap-5 justify-between"
                   >
                     <div className="flex-1 min-w-0">
                       {/* Author Header */}
@@ -305,12 +307,12 @@ export default function Explore() {
                         </Link>
                         <Link
                           to={`/profile/${author.username || ''}`}
-                          className="text-xs font-semibold text-zinc-300 hover:text-white transition-colors"
+                          className="text-xs font-semibold text-[#201F1D] hover:text-[#0F8178] transition-colors"
                         >
                           {author.full_name || author.username}
                         </Link>
-                        <span className="text-zinc-600 text-xs">•</span>
-                        <span className="text-[11px] text-zinc-500">
+                        <span className="text-stone-300 text-xs">•</span>
+                        <span className="text-[11px] text-[#777777]">
                           {new Date(article.published_at || article.created_at).toLocaleDateString(
                             'en-US',
                             { month: 'short', day: 'numeric' }
@@ -320,25 +322,25 @@ export default function Explore() {
 
                       {/* Title & Excerpt */}
                       <Link to={`/p/${article.slug}`}>
-                        <h3 className="font-serif text-lg sm:text-xl font-bold text-white group-hover:text-[#FF6719] transition-colors leading-snug mb-1.5 line-clamp-2">
+                        <h3 className="font-serif text-lg sm:text-xl font-bold text-[#201F1D] group-hover:text-[#0F8178] transition-colors leading-snug mb-1.5 line-clamp-2">
                           {article.title}
                         </h3>
                       </Link>
 
                       {(article.excerpt || article.subtitle) && (
-                        <p className="text-xs sm:text-sm text-zinc-400 line-clamp-2 leading-relaxed mb-3">
+                        <p className="text-xs sm:text-sm text-[#555555] line-clamp-2 leading-relaxed mb-3">
                           {article.excerpt || article.subtitle}
                         </p>
                       )}
 
-                      {/* Meta actions: Category, Reading Time, Likes, Bookmarks */}
-                      <div className="flex items-center justify-between text-xs text-zinc-500 pt-2 border-t border-[#202024]/60">
+                      {/* Meta actions */}
+                      <div className="flex items-center justify-between text-xs text-[#777777] pt-2 border-t border-[#E8EAE8]">
                         <div className="flex items-center gap-3">
                           {article.category && (
                             <button
                               type="button"
                               onClick={() => setSelectedCategory(article.category)}
-                              className="px-2.5 py-0.5 rounded-full bg-[#1e1e24] hover:bg-[#282830] text-zinc-300 text-[11px] font-medium transition-colors"
+                              className="px-2.5 py-0.5 rounded-full bg-[#E9F8F5] hover:bg-[#d8f4ee] text-[#0F8178] text-[11px] font-medium border border-[#0F8178]/20 transition-colors"
                             >
                               {article.category}
                             </button>
@@ -360,7 +362,7 @@ export default function Explore() {
                     {article.cover_image_url && (
                       <Link
                         to={`/p/${article.slug}`}
-                        className="w-full sm:w-36 sm:h-28 rounded-xl overflow-hidden border border-[#26262a] shrink-0"
+                        className="w-full sm:w-36 sm:h-28 rounded-xl overflow-hidden border border-[#E8EAE8] shrink-0"
                       >
                         <img
                           src={article.cover_image_url}
@@ -374,10 +376,12 @@ export default function Explore() {
               })}
             </div>
           ) : (
-            <div className="bg-[#141416] border border-[#242428] rounded-2xl p-10 text-center">
-              <BookOpen className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
-              <h3 className="font-serif text-lg font-bold text-white mb-1">No Stories Found</h3>
-              <p className="text-xs text-zinc-400 mb-4">
+            <div className="bg-white border border-[#E8EAE8] rounded-2xl p-10 text-center">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-[#E9F8F5] flex items-center justify-center text-[#0F8178]">
+                <BookOpen className="w-6 h-6" />
+              </div>
+              <h3 className="font-serif text-lg font-bold text-[#201F1D] mb-1">No Stories Found</h3>
+              <p className="text-xs text-[#777777] mb-4">
                 {selectedCategory !== 'All'
                   ? `No published stories found under "${selectedCategory}".`
                   : 'Be the first writer to publish a story on WriteSpace!'}
@@ -386,14 +390,14 @@ export default function Explore() {
                 <button
                   type="button"
                   onClick={() => setSelectedCategory('All')}
-                  className="px-4 py-2 rounded-full bg-[#1e1e24] hover:bg-[#282830] text-zinc-200 text-xs font-medium border border-zinc-700/60 transition-colors"
+                  className="px-4 py-2 rounded-full bg-[#F8FAF9] hover:bg-[#F0FAF8] text-[#201F1D] text-xs font-medium border border-[#E8EAE8] transition-colors"
                 >
                   View All Categories
                 </button>
               ) : (
                 <Link
                   to="/write"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#FF6719] hover:bg-[#e8590c] text-white text-xs font-semibold transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0F8178] hover:bg-[#086B64] text-white text-xs font-semibold shadow-xs transition-colors"
                 >
                   <span>Write a Story</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -412,12 +416,12 @@ export default function Explore() {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="bg-[#141416] border border-[#242428] rounded-2xl p-4 flex items-center gap-4 animate-pulse"
+                  className="bg-white border border-[#E8EAE8] rounded-2xl p-4 flex items-center gap-4 animate-pulse"
                 >
-                  <div className="w-12 h-12 rounded-full bg-zinc-800" />
+                  <div className="w-12 h-12 rounded-full bg-stone-100" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-zinc-800 rounded w-40" />
-                    <div className="h-3 bg-zinc-800/60 rounded w-28" />
+                    <div className="h-4 bg-stone-100 rounded w-40" />
+                    <div className="h-3 bg-stone-100/70 rounded w-28" />
                   </div>
                 </div>
               ))}
@@ -430,7 +434,7 @@ export default function Explore() {
                 return (
                   <div
                     key={writer.id}
-                    className="bg-[#141416] border border-[#242428] rounded-2xl p-4 flex items-center justify-between hover:border-[#32323a] transition-colors"
+                    className="bg-white border border-[#E8EAE8] rounded-2xl p-4 flex items-center justify-between hover:border-[#0F8178]/30 hover:bg-[#F0FAF8]/40 transition-colors"
                   >
                     <Link
                       to={`/profile/${writer.username}`}
@@ -444,18 +448,18 @@ export default function Explore() {
                       />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <h4 className="font-semibold text-sm text-zinc-100 group-hover:text-white truncate">
+                          <h4 className="font-semibold text-sm text-[#201F1D] group-hover:text-[#0F8178] transition-colors truncate">
                             {writer.full_name}
                           </h4>
                           {isSelf && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-500/10 text-[#FF6719] border border-orange-500/20">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#E9F8F5] text-[#0F8178] font-medium border border-[#0F8178]/20">
                               You
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-zinc-500 truncate">@{writer.username}</p>
+                        <p className="text-xs text-[#777777] truncate">@{writer.username}</p>
                         {writer.bio && (
-                          <p className="text-xs text-zinc-400 mt-1 line-clamp-1">{writer.bio}</p>
+                          <p className="text-xs text-[#555555] mt-1 line-clamp-1">{writer.bio}</p>
                         )}
                       </div>
                     </Link>
@@ -473,10 +477,12 @@ export default function Explore() {
               })}
             </div>
           ) : (
-            <div className="bg-[#141416] border border-[#242428] rounded-2xl p-10 text-center">
-              <Users className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
-              <h3 className="font-serif text-lg font-bold text-white mb-1">No Writers Found</h3>
-              <p className="text-xs text-zinc-400">Try adjusting your search criteria.</p>
+            <div className="bg-white border border-[#E8EAE8] rounded-2xl p-10 text-center">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-[#E9F8F5] flex items-center justify-center text-[#0F8178]">
+                <Users className="w-6 h-6" />
+              </div>
+              <h3 className="font-serif text-lg font-bold text-[#201F1D] mb-1">No Writers Found</h3>
+              <p className="text-xs text-[#777777]">Try adjusting your search criteria.</p>
             </div>
           )}
         </div>

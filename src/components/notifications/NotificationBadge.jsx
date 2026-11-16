@@ -49,7 +49,7 @@ export default function NotificationBadge({ className = '' }) {
 
   return (
     <span
-      className={`inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white bg-[#FF6719] rounded-full min-w-[16px] h-[16px] leading-none shadow-sm ${className}`}
+      className={`inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold text-white bg-[#0F8178] rounded-full min-w-[16px] h-[16px] leading-none shadow-xs ${className}`}
     >
       {unreadCount > 99 ? '99+' : unreadCount}
     </span>

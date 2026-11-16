@@ -5,6 +5,7 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 
 // Public Landing & Auth Pages
 import Landing from './pages/Landing';
+import About from './pages/About';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
@@ -34,6 +35,7 @@ export default function App() {
         <Routes>
           {/* Public Landing Page (Unauthenticated Visitors) */}
           <Route path="/" element={<Landing />} />
+          <Route path="/about" element={<About />} />
 
           {/* Authentication Pages */}
           <Route path="/register" element={<Register />} />

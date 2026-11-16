@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Compass, Sparkles, UserPlus, Check, ArrowRight } from 'lucide-react';
+import { Search, Compass, Sparkles, Users, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { subscriptionService } from '../../services/subscriptionService';
 import { recommendationService } from '../../services/recommendationService';
@@ -23,9 +23,6 @@ export default function RightSidebar({ className = '' }) {
   // Recommendations state (Real PostgreSQL profiles)
   const [recommendations, setRecommendations] = useState([]);
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(true);
-
-  // Follow interaction notice
-  const [followNotice, setFollowNotice] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -69,66 +66,77 @@ export default function RightSidebar({ className = '' }) {
     };
   }, [currentUserId]);
 
-  const handleSearchSubmit = (e) => {
+  const handleOpenSearchModal = (e) => {
     e.preventDefault();
     setIsSearchOpen(true);
   };
 
   return (
-    <aside className={`w-80 flex flex-col gap-6 py-6 px-4 select-none shrink-0 ${className}`}>
-      {/* 1. Search Bar */}
-      <form onSubmit={handleSearchSubmit} className="relative">
-        <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onClick={() => setIsSearchOpen(true)}
-          placeholder="Search WriteSpace"
-          className="w-full bg-[#161619] border border-[#242428] rounded-full pl-10 pr-4 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#FF6719] focus:ring-1 focus:ring-[#FF6719] transition-all cursor-pointer"
-        />
-      </form>
-
-      {/* Global Interactive Search Modal */}
+    <aside
+      className={`w-80 flex flex-col gap-6 py-6 px-4 bg-[#F8FAF9] select-none h-screen sticky top-0 overflow-y-auto ${className}`}
+    >
+      {/* Search Modal */}
       <SearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         initialQuery={searchQuery}
       />
 
-      {/* 2. Subscriptions Panel */}
-      <div className="bg-[#141416] border border-[#242428] rounded-2xl p-4 shadow-sm">
+      {/* 1. Global Search Bar */}
+      <div className="relative">
+        <form onSubmit={handleOpenSearchModal}>
+          <div className="relative flex items-center">
+            <Search className="w-4 h-4 text-[#777777] absolute left-3.5 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onClick={handleOpenSearchModal}
+              placeholder="Search WriteSpace..."
+              className="w-full bg-white border border-[#E8EAE8] rounded-full pl-10 pr-4 py-2.5 text-xs text-[#201F1D] placeholder:text-[#777777] focus:outline-none focus:border-[#0F8178] focus:ring-1 focus:ring-[#0F8178] transition-all shadow-xs cursor-pointer"
+            />
+          </div>
+        </form>
+      </div>
+
+      {/* 2. Subscriptions / Following Panel */}
+      <div className="bg-white border border-[#E8EAE8] rounded-2xl p-4.5 shadow-xs">
         <div className="flex items-center justify-between mb-3.5">
-          <h3 className="font-serif font-bold text-base text-zinc-100 tracking-tight">
-            Subscriptions
-          </h3>
-          <Link
-            to="/subscriptions"
-            className="text-xs text-[#FF6719] hover:text-orange-400 font-medium transition-colors"
-          >
-            See all
-          </Link>
+          <div className="flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-[#0F8178]" />
+            <h3 className="font-serif font-bold text-sm text-[#201F1D] tracking-tight">
+              Subscriptions
+            </h3>
+          </div>
+          {subscriptions.length > 0 && (
+            <Link
+              to="/subscriptions"
+              className="text-[11px] font-semibold text-[#0F8178] hover:text-[#086B64] transition-colors"
+            >
+              See all ({subscriptions.length})
+            </Link>
+          )}
         </div>
 
         {isLoadingSubscriptions ? (
-          <div className="space-y-3 py-2">
+          <div className="space-y-3 py-1">
             {[1, 2].map((i) => (
               <div key={i} className="flex items-center gap-3 animate-pulse">
-                <div className="w-9 h-9 rounded-full bg-zinc-800" />
-                <div className="flex-1 space-y-1.5">
-                  <div className="h-3 bg-zinc-800 rounded w-24" />
-                  <div className="h-2.5 bg-zinc-800/60 rounded w-16" />
+                <div className="w-8 h-8 rounded-full bg-stone-200" />
+                <div className="space-y-1.5 flex-1">
+                  <div className="h-3 bg-stone-200 rounded w-24" />
+                  <div className="h-2 bg-stone-100 rounded w-16" />
                 </div>
               </div>
             ))}
           </div>
         ) : subscriptions.length > 0 ? (
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-2">
             {subscriptions.slice(0, 5).map((sub) => (
               <Link
                 key={sub.id}
                 to={`/profile/${sub.username}`}
-                className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-[#1c1c20] transition-colors group"
+                className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-[#F0FAF8] transition-colors group"
               >
                 <UserAvatar
                   src={sub.avatar_url}
@@ -137,22 +145,22 @@ export default function RightSidebar({ className = '' }) {
                   size="sm"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold text-zinc-200 group-hover:text-white truncate">
+                  <p className="text-xs font-semibold text-[#201F1D] group-hover:text-[#0F8178] truncate">
                     {sub.full_name}
                   </p>
-                  <p className="text-[11px] text-zinc-500 truncate">@{sub.username}</p>
+                  <p className="text-[11px] text-[#777777] truncate">@{sub.username}</p>
                 </div>
               </Link>
             ))}
           </div>
         ) : (
-          <div className="py-4 text-center">
-            <p className="text-xs text-zinc-400 mb-3 leading-relaxed">
+          <div className="py-3 text-center">
+            <p className="text-xs text-[#777777] mb-2 leading-relaxed">
               You haven't followed any writers yet.
             </p>
             <Link
               to="/explore"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#FF6719] hover:text-orange-400 transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0F8178] hover:text-[#086B64] transition-colors"
             >
               <Compass className="w-3.5 h-3.5" />
               <span>Explore Writers</span>
@@ -162,64 +170,71 @@ export default function RightSidebar({ className = '' }) {
       </div>
 
       {/* 3. Recommended for you Panel */}
-      <div className="bg-[#141416] border border-[#242428] rounded-2xl p-4 shadow-sm">
+      <div className="bg-white border border-[#E8EAE8] rounded-2xl p-4.5 shadow-xs">
         <div className="flex items-center justify-between mb-3.5">
           <div className="flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-[#FF6719]" />
-            <h3 className="font-serif font-bold text-base text-zinc-100 tracking-tight">
-              Recommended for you
+            <Users className="w-4 h-4 text-[#0F8178]" />
+            <h3 className="font-serif font-bold text-sm text-[#201F1D] tracking-tight">
+              Recommended Writers
             </h3>
           </div>
+          <Link
+            to="/explore"
+            className="text-[11px] font-semibold text-[#0F8178] hover:text-[#086B64] transition-colors"
+          >
+            See more
+          </Link>
         </div>
 
         {isLoadingRecommendations ? (
-          <div className="space-y-3 py-2">
+          <div className="space-y-3 py-1">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-start gap-3 animate-pulse">
-                <div className="w-9 h-9 rounded-full bg-zinc-800 shrink-0" />
-                <div className="flex-1 space-y-1.5">
-                  <div className="h-3 bg-zinc-800 rounded w-28" />
-                  <div className="h-2.5 bg-zinc-800/60 rounded w-36" />
+              <div key={i} className="flex items-center gap-3 animate-pulse">
+                <div className="w-8 h-8 rounded-full bg-stone-200" />
+                <div className="space-y-1.5 flex-1">
+                  <div className="h-3 bg-stone-200 rounded w-24" />
+                  <div className="h-2 bg-stone-100 rounded w-16" />
                 </div>
               </div>
             ))}
           </div>
         ) : recommendations.length > 0 ? (
-          <div className="flex flex-col gap-3.5">
-            {recommendations.map((rec) => (
-              <div key={rec.id} className="flex items-start justify-between gap-2.5">
+          <div className="flex flex-col gap-3">
+            {recommendations.map((writer) => (
+              <div
+                key={writer.id}
+                className="flex items-center justify-between gap-2.5 p-1 rounded-xl hover:bg-[#F8FAF9] transition-colors"
+              >
                 <Link
-                  to={`/profile/${rec.username}`}
-                  className="flex items-start gap-2.5 min-w-0 group flex-1"
+                  to={`/profile/${writer.username}`}
+                  className="flex items-center gap-2.5 min-w-0 flex-1 group"
                 >
                   <UserAvatar
-                    src={rec.avatar_url}
-                    name={rec.full_name}
-                    username={rec.username}
+                    src={writer.avatar_url}
+                    name={writer.full_name}
+                    username={writer.username}
                     size="sm"
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-semibold text-zinc-200 group-hover:text-white truncate">
-                      {rec.full_name}
+                    <p className="text-xs font-semibold text-[#201F1D] group-hover:text-[#0F8178] truncate">
+                      {writer.full_name}
                     </p>
-                    <p className="text-[11px] text-zinc-500 truncate">@{rec.username}</p>
-                    {rec.bio && (
-                      <p className="text-[11px] text-zinc-400 mt-0.5 line-clamp-1">{rec.bio}</p>
-                    )}
+                    <p className="text-[11px] text-[#777777] truncate">@{writer.username}</p>
                   </div>
                 </Link>
 
                 <FollowButton
-                  targetUserId={rec.id}
+                  targetUserId={writer.id}
+                  username={writer.username}
                   size="xs"
                   onFollowChange={async ({ isFollowing }) => {
                     if (isFollowing) {
-                      const [subRes, recRes] = await Promise.all([
-                        subscriptionService.getSubscriptions(currentUserId),
-                        recommendationService.getRecommendedWriters(currentUserId, 5),
-                      ]);
-                      setSubscriptions(subRes.subscriptions || []);
-                      setRecommendations(recRes.recommendations || []);
+                      const { recommendations: recs } =
+                        await recommendationService.getRecommendedWriters(currentUserId, 5);
+                      setRecommendations(recs || []);
+                      const { subscriptions: subs } =
+                        await subscriptionService.getSubscriptions(currentUserId);
+                      setSubscriptions(subs || []);
                     }
                   }}
                 />
@@ -227,31 +242,37 @@ export default function RightSidebar({ className = '' }) {
             ))}
           </div>
         ) : (
-          <div className="py-4 text-center">
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              No new recommendations available right now.
-            </p>
-          </div>
+          <p className="text-xs text-[#777777] py-2">
+            No recommendations right now.
+          </p>
         )}
       </div>
 
-      {/* Sidebar Footer info */}
-      <div className="text-[11px] text-zinc-600 px-2 leading-relaxed">
-        <div className="flex flex-wrap gap-x-3 gap-y-1 mb-2">
-          <Link to="/explore" className="hover:text-zinc-400 transition-colors">
-            Explore
-          </Link>
-          <a href="#about" className="hover:text-zinc-400 transition-colors">
-            About
-          </a>
-          <a href="#terms" className="hover:text-zinc-400 transition-colors">
-            Terms
-          </a>
-          <a href="#privacy" className="hover:text-zinc-400 transition-colors">
-            Privacy
-          </a>
+      {/* 4. Footer Mini Links */}
+      <div className="px-2 text-[11px] text-[#999999] flex flex-wrap gap-x-3 gap-y-1.5 leading-normal">
+        <Link to="/about" className="hover:text-[#0F8178] transition-colors">
+          About
+        </Link>
+        <span>•</span>
+        <Link to="/explore" className="hover:text-[#0F8178] transition-colors">
+          Explore
+        </Link>
+        <span>•</span>
+        <Link to="/write" className="hover:text-[#0F8178] transition-colors">
+          Write
+        </Link>
+        <span>•</span>
+        <a
+          href="https://github.com/Mohitkumar7295/Social-Media-Platform"
+          target="_blank"
+          rel="noreferrer"
+          className="hover:text-[#0F8178] transition-colors"
+        >
+          GitHub
+        </a>
+        <div className="w-full text-[#999999] mt-1 font-mono text-[10px]">
+          WriteSpace © {new Date().getFullYear()}
         </div>
-        <p>© 2026 WriteSpace. Editorial publishing platform.</p>
       </div>
     </aside>
   );

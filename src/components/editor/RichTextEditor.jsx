@@ -42,14 +42,14 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-[#FF6719] underline underline-offset-4 hover:text-orange-400',
+          class: 'text-[#0F8178] underline underline-offset-4 hover:text-[#086B64]',
         },
       }),
       Image.configure({
         inline: true,
         allowBase64: true,
         HTMLAttributes: {
-          class: 'rounded-xl max-w-full my-6 mx-auto border border-[#2a2a30] shadow-md',
+          class: 'rounded-xl max-w-full my-6 mx-auto border border-[#E8EAE8] shadow-md',
         },
       }),
     ],
@@ -57,7 +57,7 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
     editorProps: {
       attributes: {
         class:
-          'prose prose-invert max-w-none min-h-[400px] focus:outline-none text-zinc-100 font-serif text-lg leading-relaxed selection:bg-orange-950/60 selection:text-orange-200',
+          'prose max-w-none min-h-[400px] focus:outline-none text-[#292524] font-serif text-lg leading-relaxed selection:bg-[#E9F8F5] selection:text-[#0F8178]',
       },
     },
     onUpdate: ({ editor }) => {
@@ -111,16 +111,16 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
   return (
     <div className="flex flex-col gap-4">
       {/* Editorial Floating / Fixed Toolbar */}
-      <div className="sticky top-16 z-30 flex flex-wrap items-center gap-1 p-2 bg-[#161619]/95 backdrop-blur-md border border-[#26262a] rounded-2xl shadow-xl">
+      <div className="sticky top-16 z-30 flex flex-wrap items-center gap-1 p-2 bg-white/95 backdrop-blur-md border border-[#E8EAE8] rounded-2xl shadow-xs">
         {/* Text styling group */}
-        <div className="flex items-center gap-0.5 border-r border-[#26262a] pr-1.5 mr-1">
+        <div className="flex items-center gap-0.5 border-r border-[#E8EAE8] pr-1.5 mr-1">
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleBold().run()}
             className={`p-2 rounded-xl transition-colors ${
               editor.isActive('bold')
-                ? 'bg-orange-500/20 text-[#FF6719]'
-                : 'text-zinc-400 hover:text-white hover:bg-[#222228]'
+                ? 'bg-[#E9F8F5] text-[#0F8178]'
+                : 'text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8]'
             }`}
             title="Bold (Ctrl+B)"
           >
@@ -132,8 +132,8 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
             onClick={() => editor.chain().focus().toggleItalic().run()}
             className={`p-2 rounded-xl transition-colors ${
               editor.isActive('italic')
-                ? 'bg-orange-500/20 text-[#FF6719]'
-                : 'text-zinc-400 hover:text-white hover:bg-[#222228]'
+                ? 'bg-[#E9F8F5] text-[#0F8178]'
+                : 'text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8]'
             }`}
             title="Italic (Ctrl+I)"
           >
@@ -145,8 +145,8 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
             onClick={() => editor.chain().focus().toggleUnderline().run()}
             className={`p-2 rounded-xl transition-colors ${
               editor.isActive('underline')
-                ? 'bg-orange-500/20 text-[#FF6719]'
-                : 'text-zinc-400 hover:text-white hover:bg-[#222228]'
+                ? 'bg-[#E9F8F5] text-[#0F8178]'
+                : 'text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8]'
             }`}
             title="Underline (Ctrl+U)"
           >
@@ -155,14 +155,14 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
         </div>
 
         {/* Headings group */}
-        <div className="flex items-center gap-0.5 border-r border-[#26262a] pr-1.5 mr-1">
+        <div className="flex items-center gap-0.5 border-r border-[#E8EAE8] pr-1.5 mr-1">
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
             className={`p-2 rounded-xl transition-colors ${
               editor.isActive('heading', { level: 1 })
-                ? 'bg-orange-500/20 text-[#FF6719]'
-                : 'text-zinc-400 hover:text-white hover:bg-[#222228]'
+                ? 'bg-[#E9F8F5] text-[#0F8178]'
+                : 'text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8]'
             }`}
             title="Heading 1"
           >
@@ -174,8 +174,8 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
             className={`p-2 rounded-xl transition-colors ${
               editor.isActive('heading', { level: 2 })
-                ? 'bg-orange-500/20 text-[#FF6719]'
-                : 'text-zinc-400 hover:text-white hover:bg-[#222228]'
+                ? 'bg-[#E9F8F5] text-[#0F8178]'
+                : 'text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8]'
             }`}
             title="Heading 2"
           >
@@ -187,8 +187,8 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
             onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
             className={`p-2 rounded-xl transition-colors ${
               editor.isActive('heading', { level: 3 })
-                ? 'bg-orange-500/20 text-[#FF6719]'
-                : 'text-zinc-400 hover:text-white hover:bg-[#222228]'
+                ? 'bg-[#E9F8F5] text-[#0F8178]'
+                : 'text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8]'
             }`}
             title="Heading 3"
           >
@@ -197,14 +197,14 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
         </div>
 
         {/* Lists & Quotes group */}
-        <div className="flex items-center gap-0.5 border-r border-[#26262a] pr-1.5 mr-1">
+        <div className="flex items-center gap-0.5 border-r border-[#E8EAE8] pr-1.5 mr-1">
           <button
             type="button"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             className={`p-2 rounded-xl transition-colors ${
               editor.isActive('bulletList')
-                ? 'bg-orange-500/20 text-[#FF6719]'
-                : 'text-zinc-400 hover:text-white hover:bg-[#222228]'
+                ? 'bg-[#E9F8F5] text-[#0F8178]'
+                : 'text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8]'
             }`}
             title="Bullet List"
           >
@@ -216,8 +216,8 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
             className={`p-2 rounded-xl transition-colors ${
               editor.isActive('orderedList')
-                ? 'bg-orange-500/20 text-[#FF6719]'
-                : 'text-zinc-400 hover:text-white hover:bg-[#222228]'
+                ? 'bg-[#E9F8F5] text-[#0F8178]'
+                : 'text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8]'
             }`}
             title="Numbered List"
           >
@@ -229,8 +229,8 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
             className={`p-2 rounded-xl transition-colors ${
               editor.isActive('blockquote')
-                ? 'bg-orange-500/20 text-[#FF6719]'
-                : 'text-zinc-400 hover:text-white hover:bg-[#222228]'
+                ? 'bg-[#E9F8F5] text-[#0F8178]'
+                : 'text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8]'
             }`}
             title="Blockquote"
           >
@@ -240,7 +240,7 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
           <button
             type="button"
             onClick={() => editor.chain().focus().setHorizontalRule().run()}
-            className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-[#222228] transition-colors"
+            className="p-2 rounded-xl text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8] transition-colors"
             title="Divider Line"
           >
             <Minus className="w-4 h-4" />
@@ -248,7 +248,7 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
         </div>
 
         {/* Links & Images group */}
-        <div className="flex items-center gap-0.5 border-r border-[#26262a] pr-1.5 mr-1">
+        <div className="flex items-center gap-0.5 border-r border-[#E8EAE8] pr-1.5 mr-1">
           <button
             type="button"
             onClick={() => {
@@ -257,8 +257,8 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
             }}
             className={`p-2 rounded-xl transition-colors ${
               editor.isActive('link')
-                ? 'bg-orange-500/20 text-[#FF6719]'
-                : 'text-zinc-400 hover:text-white hover:bg-[#222228]'
+                ? 'bg-[#E9F8F5] text-[#0F8178]'
+                : 'text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8]'
             }`}
             title="Insert Link"
           >
@@ -269,7 +269,7 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
             <button
               type="button"
               onClick={() => editor.chain().focus().unsetLink().run()}
-              className="p-2 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-colors"
+              className="p-2 rounded-xl text-rose-500 hover:bg-rose-50 transition-colors"
               title="Remove Link"
             >
               <Unlink className="w-4 h-4" />
@@ -280,7 +280,7 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
             className={`p-2 rounded-xl cursor-pointer transition-colors ${
               isUploadingImage
                 ? 'opacity-50 pointer-events-none'
-                : 'text-zinc-400 hover:text-white hover:bg-[#222228]'
+                : 'text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8]'
             }`}
             title="Insert Image"
           >
@@ -301,7 +301,7 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
             type="button"
             onClick={() => editor.chain().focus().undo().run()}
             disabled={!editor.can().undo()}
-            className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-[#222228] disabled:opacity-30 disabled:pointer-events-none transition-colors"
+            className="p-2 rounded-xl text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8] disabled:opacity-30 disabled:pointer-events-none transition-colors"
             title="Undo"
           >
             <Undo className="w-4 h-4" />
@@ -311,7 +311,7 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
             type="button"
             onClick={() => editor.chain().focus().redo().run()}
             disabled={!editor.can().redo()}
-            className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-[#222228] disabled:opacity-30 disabled:pointer-events-none transition-colors"
+            className="p-2 rounded-xl text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8] disabled:opacity-30 disabled:pointer-events-none transition-colors"
             title="Redo"
           >
             <Redo className="w-4 h-4" />
@@ -321,15 +321,15 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
 
       {/* Link Input Modal */}
       {linkModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="w-full max-w-md bg-[#18181c] border border-[#2e2e36] rounded-2xl p-6 shadow-2xl">
-            <h4 className="text-base font-serif font-bold text-white mb-3">Add or Edit Link</h4>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white border border-[#E8EAE8] rounded-2xl p-6 shadow-2xl">
+            <h4 className="text-base font-serif font-bold text-[#201F1D] mb-3">Add or Edit Link</h4>
             <input
               type="url"
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
               placeholder="https://example.com"
-              className="w-full bg-[#121214] border border-[#2a2a30] rounded-xl px-4 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-[#FF6719] mb-4"
+              className="w-full bg-[#F8FAF9] border border-[#E8EAE8] rounded-xl px-4 py-2.5 text-sm text-[#201F1D] placeholder:text-stone-400 focus:outline-none focus:border-[#0F8178] mb-4"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleAddLink();
@@ -339,14 +339,14 @@ export default function RichTextEditor({ content = '', onChange, placeholder = '
               <button
                 type="button"
                 onClick={() => setLinkModalOpen(false)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8] transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleAddLink}
-                className="px-5 py-2 rounded-xl bg-[#FF6719] hover:bg-[#e8590c] text-white text-xs font-semibold shadow transition-colors"
+                className="px-5 py-2 rounded-xl bg-[#0F8178] hover:bg-[#086B64] text-white text-xs font-semibold shadow-xs transition-colors"
               >
                 Apply Link
               </button>

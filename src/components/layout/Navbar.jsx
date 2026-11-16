@@ -85,34 +85,28 @@ export default function Navbar({ onOpenAuth }) {
             >
               Home
             </Link>
-            <a
-              href="/#explore"
+            <Link
+              to="/explore"
               className="text-sm font-medium text-stone-600 hover:text-brand-700 transition-colors"
             >
               Explore
-            </a>
-            <a
-              href="/#about"
+            </Link>
+            <Link
+              to="/about"
               className="text-sm font-medium text-stone-600 hover:text-brand-700 transition-colors"
             >
               About
-            </a>
+            </Link>
 
-            {/* Write button (available for logged-in users, with Phase 4 marker) */}
+            {/* Write button for logged-in users */}
             {isAuthenticated && (
-              <div className="relative group">
-                <button
-                  type="button"
-                  onClick={() => alert('Article composer & publishing studio unlocks in Phase 4!')}
-                  className="flex items-center gap-1.5 text-sm font-medium text-stone-600 hover:text-brand-700 transition-colors"
-                >
-                  <PenLine className="w-4 h-4 text-brand-700" />
-                  <span>Write</span>
-                  <span className="text-[10px] bg-brand-50 text-brand-700 font-semibold px-1.5 py-0.5 rounded-full border border-brand-200">
-                    Phase 4
-                  </span>
-                </button>
-              </div>
+              <Link
+                to="/write"
+                className="flex items-center gap-1.5 text-sm font-medium text-stone-600 hover:text-brand-700 transition-colors"
+              >
+                <PenLine className="w-4 h-4 text-brand-700" />
+                <span>Write</span>
+              </Link>
             )}
           </nav>
 
@@ -236,20 +230,20 @@ export default function Navbar({ onOpenAuth }) {
             >
               Home
             </Link>
-            <a
-              href="/#explore"
+            <Link
+              to="/explore"
               onClick={() => setMobileMenuOpen(false)}
               className="px-3 py-2 text-base font-medium text-stone-700 hover:bg-stone-50 hover:text-brand-700 rounded-lg transition-colors"
             >
               Explore Stories
-            </a>
-            <a
-              href="/#about"
+            </Link>
+            <Link
+              to="/about"
               onClick={() => setMobileMenuOpen(false)}
               className="px-3 py-2 text-base font-medium text-stone-700 hover:bg-stone-50 hover:text-brand-700 rounded-lg transition-colors"
             >
               About WriteSpace
-            </a>
+            </Link>
 
             {isAuthenticated && (
               <>

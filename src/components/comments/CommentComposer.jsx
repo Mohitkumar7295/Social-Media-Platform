@@ -27,14 +27,14 @@ export default function CommentComposer({
   // Guest view: prompt to sign in before commenting
   if (!user) {
     return (
-      <div className="bg-[#141416] border border-[#242428] rounded-2xl p-5 text-center my-4">
-        <p className="text-zinc-300 text-sm mb-3">
+      <div className="bg-white border border-[#E8EAE8] rounded-2xl p-5 text-center my-4">
+        <p className="text-[#201F1D] text-sm mb-3">
           Sign in to join the conversation and share your thoughts.
         </p>
         <Link
           to="/login"
           state={{ from: location.pathname }}
-          className="inline-flex items-center justify-center px-5 py-2 rounded-full bg-[#FF6719] hover:bg-[#e8590c] text-white text-xs font-semibold shadow transition-colors"
+          className="inline-flex items-center justify-center px-5 py-2 rounded-full bg-[#0F8178] hover:bg-[#086B64] text-white text-xs font-semibold shadow-xs transition-colors"
         >
           Sign In to Respond
         </Link>
@@ -70,8 +70,8 @@ export default function CommentComposer({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`bg-[#141416] border border-[#242428] rounded-2xl p-4 transition-all focus-within:border-zinc-600 ${
-        isReply ? 'ml-6 sm:ml-12 mt-3 bg-[#111113]' : ''
+      className={`bg-white border border-[#E8EAE8] rounded-2xl p-4 transition-all focus-within:border-[#0F8178] focus-within:ring-1 focus-within:ring-[#0F8178]/20 shadow-2xs ${
+        isReply ? 'ml-6 sm:ml-12 mt-3 bg-[#F8FAF9]' : ''
       }`}
     >
       <div className="flex items-start gap-3">
@@ -95,15 +95,15 @@ export default function CommentComposer({
             maxLength={3000}
             autoFocus={autoFocus}
             disabled={isSubmitting}
-            className="w-full bg-transparent text-zinc-100 placeholder-zinc-500 text-sm resize-none focus:outline-none leading-relaxed"
+            className="w-full bg-transparent text-[#201F1D] placeholder:text-stone-400 text-sm resize-none focus:outline-none leading-relaxed"
           />
 
           {errorMsg && (
-            <p className="text-xs text-rose-400 mt-1.5 font-medium">{errorMsg}</p>
+            <p className="text-xs text-rose-500 mt-1.5 font-medium">{errorMsg}</p>
           )}
 
-          <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-[#202024]">
-            <span className="text-[11px] text-zinc-500 tabular-nums">
+          <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-[#E8EAE8]">
+            <span className="text-[11px] text-[#777777] tabular-nums">
               {content.length}/3000
             </span>
 
@@ -113,7 +113,7 @@ export default function CommentComposer({
                   type="button"
                   onClick={onCancel}
                   disabled={isSubmitting}
-                  className="px-3 py-1.5 rounded-full text-xs text-zinc-400 hover:text-zinc-200 hover:bg-[#1f1f24] transition-colors"
+                  className="px-3 py-1.5 rounded-full text-xs text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8] transition-colors"
                 >
                   Cancel
                 </button>
@@ -122,7 +122,7 @@ export default function CommentComposer({
               <button
                 type="submit"
                 disabled={isSubmitting || !content.trim()}
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#FF6719] hover:bg-[#e8590c] disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold shadow-sm transition-all"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#0F8178] hover:bg-[#086B64] disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold shadow-xs transition-all"
               >
                 {isSubmitting ? (
                   <>

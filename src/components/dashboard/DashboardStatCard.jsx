@@ -8,14 +8,14 @@ export default function DashboardStatCard({
   label,
   value,
   icon: Icon,
-  iconColor = 'text-[#FF6719]',
-  iconBg = 'bg-orange-500/10 border-orange-500/20',
+  iconColor = 'text-[#0F8178]',
+  iconBg = 'bg-[#E9F8F5] border-[#0F8178]/20',
   subText = null,
 }) {
   return (
-    <div className="bg-[#141416] border border-[#242428] rounded-2xl p-4 sm:p-5 flex flex-col justify-between hover:border-[#32323a] transition-all group">
+    <div className="bg-white border border-[#E8EAE8] rounded-2xl p-4 sm:p-5 flex flex-col justify-between hover:border-[#0F8178]/30 hover:shadow-xs transition-all group">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-semibold text-zinc-400 group-hover:text-zinc-300 transition-colors">
+        <span className="text-xs font-semibold text-[#777777] group-hover:text-[#201F1D] transition-colors">
           {label}
         </span>
         <div
@@ -26,11 +26,11 @@ export default function DashboardStatCard({
       </div>
 
       <div>
-        <div className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight tabular-nums">
+        <div className="font-serif text-2xl sm:text-3xl font-bold text-[#201F1D] tracking-tight tabular-nums">
           {typeof value === 'number' ? value.toLocaleString() : value}
         </div>
         {subText && (
-          <p className="text-[11px] text-zinc-500 mt-1 truncate">
+          <p className="text-[11px] text-[#777777] mt-1 truncate">
             {subText}
           </p>
         )}

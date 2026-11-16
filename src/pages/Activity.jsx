@@ -114,12 +114,14 @@ export default function Activity() {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2">
-            <Bell className="w-5 h-5 text-[#FF6719]" />
-            <h1 className="font-serif text-2xl font-bold text-white tracking-tight">
+            <div className="w-8 h-8 rounded-lg bg-[#E9F8F5] text-[#0F8178] flex items-center justify-center">
+              <Bell className="w-4 h-4" />
+            </div>
+            <h1 className="font-serif text-2xl font-bold text-[#201F1D] tracking-tight">
               Activity & Notifications
             </h1>
             {unreadCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[#FF6719]/15 text-[#FF6719] border border-orange-500/20">
+              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[#E9F8F5] text-[#0F8178] border border-[#0F8178]/20">
                 {unreadCount} new
               </span>
             )}
@@ -133,7 +135,7 @@ export default function Activity() {
                 loadNotifications(1, false);
               }}
               title="Refresh alerts"
-              className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-[#1c1c22] border border-[#26262a] transition-colors"
+              className="p-2 rounded-xl text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8] border border-[#E8EAE8] bg-white transition-colors"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
             </button>
@@ -142,31 +144,31 @@ export default function Activity() {
               <button
                 type="button"
                 onClick={handleMarkAllAsRead}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#18181c] hover:bg-[#202026] text-zinc-300 hover:text-white text-xs font-medium border border-[#2a2a30] transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-[#F0FAF8] text-[#201F1D] hover:text-[#0F8178] text-xs font-medium border border-[#E8EAE8] shadow-2xs transition-colors"
               >
-                <CheckCheck className="w-3.5 h-3.5 text-[#FF6719]" />
+                <CheckCheck className="w-3.5 h-3.5 text-[#0F8178]" />
                 <span>Mark all as read</span>
               </button>
             )}
           </div>
         </div>
-        <p className="text-xs text-zinc-400">
+        <p className="text-xs text-[#777777]">
           Stay updated on reader applauds, comments, discussion replies, and new followers.
         </p>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-6 border-b border-[#222226] mb-5">
+      <div className="flex items-center gap-6 border-b border-[#E8EAE8] mb-5">
         <button
           type="button"
           onClick={() => setFilter('all')}
           className={`pb-3 text-sm font-semibold transition-colors relative ${
-            filter === 'all' ? 'text-white' : 'text-zinc-400 hover:text-zinc-200'
+            filter === 'all' ? 'text-[#0F8178]' : 'text-[#777777] hover:text-[#201F1D]'
           }`}
         >
           <span>All</span>
           {filter === 'all' && (
-            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF6719] rounded-full" />
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0F8178] rounded-full" />
           )}
         </button>
 
@@ -174,15 +176,15 @@ export default function Activity() {
           type="button"
           onClick={() => setFilter('unread')}
           className={`pb-3 text-sm font-semibold transition-colors relative flex items-center gap-2 ${
-            filter === 'unread' ? 'text-white' : 'text-zinc-400 hover:text-zinc-200'
+            filter === 'unread' ? 'text-[#0F8178]' : 'text-[#777777] hover:text-[#201F1D]'
           }`}
         >
           <span>Unread</span>
           {unreadCount > 0 && (
-            <span className="w-2 h-2 rounded-full bg-[#FF6719]" />
+            <span className="w-2 h-2 rounded-full bg-[#0F8178]" />
           )}
           {filter === 'unread' && (
-            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF6719] rounded-full" />
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0F8178] rounded-full" />
           )}
         </button>
       </div>
@@ -193,12 +195,12 @@ export default function Activity() {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="bg-[#141416] border border-[#242428] rounded-2xl p-4 flex items-center gap-4 animate-pulse"
+              className="bg-white border border-[#E8EAE8] rounded-2xl p-4 flex items-center gap-4 animate-pulse"
             >
-              <div className="w-10 h-10 rounded-full bg-zinc-800 shrink-0" />
+              <div className="w-10 h-10 rounded-full bg-stone-100 shrink-0" />
               <div className="flex-1 space-y-2">
-                <div className="h-3.5 bg-zinc-800 rounded w-2/3" />
-                <div className="h-2.5 bg-zinc-800/60 rounded w-1/4" />
+                <div className="h-3.5 bg-stone-100 rounded w-2/3" />
+                <div className="h-2.5 bg-stone-100/70 rounded w-1/4" />
               </div>
             </div>
           ))}
@@ -219,7 +221,7 @@ export default function Activity() {
               <button
                 type="button"
                 onClick={handleLoadMore}
-                className="px-5 py-2.5 rounded-full bg-[#18181c] hover:bg-[#202026] text-zinc-300 hover:text-white text-xs font-semibold border border-[#282830] transition-colors"
+                className="px-5 py-2.5 rounded-full bg-white hover:bg-[#F0FAF8] text-[#201F1D] hover:text-[#0F8178] text-xs font-semibold border border-[#E8EAE8] shadow-2xs transition-colors"
               >
                 Load More Activity
               </button>
@@ -227,14 +229,14 @@ export default function Activity() {
           )}
         </div>
       ) : (
-        <div className="bg-[#141416] border border-[#242428] rounded-2xl p-10 text-center my-4">
-          <div className="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-[#FF6719] flex items-center justify-center mx-auto mb-4">
+        <div className="bg-white border border-[#E8EAE8] rounded-2xl p-10 text-center my-4">
+          <div className="w-14 h-14 rounded-2xl bg-[#E9F8F5] border border-[#0F8178]/20 text-[#0F8178] flex items-center justify-center mx-auto mb-4">
             <Inbox className="w-7 h-7" />
           </div>
-          <h3 className="font-serif text-xl font-bold text-white mb-2">
+          <h3 className="font-serif text-xl font-bold text-[#201F1D] mb-2">
             {filter === 'unread' ? "You're all caught up!" : 'No activity yet'}
           </h3>
-          <p className="text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed mb-6">
+          <p className="text-xs text-[#777777] max-w-sm mx-auto leading-relaxed mb-6">
             {filter === 'unread'
               ? 'There are no unread notifications right now. Check back later or view all activity.'
               : 'When readers applaud your stories, comment on discussions, or follow your profile, alerts will arrive here in real time.'}
@@ -243,14 +245,14 @@ export default function Activity() {
             <button
               type="button"
               onClick={() => setFilter('all')}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1c1c20] hover:bg-[#282830] text-zinc-300 hover:text-white text-xs font-semibold border border-zinc-700/60 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#F8FAF9] hover:bg-[#F0FAF8] text-[#201F1D] text-xs font-semibold border border-[#E8EAE8] transition-colors"
             >
               <span>View All Activity</span>
             </button>
           ) : (
             <Link
               to="/write"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FF6719] hover:bg-[#e8590c] text-white text-xs font-semibold shadow transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0F8178] hover:bg-[#086B64] text-white text-xs font-semibold shadow-xs transition-colors"
             >
               <span>Publish a Story</span>
               <ArrowRight className="w-4 h-4" />

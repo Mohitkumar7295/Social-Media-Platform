@@ -42,17 +42,17 @@ export default function RelatedArticles({ currentPostId, category }) {
 
   if (isLoading) {
     return (
-      <div className="mt-16 pt-10 border-t border-[#242428]">
-        <div className="h-6 bg-zinc-800 rounded w-48 mb-6 animate-pulse" />
+      <div className="mt-16 pt-10 border-t border-[#E8EAE8]">
+        <div className="h-6 bg-stone-100 rounded w-48 mb-6 animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="bg-[#141416] border border-[#242428] rounded-2xl p-4 animate-pulse space-y-3"
+              className="bg-white border border-[#E8EAE8] rounded-2xl p-4 animate-pulse space-y-3"
             >
-              <div className="h-32 bg-zinc-800 rounded-xl" />
-              <div className="h-4 bg-zinc-800 rounded w-3/4" />
-              <div className="h-3 bg-zinc-800/60 rounded w-full" />
+              <div className="h-32 bg-stone-100 rounded-xl" />
+              <div className="h-4 bg-stone-100 rounded w-3/4" />
+              <div className="h-3 bg-stone-100/70 rounded w-full" />
             </div>
           ))}
         </div>
@@ -65,20 +65,20 @@ export default function RelatedArticles({ currentPostId, category }) {
   }
 
   return (
-    <section className="mt-16 pt-10 border-t border-[#242428]">
+    <section className="mt-16 pt-10 border-t border-[#E8EAE8]">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 className="font-serif text-2xl font-bold text-white tracking-tight">
+          <h3 className="font-serif text-2xl font-bold text-[#201F1D] tracking-tight">
             More stories you might enjoy
           </h3>
-          <p className="text-xs text-zinc-400 mt-0.5">
+          <p className="text-xs text-[#777777] mt-0.5">
             Recommended articles from thinkers across WriteSpace.
           </p>
         </div>
 
         <Link
           to="/explore"
-          className="text-xs font-semibold text-[#FF6719] hover:text-orange-400 flex items-center gap-1 transition-colors"
+          className="text-xs font-semibold text-[#0F8178] hover:text-[#086B64] flex items-center gap-1 transition-colors"
         >
           <span>Explore All</span>
           <ArrowRight className="w-3.5 h-3.5" />
@@ -92,12 +92,12 @@ export default function RelatedArticles({ currentPostId, category }) {
             <Link
               key={story.id}
               to={`/p/${story.slug}`}
-              className="group bg-[#141416] border border-[#242428] hover:border-[#34343c] rounded-2xl p-4 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 shadow-sm"
+              className="group bg-white border border-[#E8EAE8] hover:border-[#0F8178]/30 rounded-2xl p-4 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 shadow-2xs"
             >
               <div>
                 {/* Cover Image */}
                 {story.cover_image_url ? (
-                  <div className="rounded-xl overflow-hidden border border-[#242428] h-36 w-full mb-3.5">
+                  <div className="rounded-xl overflow-hidden border border-[#E8EAE8] h-36 w-full mb-3.5">
                     <img
                       src={story.cover_image_url}
                       alt={story.title}
@@ -105,14 +105,14 @@ export default function RelatedArticles({ currentPostId, category }) {
                     />
                   </div>
                 ) : (
-                  <div className="rounded-xl bg-[#1a1a20] border border-[#242428] h-36 w-full mb-3.5 flex items-center justify-center text-zinc-600">
+                  <div className="rounded-xl bg-[#F8FAF9] border border-[#E8EAE8] h-36 w-full mb-3.5 flex items-center justify-center text-stone-300">
                     <BookOpen className="w-8 h-8 opacity-40" />
                   </div>
                 )}
 
                 {/* Category & Reading Time */}
-                <div className="flex items-center gap-2 mb-2 text-[11px] text-zinc-400">
-                  <span className="px-2 py-0.5 rounded-full bg-[#1c1c22] text-[#FF6719] font-medium border border-orange-500/10">
+                <div className="flex items-center gap-2 mb-2 text-[11px] text-[#777777]">
+                  <span className="px-2 py-0.5 rounded-full bg-[#E9F8F5] text-[#0F8178] font-medium border border-[#0F8178]/20">
                     {story.category || 'General'}
                   </span>
                   <span>•</span>
@@ -123,27 +123,27 @@ export default function RelatedArticles({ currentPostId, category }) {
                 </div>
 
                 {/* Title */}
-                <h4 className="font-serif font-bold text-base text-zinc-100 group-hover:text-white line-clamp-2 leading-snug mb-2">
+                <h4 className="font-serif font-bold text-base text-[#201F1D] group-hover:text-[#0F8178] line-clamp-2 leading-snug mb-2 transition-colors">
                   {story.title}
                 </h4>
 
                 {/* Excerpt */}
                 {story.excerpt && (
-                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed mb-4">
+                  <p className="text-xs text-[#555555] line-clamp-2 leading-relaxed mb-4">
                     {story.excerpt}
                   </p>
                 )}
               </div>
 
               {/* Author footer */}
-              <div className="flex items-center gap-2.5 pt-3 border-t border-[#202024] mt-2">
+              <div className="flex items-center gap-2.5 pt-3 border-t border-[#E8EAE8] mt-2">
                 <UserAvatar
                   src={author.avatar_url}
                   name={author.full_name}
                   username={author.username}
                   size="xs"
                 />
-                <span className="text-xs font-medium text-zinc-300 truncate">
+                <span className="text-xs font-medium text-[#201F1D] truncate">
                   {author.full_name || 'Writer'}
                 </span>
               </div>

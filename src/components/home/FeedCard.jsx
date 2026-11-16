@@ -4,7 +4,6 @@ import {
   MessageCircle,
   Share2,
   Bookmark,
-  MoreHorizontal,
   Clock,
   Sparkles,
 } from 'lucide-react';
@@ -15,8 +14,6 @@ import { commentService } from '../../services/commentService';
 import ShareButton from '../reading/ShareButton';
 
 export default function FeedCard({ post }) {
-  const [showInteractionNotice, setShowInteractionNotice] = useState(false);
-  const [interactionName, setInteractionName] = useState('');
   const [commentsCount, setCommentsCount] = useState(post?.comments_count || 0);
 
   useEffect(() => {
@@ -39,11 +36,6 @@ export default function FeedCard({ post }) {
   const authorName = author.full_name || 'Anonymous Author';
   const authorUsername = author.username || 'writer';
 
-  const handleInteraction = (name) => {
-    setInteractionName(name);
-    setShowInteractionNotice(true);
-  };
-
   const formattedDate = post.created_at
     ? new Date(post.created_at).toLocaleDateString('en-US', {
         month: 'short',
@@ -52,140 +44,105 @@ export default function FeedCard({ post }) {
     : 'Recent';
 
   return (
-    <>
-      <article className="bg-[#141416] border border-[#242428] rounded-2xl p-5 mb-4 hover:border-[#303038] transition-all duration-150">
-        {/* Header: Author Info */}
-        <div className="flex items-center justify-between mb-3.5">
-          <div className="flex items-center gap-3">
-            <Link to={`/profile/${authorUsername}`} className="hover:opacity-90 transition-opacity">
-              <UserAvatar
-                src={author.avatar_url}
-                name={authorName}
-                username={authorUsername}
-                size="md"
-              />
-            </Link>
-            <div>
-              <div className="flex items-center gap-2">
-                <Link
-                  to={`/profile/${authorUsername}`}
-                  className="font-semibold text-sm text-zinc-100 hover:text-white transition-colors"
-                >
-                  {authorName}
-                </Link>
-                <span className="text-zinc-500 text-xs">•</span>
-                <span className="text-xs text-zinc-400">{formattedDate}</span>
-              </div>
-              <p className="text-xs text-zinc-400">@{authorUsername}</p>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => handleInteraction('Options')}
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-[#1e1e24] transition-colors"
-          >
-            <MoreHorizontal className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Post Content */}
-        <div className="mb-4">
-          {post.title && (
-            <Link to={post.slug ? `/p/${post.slug}` : '#'}>
-              <h3 className="font-serif text-xl font-bold text-white mb-1.5 tracking-tight hover:text-[#FF6719] transition-colors leading-snug">
-                {post.title}
-              </h3>
-            </Link>
-          )}
-
-          {(post.excerpt || post.content) && (
-            <Link to={post.slug ? `/p/${post.slug}` : '#'}>
-              <p className="text-sm text-zinc-300 leading-relaxed line-clamp-3">
-                {post.excerpt || post.content.replace(/<[^>]*>/g, ' ')}
-              </p>
-            </Link>
-          )}
-
-          {post.cover_image_url && (
-            <Link to={post.slug ? `/p/${post.slug}` : '#'}>
-              <div className="mt-3 rounded-xl overflow-hidden border border-[#26262a] max-h-72">
-                <img
-                  src={post.cover_image_url}
-                  alt={post.title || 'Post cover'}
-                  className="w-full h-full object-cover hover:scale-[1.01] transition-transform duration-200"
-                />
-              </div>
-            </Link>
-          )}
-
-          {/* Metadata pill */}
-          <div className="flex items-center gap-3 mt-3 text-xs text-zinc-400">
-            {post.category && (
-              <span className="px-2.5 py-0.5 rounded-full bg-[#1e1e24] text-zinc-300 font-medium">
-                {post.category}
-              </span>
-            )}
-            <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5" />
-              {post.reading_time || 1} min read
-            </span>
-          </div>
-        </div>
-
-        {/* Footer: Interactions */}
-        <div className="flex items-center justify-between pt-3 border-t border-[#202024] text-zinc-400 text-xs">
-          <div className="flex items-center gap-5">
-            <LikeButton postId={post.id} size="sm" />
-
-            <Link
-              to={post.slug ? `/p/${post.slug}#responses` : '#'}
-              className="flex items-center gap-1.5 hover:text-blue-400 transition-colors group"
-              title="View responses"
-            >
-              <MessageCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span className="tabular-nums">
-                {commentsCount > 0 ? commentsCount.toLocaleString() : 'Comment'}
-              </span>
-            </Link>
-
-            <ShareButton
-              title={post.title}
-              text={post.excerpt}
-              className="p-0 text-zinc-400 hover:text-emerald-400 hover:bg-transparent"
-              buttonText="Share"
+    <article className="bg-white border border-[#E8EAE8] rounded-2xl p-5 mb-4 shadow-xs hover:border-[#0F8178]/40 hover:shadow-sm transition-all duration-150">
+      {/* Header: Author Info */}
+      <div className="flex items-center justify-between mb-3.5">
+        <div className="flex items-center gap-3">
+          <Link to={`/profile/${authorUsername}`} className="hover:opacity-90 transition-opacity">
+            <UserAvatar
+              src={author.avatar_url}
+              name={authorName}
+              username={authorUsername}
+              size="md"
             />
-          </div>
-
-          <BookmarkButton postId={post.id} size="sm" />
-        </div>
-      </article>
-
-      {/* Interaction notice modal */}
-      {showInteractionNotice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="w-full max-w-sm bg-[#18181c] border border-[#2e2e36] rounded-2xl p-6 shadow-2xl">
-            <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 text-[#FF6719] flex items-center justify-center mb-3">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <h4 className="text-lg font-serif font-bold text-white mb-1.5">
-              {interactionName} Coming in Future Phases
-            </h4>
-            <p className="text-xs text-zinc-400 leading-relaxed mb-5">
-              Social interactions like likes, comments, and restacks are scheduled for Phase 6 & Phase 7. WriteSpace strictly avoids fake counters or mock interaction data.
-            </p>
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => setShowInteractionNotice(false)}
-                className="px-4 py-2 rounded-xl bg-[#FF6719] hover:bg-[#e8590c] text-white font-medium text-xs transition-colors"
+          </Link>
+          <div>
+            <div className="flex items-center gap-2">
+              <Link
+                to={`/profile/${authorUsername}`}
+                className="font-semibold text-sm text-[#201F1D] hover:text-[#0F8178] transition-colors"
               >
-                Close
-              </button>
+                {authorName}
+              </Link>
+              <span className="text-[#999999] text-xs">•</span>
+              <span className="text-xs text-[#777777]">{formattedDate}</span>
             </div>
+            <p className="text-xs text-[#777777]">@{authorUsername}</p>
           </div>
         </div>
-      )}
-    </>
+
+        {post.category && (
+          <span className="px-2.5 py-0.5 rounded-full bg-[#E9F8F5] text-[#0F8178] text-[11px] font-semibold border border-[#0F8178]/20">
+            {post.category}
+          </span>
+        )}
+      </div>
+
+      {/* Post Content */}
+      <div className="mb-4">
+        {post.title && (
+          <Link to={post.slug ? `/p/${post.slug}` : '#'}>
+            <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#201F1D] mb-1.5 tracking-tight hover:text-[#0F8178] transition-colors leading-snug">
+              {post.title}
+            </h3>
+          </Link>
+        )}
+
+        {(post.excerpt || post.content) && (
+          <Link to={post.slug ? `/p/${post.slug}` : '#'}>
+            <p className="text-sm text-[#555555] leading-relaxed line-clamp-3">
+              {post.excerpt || post.content.replace(/<[^>]*>/g, ' ')}
+            </p>
+          </Link>
+        )}
+
+        {post.cover_image_url && (
+          <Link to={post.slug ? `/p/${post.slug}` : '#'}>
+            <div className="mt-3.5 rounded-xl overflow-hidden border border-[#E8EAE8] max-h-72">
+              <img
+                src={post.cover_image_url}
+                alt={post.title || 'Post cover'}
+                className="w-full h-full object-cover hover:scale-[1.01] transition-transform duration-200"
+              />
+            </div>
+          </Link>
+        )}
+
+        {/* Reading time */}
+        <div className="flex items-center gap-3 mt-3 text-xs text-[#777777]">
+          <span className="flex items-center gap-1">
+            <Clock className="w-3.5 h-3.5 text-[#0F8178]" />
+            <span>{post.reading_time || 1} min read</span>
+          </span>
+        </div>
+      </div>
+
+      {/* Footer: Interactions */}
+      <div className="flex items-center justify-between pt-3 border-t border-[#E8EAE8] text-[#777777] text-xs">
+        <div className="flex items-center gap-5">
+          <LikeButton postId={post.id} size="sm" />
+
+          <Link
+            to={post.slug ? `/p/${post.slug}#responses` : '#'}
+            className="flex items-center gap-1.5 hover:text-[#0F8178] transition-colors group"
+            title="View responses"
+          >
+            <MessageCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
+            <span className="tabular-nums font-medium">
+              {commentsCount > 0 ? commentsCount.toLocaleString() : 'Comment'}
+            </span>
+          </Link>
+
+          <ShareButton
+            title={post.title}
+            text={post.excerpt}
+            className="p-0 text-[#777777] hover:text-[#0F8178] hover:bg-transparent"
+            buttonText="Share"
+          />
+        </div>
+
+        <BookmarkButton postId={post.id} size="sm" />
+      </div>
+    </article>
   );
 }

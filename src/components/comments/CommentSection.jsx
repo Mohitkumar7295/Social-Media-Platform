@@ -156,14 +156,16 @@ export default function CommentSection({ postId, onCommentCountChange }) {
   };
 
   return (
-    <section id="responses" className="mt-12 pt-8 border-t border-[#202024] scroll-mt-24">
+    <section id="responses" className="mt-12 pt-8 border-t border-[#E8EAE8] scroll-mt-24">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2.5">
-          <MessageCircle className="w-5 h-5 text-[#FF6719]" />
-          <h3 className="font-serif text-xl sm:text-2xl font-bold text-white tracking-tight">
+          <div className="w-7 h-7 rounded-lg bg-[#E9F8F5] text-[#0F8178] flex items-center justify-center">
+            <MessageCircle className="w-4 h-4" />
+          </div>
+          <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#201F1D] tracking-tight">
             Responses{' '}
-            <span className="font-sans text-sm font-normal text-zinc-400">
+            <span className="font-sans text-sm font-normal text-[#777777]">
               ({totalCount})
             </span>
           </h3>
@@ -173,7 +175,7 @@ export default function CommentSection({ postId, onCommentCountChange }) {
           type="button"
           onClick={loadComments}
           disabled={isLoading}
-          className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-[#1a1a20] transition-colors"
+          className="p-1.5 rounded-lg text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8] transition-colors"
           title="Refresh responses"
         >
           <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -192,12 +194,12 @@ export default function CommentSection({ postId, onCommentCountChange }) {
 
       {/* Error state */}
       {errorMsg && (
-        <div className="p-4 mb-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 flex items-center justify-between">
+        <div className="p-4 mb-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center justify-between">
           <span>{errorMsg}</span>
           <button
             type="button"
             onClick={loadComments}
-            className="underline hover:text-white ml-2 font-semibold"
+            className="underline hover:text-rose-900 ml-2 font-semibold"
           >
             Retry
           </button>
@@ -208,13 +210,13 @@ export default function CommentSection({ postId, onCommentCountChange }) {
       {isLoading && comments.length === 0 && (
         <div className="space-y-4 animate-pulse">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="py-4 border-b border-[#202024] space-y-2.5">
+            <div key={i} className="py-4 border-b border-[#E8EAE8] space-y-2.5">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-zinc-800" />
-                <div className="h-4 bg-zinc-800 rounded w-28" />
+                <div className="w-8 h-8 rounded-full bg-stone-100" />
+                <div className="h-4 bg-stone-100 rounded w-28" />
               </div>
-              <div className="h-4 bg-zinc-800/80 rounded w-4/5 ml-11" />
-              <div className="h-3 bg-zinc-800/60 rounded w-1/2 ml-11" />
+              <div className="h-4 bg-stone-100 rounded w-4/5 ml-11" />
+              <div className="h-3 bg-stone-100/70 rounded w-1/2 ml-11" />
             </div>
           ))}
         </div>
@@ -222,14 +224,14 @@ export default function CommentSection({ postId, onCommentCountChange }) {
 
       {/* Empty State */}
       {!isLoading && comments.length === 0 && (
-        <div className="text-center py-12 px-4 rounded-2xl bg-[#141416]/50 border border-[#202024]">
-          <div className="w-12 h-12 rounded-2xl bg-zinc-800/60 text-zinc-400 flex items-center justify-center mx-auto mb-3">
-            <MessageSquareOff className="w-6 h-6" />
+        <div className="text-center py-12 px-4 rounded-2xl bg-[#F8FAF9] border border-[#E8EAE8]">
+          <div className="w-12 h-12 rounded-2xl bg-white border border-[#E8EAE8] text-[#777777] flex items-center justify-center mx-auto mb-3">
+            <MessageSquareOff className="w-6 h-6 text-[#0F8178]" />
           </div>
-          <h4 className="text-sm font-semibold text-zinc-200 mb-1">
+          <h4 className="text-sm font-semibold text-[#201F1D] mb-1">
             No responses yet
           </h4>
-          <p className="text-xs text-zinc-400 max-w-sm mx-auto">
+          <p className="text-xs text-[#777777] max-w-sm mx-auto">
             Be the first to share your thoughts, critique, or encouragement with the author.
           </p>
         </div>

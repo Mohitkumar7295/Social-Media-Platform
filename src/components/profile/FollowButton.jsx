@@ -7,7 +7,9 @@ import { followService } from '../../services/followService';
 /**
  * FollowButton Component
  * Renders an interactive follow/unfollow button connected to InsForge PostgreSQL 'follows' table.
- * Enforces self-follow prevention, optimistic updates, rollback on error, and login redirects.
+ * Adheres to the white & teal design palette:
+ * - Follow: Teal green with white text
+ * - Following: Light mint with teal text, turning soft rose on hover to signal Unfollow
  */
 export default function FollowButton({
   targetUserId,
@@ -47,7 +49,7 @@ export default function FollowButton({
     };
   }, [user?.id, targetUserId, initialIsFollowing]);
 
-  // 1. Prevent self-following: render nothing if target is the current user
+  // Prevent self-following
   if (user?.id && targetUserId && user.id === targetUserId) {
     return null;
   }
@@ -56,7 +58,6 @@ export default function FollowButton({
     e.preventDefault();
     e.stopPropagation();
 
-    // 2. Redirect guests to login
     if (!user) {
       navigate('/login', { state: { from: location.pathname } });
       return;
@@ -64,7 +65,7 @@ export default function FollowButton({
 
     if (isSubmitting || !targetUserId) return;
 
-    // 3. Optimistic local update
+    // Optimistic local update
     const previousState = isFollowing;
     const newState = !previousState;
     setIsFollowing(newState);
@@ -130,18 +131,16 @@ export default function FollowButton({
       } ${
         isFollowing
           ? isHovered
-            ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20'
-            : 'bg-[#1e1e24] text-zinc-300 border border-zinc-700/60 hover:border-zinc-500'
-          : variant === 'primary'
-          ? 'bg-[#FF6719] hover:bg-[#e8590c] text-white shadow'
-          : 'bg-zinc-100 hover:bg-white text-zinc-900'
+            ? 'bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100'
+            : 'bg-[#E9F8F5] text-[#0F8178] border border-[#0F8178]/30 hover:border-[#0F8178]/50'
+          : 'bg-[#0F8178] hover:bg-[#086B64] text-white'
       } ${className}`}
       title={
         isFollowing
           ? isHovered
-            ? 'Unfollow user'
-            : 'Following'
-          : 'Follow user'
+            ? 'Unfollow author'
+            : 'Subscribed / Following'
+          : 'Follow author'
       }
     >
       {isSubmitting ? (
@@ -157,7 +156,7 @@ export default function FollowButton({
           </>
         ) : (
           <>
-            <UserCheck className={`${iconSizes[size] || iconSizes.sm} text-emerald-400`} />
+            <UserCheck className={`${iconSizes[size] || iconSizes.sm} text-[#0F8178]`} />
             <span>Following</span>
           </>
         )

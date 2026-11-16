@@ -279,52 +279,52 @@ export default function Write() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0e0e10] flex items-center justify-center text-zinc-400">
-        <RefreshCw className="w-6 h-6 animate-spin text-[#FF6719] mr-2" />
+      <div className="min-h-screen bg-white flex items-center justify-center text-[#777777]">
+        <RefreshCw className="w-6 h-6 animate-spin text-[#0F8178] mr-2" />
         <span>Loading story draft...</span>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0e0e10] text-zinc-100 flex flex-col selection:bg-orange-950/60 selection:text-orange-200">
+    <div className="min-h-screen bg-white text-[#201F1D] flex flex-col selection:bg-[#E9F8F5] selection:text-[#0F8178]">
       {/* Top Fixed Editorial Toolbar */}
-      <header className="sticky top-0 z-40 bg-[#121214]/95 backdrop-blur-md border-b border-[#222226] px-4 sm:px-8 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E8EAE8] px-4 sm:px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link
             to="/home"
-            className="flex items-center gap-1.5 text-zinc-400 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl hover:bg-[#1c1c22] transition-colors"
+            className="flex items-center gap-1.5 text-[#777777] hover:text-[#201F1D] text-xs font-semibold px-3 py-1.5 rounded-xl hover:bg-[#F0FAF8] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back</span>
           </Link>
 
           {/* Auto-save Status Indicator */}
-          <div className="flex items-center gap-1.5 text-xs text-zinc-400 select-none">
+          <div className="flex items-center gap-1.5 text-xs text-[#777777] select-none">
             {saveStatus === 'saving' && (
               <>
                 <RefreshCw className="w-3.5 h-3.5 animate-spin text-amber-500" />
-                <span className="text-zinc-400">Saving draft...</span>
+                <span className="text-[#777777]">Saving draft...</span>
               </>
             )}
             {saveStatus === 'saved' && (
               <>
-                <Check className="w-3.5 h-3.5 text-emerald-500" />
-                <span className="text-zinc-500">Saved to cloud</span>
+                <Check className="w-3.5 h-3.5 text-[#0F8178]" />
+                <span className="text-[#777777]">Saved to cloud</span>
               </>
             )}
             {saveStatus === 'unsaved' && (
-              <span className="text-zinc-500 italic">Unsaved changes</span>
+              <span className="text-[#777777] italic">Unsaved changes</span>
             )}
             {saveStatus === 'error' && (
-              <span className="text-rose-400">Save error</span>
+              <span className="text-rose-500">Save error</span>
             )}
           </div>
         </div>
 
         {/* Right Action buttons: Preview & Publish */}
         <div className="flex items-center gap-3">
-          <span className="hidden sm:flex items-center gap-1 text-xs text-zinc-500 mr-2">
+          <span className="hidden sm:flex items-center gap-1 text-xs text-[#777777] mr-2">
             <Clock className="w-3.5 h-3.5" />
             {readingTime} min read
           </span>
@@ -332,7 +332,7 @@ export default function Write() {
           <button
             type="button"
             onClick={() => setShowPreviewModal(true)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#1c1c20] hover:bg-[#26262c] text-zinc-300 hover:text-white text-xs font-semibold border border-zinc-700/60 transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F8FAF9] hover:bg-[#F0FAF8] text-[#201F1D] text-xs font-semibold border border-[#E8EAE8] transition-colors"
           >
             <Eye className="w-3.5 h-3.5" />
             <span>Preview</span>
@@ -341,7 +341,7 @@ export default function Write() {
           <button
             type="button"
             onClick={() => setShowPublishModal(true)}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#FF6719] hover:bg-[#e8590c] active:scale-[0.98] text-white text-xs font-semibold shadow-md shadow-orange-950/40 transition-all"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#0F8178] hover:bg-[#086B64] active:scale-[0.98] text-white text-xs font-semibold shadow-xs transition-all"
           >
             <span>{status === 'published' ? 'Update & Publish' : 'Publish'}</span>
             <Send className="w-3.5 h-3.5" />
@@ -353,7 +353,7 @@ export default function Write() {
       <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-10 flex flex-col gap-6">
         {/* Error Banner if any */}
         {errorMessage && (
-          <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center justify-between">
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center justify-between">
             <span>{errorMessage}</span>
             <button onClick={() => setErrorMessage('')}>
               <X className="w-4 h-4" />
@@ -364,14 +364,14 @@ export default function Write() {
         {/* Cover Image Upload Area */}
         <div className="group relative">
           {coverImageUrl ? (
-            <div className="relative rounded-2xl overflow-hidden border border-[#26262a] max-h-80 w-full shadow-lg">
+            <div className="relative rounded-2xl overflow-hidden border border-[#E8EAE8] max-h-80 w-full shadow-md">
               <img
                 src={coverImageUrl}
                 alt="Article Cover"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute top-3 right-3 flex items-center gap-2 bg-black/70 backdrop-blur-md p-1.5 rounded-xl border border-white/10">
-                <label className="cursor-pointer text-xs font-semibold text-zinc-200 hover:text-white px-2 py-1 rounded-lg hover:bg-white/10 transition-colors">
+              <div className="absolute top-3 right-3 flex items-center gap-2 bg-stone-900/70 backdrop-blur-md p-1.5 rounded-xl border border-white/20">
+                <label className="cursor-pointer text-xs font-semibold text-stone-200 hover:text-white px-2 py-1 rounded-lg hover:bg-white/10 transition-colors">
                   Change Cover
                   <input
                     type="file"
@@ -384,7 +384,7 @@ export default function Write() {
                 <button
                   type="button"
                   onClick={handleRemoveCover}
-                  className="p-1 rounded-lg text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 transition-colors"
+                  className="p-1 rounded-lg text-rose-300 hover:text-white hover:bg-rose-500/30 transition-colors"
                   title="Remove Cover"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -392,8 +392,8 @@ export default function Write() {
               </div>
             </div>
           ) : (
-            <label className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-zinc-200 hover:bg-[#18181c] w-fit cursor-pointer border border-dashed border-zinc-800 hover:border-zinc-700 transition-colors">
-              <ImageIcon className="w-4 h-4 text-[#FF6719]" />
+            <label className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#555555] hover:text-[#0F8178] hover:bg-[#F0FAF8] w-fit cursor-pointer border border-dashed border-stone-300 hover:border-[#0F8178] transition-colors">
+              <ImageIcon className="w-4 h-4 text-[#0F8178]" />
               <span>{isUploadingCover ? 'Uploading cover image...' : 'Add cover image'}</span>
               <input
                 type="file"
@@ -414,13 +414,13 @@ export default function Write() {
             placeholder="Title"
             rows={1}
             maxLength={200}
-            className="w-full bg-transparent font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white placeholder:text-zinc-600 focus:outline-none resize-none tracking-tight leading-tight"
+            className="w-full bg-transparent font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#201F1D] placeholder:text-stone-300 focus:outline-none resize-none tracking-tight leading-tight"
             onInput={(e) => {
               e.target.style.height = 'auto';
               e.target.style.height = `${e.target.scrollHeight}px`;
             }}
           />
-          <div className="flex justify-end text-[11px] text-zinc-600 mt-1">
+          <div className="flex justify-end text-[11px] text-[#777777] mt-1">
             {title.length}/200
           </div>
         </div>
@@ -433,9 +433,9 @@ export default function Write() {
             onChange={(e) => setSubtitle(e.target.value.slice(0, 300))}
             placeholder="Add a subtitle..."
             maxLength={300}
-            className="w-full bg-transparent font-serif text-lg sm:text-xl text-zinc-300 placeholder:text-zinc-600 focus:outline-none border-b border-[#202024] pb-3"
+            className="w-full bg-transparent font-serif text-lg sm:text-xl text-[#555555] placeholder:text-stone-300 focus:outline-none border-b border-[#E8EAE8] pb-3"
           />
-          <div className="flex justify-end text-[11px] text-zinc-600 mt-1">
+          <div className="flex justify-end text-[11px] text-[#777777] mt-1">
             {subtitle.length}/300
           </div>
         </div>
@@ -450,14 +450,14 @@ export default function Write() {
 
       {/* Publish Settings Modal */}
       {showPublishModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
-          <div className="w-full max-w-lg bg-[#161619] border border-[#2a2a30] rounded-2xl p-6 shadow-2xl flex flex-col gap-5">
-            <div className="flex items-center justify-between pb-3 border-b border-[#242428]">
-              <h3 className="font-serif text-xl font-bold text-white">Publishing Settings</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="w-full max-w-lg bg-white border border-[#E8EAE8] rounded-2xl p-6 shadow-2xl flex flex-col gap-5">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E8EAE8]">
+              <h3 className="font-serif text-xl font-bold text-[#201F1D]">Publishing Settings</h3>
               <button
                 type="button"
                 onClick={() => setShowPublishModal(false)}
-                className="p-1.5 rounded-lg text-zinc-400 hover:text-white"
+                className="p-1.5 rounded-lg text-[#777777] hover:text-[#201F1D]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -465,13 +465,13 @@ export default function Write() {
 
             {/* Category selection */}
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 mb-2">
+              <label className="block text-xs font-semibold text-[#201F1D] mb-2">
                 Category
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full bg-[#121214] border border-[#282830] rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-[#FF6719]"
+                className="w-full bg-[#F8FAF9] border border-[#E8EAE8] rounded-xl px-3.5 py-2.5 text-sm text-[#201F1D] focus:outline-none focus:border-[#0F8178]"
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -483,7 +483,7 @@ export default function Write() {
 
             {/* Custom Excerpt */}
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 mb-2">
+              <label className="block text-xs font-semibold text-[#201F1D] mb-2">
                 Story Preview Description (Excerpt)
               </label>
               <textarea
@@ -492,19 +492,19 @@ export default function Write() {
                 rows={3}
                 maxLength={240}
                 placeholder="Brief summary shown on feeds and social shares..."
-                className="w-full bg-[#121214] border border-[#282830] rounded-xl p-3 text-xs text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-[#FF6719] resize-none"
+                className="w-full bg-[#F8FAF9] border border-[#E8EAE8] rounded-xl p-3 text-xs text-[#201F1D] placeholder:text-stone-400 focus:outline-none focus:border-[#0F8178] resize-none"
               />
-              <span className="text-[11px] text-zinc-500 float-right">
+              <span className="text-[11px] text-[#777777] float-right">
                 {(excerpt || extractExcerpt(content)).length}/240
               </span>
             </div>
 
             {/* Publish Actions */}
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#242428]">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E8EAE8]">
               <button
                 type="button"
                 onClick={() => setShowPublishModal(false)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8] transition-colors"
               >
                 Cancel
               </button>
@@ -513,7 +513,7 @@ export default function Write() {
                 type="button"
                 onClick={handlePublish}
                 disabled={publishLoading || !title.trim()}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#FF6719] hover:bg-[#e8590c] active:scale-[0.98] text-white text-xs font-semibold shadow-md shadow-orange-950/40 transition-all disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0F8178] hover:bg-[#086B64] active:scale-[0.98] text-white text-xs font-semibold shadow-xs transition-all disabled:opacity-50"
               >
                 {publishLoading ? (
                   <>
@@ -534,40 +534,40 @@ export default function Write() {
 
       {/* Story Preview Modal */}
       {showPreviewModal && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md overflow-y-auto p-4 sm:p-8 animate-in fade-in duration-150">
-          <div className="max-w-3xl mx-auto bg-[#121214] border border-[#242428] rounded-2xl p-6 sm:p-10 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs overflow-y-auto p-4 sm:p-8 animate-in fade-in duration-150">
+          <div className="max-w-3xl mx-auto bg-white border border-[#E8EAE8] rounded-2xl p-6 sm:p-10 shadow-2xl relative">
             <button
               type="button"
               onClick={() => setShowPreviewModal(false)}
-              className="absolute top-6 right-6 p-2 rounded-xl bg-[#1c1c20] text-zinc-400 hover:text-white"
+              className="absolute top-6 right-6 p-2 rounded-xl bg-[#F8FAF9] text-[#777777] hover:text-[#201F1D]"
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* Preview Banner */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-[#FF6719] text-xs font-semibold mb-6">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E9F8F5] border border-[#0F8178]/20 text-[#0F8178] text-xs font-semibold mb-6">
               <Eye className="w-3.5 h-3.5" />
               <span>Story Preview Mode</span>
             </div>
 
             {/* Preview Cover */}
             {coverImageUrl && (
-              <div className="rounded-2xl overflow-hidden border border-[#26262a] max-h-80 w-full mb-6">
+              <div className="rounded-2xl overflow-hidden border border-[#E8EAE8] max-h-80 w-full mb-6">
                 <img src={coverImageUrl} alt={title} className="w-full h-full object-cover" />
               </div>
             )}
 
             {/* Preview Header */}
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-white mb-2 leading-tight">
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#201F1D] mb-2 leading-tight">
               {title || 'Untitled Story'}
             </h1>
 
             {subtitle && (
-              <p className="font-serif text-lg text-zinc-400 mb-6 italic">{subtitle}</p>
+              <p className="font-serif text-lg text-[#555555] mb-6 italic">{subtitle}</p>
             )}
 
             {/* Author info pill */}
-            <div className="flex items-center gap-3 py-4 border-y border-[#202024] mb-8">
+            <div className="flex items-center gap-3 py-4 border-y border-[#E8EAE8] mb-8">
               <UserAvatar
                 src={profile?.avatar_url}
                 name={profile?.full_name}
@@ -575,20 +575,20 @@ export default function Write() {
                 size="md"
               />
               <div>
-                <p className="text-sm font-semibold text-white">{profile?.full_name}</p>
-                <div className="flex items-center gap-2 text-xs text-zinc-400">
+                <p className="text-sm font-semibold text-[#201F1D]">{profile?.full_name}</p>
+                <div className="flex items-center gap-2 text-xs text-[#777777]">
                   <span>@{profile?.username}</span>
                   <span>•</span>
                   <span>{readingTime} min read</span>
                   <span>•</span>
-                  <span className="text-[#FF6719]">{category}</span>
+                  <span className="text-[#0F8178] font-semibold">{category}</span>
                 </div>
               </div>
             </div>
 
             {/* Preview Body */}
             <div
-              className="prose prose-invert max-w-none font-serif text-lg leading-relaxed text-zinc-200"
+              className="prose max-w-none font-serif text-lg leading-relaxed text-[#292524]"
               dangerouslySetInnerHTML={{ __html: content || '<p><i>No content yet...</i></p>' }}
             />
           </div>

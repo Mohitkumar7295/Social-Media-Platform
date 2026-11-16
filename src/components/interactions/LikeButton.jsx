@@ -129,8 +129,8 @@ export default function LikeButton({
       disabled={isSubmitting}
       className={`inline-flex items-center gap-1.5 transition-colors group ${
         liked
-          ? 'text-rose-500 hover:text-rose-400'
-          : 'text-zinc-400 hover:text-rose-400'
+          ? 'text-rose-500 hover:text-rose-600'
+          : 'text-[#777777] hover:text-rose-500'
       } ${className}`}
       title={liked ? 'Unlike article' : 'Applaud article'}
       aria-label={liked ? 'Unlike' : 'Like'}

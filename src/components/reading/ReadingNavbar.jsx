@@ -41,13 +41,13 @@ export default function ReadingNavbar({ post }) {
   const authorHandle = profile?.username || 'me';
 
   return (
-    <header className="sticky top-0 z-40 bg-[#121214]/95 backdrop-blur-md border-b border-[#222226] px-4 sm:px-8 py-3 flex items-center justify-between">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E8EAE8] px-4 sm:px-8 py-3 flex items-center justify-between">
       {/* Left: Back & Logo */}
       <div className="flex items-center gap-3 sm:gap-5">
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="flex items-center gap-1.5 text-zinc-400 hover:text-white text-xs font-semibold px-2.5 py-1.5 rounded-xl hover:bg-[#1c1c22] transition-colors"
+          className="flex items-center gap-1.5 text-[#777777] hover:text-[#201F1D] text-xs font-semibold px-2.5 py-1.5 rounded-xl hover:bg-[#F0FAF8] transition-colors"
           title="Go Back"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -56,9 +56,9 @@ export default function ReadingNavbar({ post }) {
 
         <Link
           to={isAuthenticated ? '/home' : '/'}
-          className="flex items-center gap-2.5 text-white hover:opacity-90 transition-opacity"
+          className="flex items-center gap-2.5 text-[#201F1D] hover:opacity-90 transition-opacity"
         >
-          <div className="w-7 h-7 rounded-lg bg-[#FF6719] flex items-center justify-center text-white shadow-sm">
+          <div className="w-7 h-7 rounded-lg bg-[#0F8178] flex items-center justify-center text-white shadow-2xs">
             <Feather className="w-4 h-4 text-white" />
           </div>
           <span className="font-serif font-bold text-lg tracking-tight">WriteSpace</span>
@@ -70,7 +70,7 @@ export default function ReadingNavbar({ post }) {
         {/* Explore link */}
         <Link
           to="/explore"
-          className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 px-3 py-1.5 rounded-xl hover:bg-[#1a1a20] transition-colors"
+          className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-[#777777] hover:text-[#201F1D] px-3 py-1.5 rounded-xl hover:bg-[#F0FAF8] transition-colors"
         >
           <Compass className="w-3.5 h-3.5" />
           <span>Explore</span>
@@ -80,7 +80,7 @@ export default function ReadingNavbar({ post }) {
         <ShareButton
           title={post?.title}
           text={post?.excerpt}
-          className="px-3 py-1.5 rounded-full bg-[#1c1c20] hover:bg-[#282830] text-zinc-300 hover:text-white text-xs font-semibold border border-zinc-700/60"
+          className="px-3 py-1.5 rounded-full bg-[#F8FAF9] hover:bg-[#F0FAF8] text-[#201F1D] text-xs font-semibold border border-[#E8EAE8]"
         />
 
         {/* Authenticated User Menu or Guest Sign In */}
@@ -89,7 +89,7 @@ export default function ReadingNavbar({ post }) {
             <button
               type="button"
               onClick={() => setDropdownOpen((prev) => !prev)}
-              className="flex items-center gap-2 p-1 rounded-full hover:bg-[#1c1c20] transition-colors focus:outline-none"
+              className="flex items-center gap-2 p-1 rounded-full hover:bg-[#F0FAF8] transition-colors focus:outline-none"
             >
               <UserAvatar
                 src={profile?.avatar_url}
@@ -97,52 +97,52 @@ export default function ReadingNavbar({ post }) {
                 username={profile?.username}
                 size="sm"
               />
-              <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
+              <ChevronDown className="w-3.5 h-3.5 text-[#777777]" />
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-52 bg-[#18181c] border border-[#2a2a30] rounded-2xl shadow-2xl p-1.5 z-50 animate-in fade-in duration-150">
-                <div className="px-3 py-2 border-b border-[#242428]">
-                  <p className="text-xs font-semibold text-white truncate">
+              <div className="absolute right-0 mt-2 w-52 bg-white border border-[#E8EAE8] rounded-2xl shadow-xl p-1.5 z-50 animate-in fade-in duration-150">
+                <div className="px-3 py-2 border-b border-[#E8EAE8]">
+                  <p className="text-xs font-semibold text-[#201F1D] truncate">
                     {profile?.full_name || 'My Account'}
                   </p>
-                  <p className="text-[11px] text-zinc-400 truncate">@{authorHandle}</p>
+                  <p className="text-[11px] text-[#777777] truncate">@{authorHandle}</p>
                 </div>
 
                 <div className="py-1">
                   <Link
                     to={`/profile/${authorHandle}`}
                     onClick={() => setDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-zinc-200 hover:text-white hover:bg-[#222228] rounded-xl transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[#201F1D] hover:text-[#0F8178] hover:bg-[#F0FAF8] rounded-xl transition-colors"
                   >
-                    <User className="w-3.5 h-3.5 text-zinc-400" />
+                    <User className="w-3.5 h-3.5 text-[#777777]" />
                     <span>View Profile</span>
                   </Link>
 
                   <Link
                     to="/dashboard"
                     onClick={() => setDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-zinc-200 hover:text-white hover:bg-[#222228] rounded-xl transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[#201F1D] hover:text-[#0F8178] hover:bg-[#F0FAF8] rounded-xl transition-colors"
                   >
-                    <FileText className="w-3.5 h-3.5 text-zinc-400" />
+                    <FileText className="w-3.5 h-3.5 text-[#777777]" />
                     <span>My Stories</span>
                   </Link>
 
                   <Link
                     to="/settings/profile"
                     onClick={() => setDropdownOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-zinc-200 hover:text-white hover:bg-[#222228] rounded-xl transition-colors"
+                    className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[#201F1D] hover:text-[#0F8178] hover:bg-[#F0FAF8] rounded-xl transition-colors"
                   >
-                    <Settings className="w-3.5 h-3.5 text-zinc-400" />
+                    <Settings className="w-3.5 h-3.5 text-[#777777]" />
                     <span>Settings</span>
                   </Link>
                 </div>
 
-                <div className="pt-1 border-t border-[#242428]">
+                <div className="pt-1 border-t border-[#E8EAE8]">
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors text-left"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-xl transition-colors text-left"
                   >
                     <LogOut className="w-3.5 h-3.5" />
                     <span>Sign Out</span>
@@ -155,13 +155,13 @@ export default function ReadingNavbar({ post }) {
           <div className="flex items-center gap-2">
             <Link
               to="/login"
-              className="text-xs font-semibold text-zinc-300 hover:text-white px-3 py-1.5 rounded-xl hover:bg-[#1a1a20] transition-colors"
+              className="text-xs font-semibold text-[#555555] hover:text-[#201F1D] px-3 py-1.5 rounded-xl hover:bg-[#F0FAF8] transition-colors"
             >
               Sign In
             </Link>
             <Link
               to="/register"
-              className="px-3.5 py-1.5 rounded-full bg-[#FF6719] hover:bg-[#e8590c] text-white text-xs font-semibold shadow transition-colors"
+              className="px-3.5 py-1.5 rounded-full bg-[#0F8178] hover:bg-[#086B64] text-white text-xs font-semibold shadow-xs transition-colors"
             >
               Get Started
             </Link>

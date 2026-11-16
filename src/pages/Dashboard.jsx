@@ -113,19 +113,19 @@ export default function Dashboard() {
   return (
     <AppLayout activeNav="profile">
       {/* Dashboard Top Welcome Banner */}
-      <div className="bg-[#141416] border border-[#242428] rounded-2xl p-6 sm:p-7 mb-6 relative overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#E8EAE8] rounded-2xl p-6 sm:p-7 mb-6 relative overflow-hidden shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative z-10">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <Sparkles className="w-4 h-4 text-[#FF6719]" />
-              <span className="text-xs font-semibold text-[#FF6719] uppercase tracking-wider">
+              <Sparkles className="w-4 h-4 text-[#0F8178]" />
+              <span className="text-xs font-semibold text-[#0F8178] uppercase tracking-wider">
                 Writer Studio
               </span>
             </div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#201F1D] tracking-tight">
               Welcome back, {profile?.full_name || 'Writer'}
             </h1>
-            <p className="text-xs sm:text-sm text-zinc-400 mt-1 max-w-xl">
+            <p className="text-xs sm:text-sm text-[#777777] mt-1 max-w-xl">
               Track your publication engagement, manage your stories, and review recent reader interactions.
             </p>
           </div>
@@ -138,14 +138,14 @@ export default function Dashboard() {
                 loadDashboardData();
               }}
               title="Refresh metrics"
-              className="p-2.5 rounded-xl text-zinc-400 hover:text-white hover:bg-[#202026] border border-[#2a2a30] transition-colors"
+              className="p-2.5 rounded-xl text-[#777777] hover:text-[#201F1D] hover:bg-[#F0FAF8] border border-[#E8EAE8] bg-[#F8FAF9] transition-colors"
             >
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             </button>
 
             <Link
               to="/write"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FF6719] hover:bg-[#e8590c] text-white text-xs font-semibold shadow-md shadow-orange-950/40 transition-all"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0F8178] hover:bg-[#086B64] text-white text-xs font-semibold shadow-xs transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>Write Story</span>
@@ -160,8 +160,8 @@ export default function Dashboard() {
           label="Published Stories"
           value={stats.publishedCount}
           icon={FileText}
-          iconColor="text-emerald-400"
-          iconBg="bg-emerald-500/10 border-emerald-500/20"
+          iconColor="text-[#0F8178]"
+          iconBg="bg-[#E9F8F5] border-[#0F8178]/20"
           subText="Live on public feed"
         />
 
@@ -169,8 +169,8 @@ export default function Dashboard() {
           label="Drafts in Progress"
           value={stats.draftCount}
           icon={Clock}
-          iconColor="text-amber-400"
-          iconBg="bg-amber-500/10 border-amber-500/20"
+          iconColor="text-amber-600"
+          iconBg="bg-amber-50 border-amber-200/60"
           subText="Unpublished works"
         />
 
@@ -179,7 +179,7 @@ export default function Dashboard() {
           value={stats.likesCount}
           icon={Heart}
           iconColor="text-rose-500"
-          iconBg="bg-rose-500/10 border-rose-500/20"
+          iconBg="bg-rose-50 border-rose-200/60"
           subText="Across all publications"
         />
 
@@ -187,8 +187,8 @@ export default function Dashboard() {
           label="Reader Responses"
           value={stats.commentsCount}
           icon={MessageCircle}
-          iconColor="text-blue-400"
-          iconBg="bg-blue-500/10 border-blue-500/20"
+          iconColor="text-sky-600"
+          iconBg="bg-sky-50 border-sky-200/60"
           subText="Comments & replies"
         />
 
@@ -196,8 +196,8 @@ export default function Dashboard() {
           label="Subscribers / Followers"
           value={stats.followersCount}
           icon={Users}
-          iconColor="text-purple-400"
-          iconBg="bg-purple-500/10 border-purple-500/20"
+          iconColor="text-purple-600"
+          iconBg="bg-purple-50 border-purple-200/60"
           subText="Reader network"
         />
 
@@ -205,8 +205,8 @@ export default function Dashboard() {
           label="Stories Bookmarked"
           value={stats.bookmarksCount}
           icon={Bookmark}
-          iconColor="text-amber-400"
-          iconBg="bg-amber-500/10 border-amber-500/20"
+          iconColor="text-amber-600"
+          iconBg="bg-amber-50 border-amber-200/60"
           subText="In readers' reading lists"
         />
       </div>
@@ -231,23 +231,23 @@ export default function Dashboard() {
 
       {/* Delete Confirmation Modal */}
       {deleteModalPost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="w-full max-w-md bg-[#18181c] border border-[#2e2e36] rounded-2xl p-6 shadow-2xl">
-            <div className="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-center justify-center mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white border border-[#E8EAE8] rounded-2xl p-6 shadow-2xl">
+            <div className="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200/60 text-rose-500 flex items-center justify-center mb-4">
               <AlertCircle className="w-6 h-6" />
             </div>
-            <h3 className="font-serif text-xl font-bold text-white mb-2">
+            <h3 className="font-serif text-xl font-bold text-[#201F1D] mb-2">
               Delete Article Permanently?
             </h3>
-            <p className="text-xs text-zinc-400 leading-relaxed mb-6">
-              Are you sure you want to delete <span className="text-zinc-200 font-semibold italic">"{deleteModalPost.title}"</span>? This will permanently remove the article, comments, likes, and any uploaded cover image. This action cannot be undone.
+            <p className="text-xs text-[#777777] leading-relaxed mb-6">
+              Are you sure you want to delete <span className="text-[#201F1D] font-semibold italic">"{deleteModalPost.title}"</span>? This will permanently remove the article, comments, likes, and any uploaded cover image. This action cannot be undone.
             </p>
             <div className="flex justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setDeleteModalPost(null)}
                 disabled={isDeleting}
-                className="px-4 py-2 rounded-xl bg-[#222228] hover:bg-[#2c2c34] text-zinc-300 font-medium text-xs transition-colors"
+                className="px-4 py-2 rounded-xl bg-[#F8FAF9] hover:bg-[#F0FAF8] text-[#201F1D] border border-[#E8EAE8] font-medium text-xs transition-colors"
               >
                 Cancel
               </button>
@@ -255,7 +255,7 @@ export default function Dashboard() {
                 type="button"
                 onClick={confirmDelete}
                 disabled={isDeleting}
-                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs transition-colors"
+                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs shadow-xs transition-colors"
               >
                 {isDeleting ? 'Deleting...' : 'Delete Article'}
               </button>
