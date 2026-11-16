@@ -120,6 +120,24 @@ This document details the phase-by-phase implementation schedule, deliverables, 
 
 ---
 
+### Phase 7: Follow/Unfollow and Personalized Feeds
+- **Status**: **COMPLETED**
+- **Objective**: Full follow/unfollow social graph system, self-follow prevention, duplicate follow protection, accurate live follower/following counts, follower and following lists on user profiles, interactive follow buttons across recommended writers, profile headers, and author cards, personalized Following feed filtering stories by followed creators, chronological For You feed, and dynamic exclusion of already-followed writers in recommendations.
+- **Deliverables**:
+  - `src/services/followService.js` (complete social graph operations: follow, unfollow, toggle, counts, followers/following queries, followed ID arrays)
+  - `src/services/recommendationService.js` (prioritizes authors with published articles, filters current user & followed writers)
+  - `src/services/feedService.js` (strict status='published' enforcement, chronological ordering, author relation joins)
+  - `src/components/profile/FollowButton.jsx` (interactive follow/following/unfollow button with optimistic updates and self-follow protection)
+  - `src/components/profile/UserFollowList.jsx` (followers and following list view with author credentials and live follow buttons)
+  - `src/pages/PublicProfile.jsx` (interactive FollowButton, clickable follower/following counts, and dedicated tabs)
+  - `src/components/home/RightSidebar.jsx` (connected live FollowButtons with instant recommendation & subscription refresh)
+  - `src/pages/ArticleReadingView.jsx` (wired FollowButton on author bio card)
+  - `src/pages/Subscriptions.jsx` (wired interactive FollowButtons on subscribed creators)
+  - `scripts/test-phase7.mjs` integration test suite
+- **Validation**: 9 of 9 integration tests passed with 0 failures; complete regression suite (Phases 3–6) passed; Vite production build verified; live deployed to `https://u9367zk9.insforge.site`.
+
+---
+
 ### Phase 2: PostgreSQL Schema and RLS Policies
 - **Status**: PENDING
 - **Objective**: Apply relational database schema, indexes, constraints, triggers, and Row Level Security policies to InsForge PostgreSQL.

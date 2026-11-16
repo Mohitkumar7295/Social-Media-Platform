@@ -23,6 +23,7 @@ export const feedService = {
         .from('posts')
         .select('*, author:profiles(*)', { count: 'exact' })
         .eq('status', 'published')
+        .order('published_at', { ascending: false, nullsFirst: false })
         .order('created_at', { ascending: false })
         .range(fromOffset, toOffset);
 
@@ -73,6 +74,7 @@ export const feedService = {
         .select('*, author:profiles(*)', { count: 'exact' })
         .in('author_id', authorIds)
         .eq('status', 'published')
+        .order('published_at', { ascending: false, nullsFirst: false })
         .order('created_at', { ascending: false })
         .range(fromOffset, toOffset);
 

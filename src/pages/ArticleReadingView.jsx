@@ -29,6 +29,7 @@ import ShareButton from '../components/reading/ShareButton';
 import UserAvatar from '../components/common/UserAvatar';
 import LikeButton from '../components/interactions/LikeButton';
 import CommentSection from '../components/comments/CommentSection';
+import FollowButton from '../components/profile/FollowButton';
 
 export default function ArticleReadingView() {
   const { slug } = useParams();
@@ -408,14 +409,11 @@ export default function ArticleReadingView() {
                 </div>
               </Link>
 
-              {!isAuthor && (
-                <button
-                  type="button"
-                  onClick={() => setSocialNotice('Follow')}
-                  className="px-5 py-2 rounded-full bg-[#1c1c20] hover:bg-[#282830] text-zinc-200 hover:text-white text-xs font-semibold border border-zinc-700/60 transition-colors shadow-sm"
-                >
-                  Follow Author
-                </button>
+              {!isAuthor && author.id && (
+                <FollowButton
+                  targetUserId={author.id}
+                  size="sm"
+                />
               )}
             </div>
 

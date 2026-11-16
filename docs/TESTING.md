@@ -153,6 +153,27 @@ Execution Summary:
 - Build: `npm run build` completed successfully (exit code 0).
 - Production Deployment: Live on `https://u9367zk9.insforge.site`.
 
+### Phase 7 Test Suite Results (Follow/Unfollow and Personalized Feeds)
+Executed via `scripts/test-phase7.mjs`:
+
+| Test # | Target Module | Test Description | Result | Status |
+|---|---|---|---|---|
+| **Test 1** | `followService.followUser` | User A follows User B; verify record created in `follows` table | Follow created, follower count = 1 | **PASSED** |
+| **Test 2** | Database Check Constraint | Self-follow attempt (User A follows User A) | Rejected by `check_not_self_follow` | **PASSED** |
+| **Test 3** | Database Unique Constraint | Duplicate follow attempt (User A follows User B again) | Rejected by `unique_follower_following` | **PASSED** |
+| **Test 4** | `followService.getFollowers/Following` | Verify followers and following lists join user profile relations | Author profiles linked correctly | **PASSED** |
+| **Test 5** | `recommendationService.getRecommendedWriters` | Verify recommended writers exclude authors already followed | Followed creator filtered out | **PASSED** |
+| **Test 6** | `feedService.getFollowingFeed` | Following feed query returns published stories by followed creators | Story retrieved in following feed | **PASSED** |
+| **Test 7** | Draft Isolation | Unpublished drafts query test across global feeds | Drafts excluded from feeds | **PASSED** |
+| **Test 8** | `followService.unfollowUser` | User A unfollows User B; verify record removed and count returns to 0 | Record deleted, count = 0 | **PASSED** |
+| **Test 9** | `feedService.getFollowingFeed` | Following feed query after unfollow confirms stories removed | Empty following stream returned | **PASSED** |
+
+Execution Summary:
+- **9 of 9 integration tests passed with 0 errors**.
+- Full regression suite for Phases 3–6 (28 tests total) all passed with 0 errors.
+- Build: `npm run build` completed successfully (exit code 0).
+- Production Deployment: Live on `https://u9367zk9.insforge.site`.
+
 ### Test Scenario: Complete Publishing & Engagement Lifecycle
 1. **Account Registration**:
    - Navigate to `/register`.

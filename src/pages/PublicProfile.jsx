@@ -4,6 +4,8 @@ import { Feather, MapPin, Globe, Calendar, Users, Edit3, UserCheck, AlertCircle,
 import { profileService } from '../services/profileService';
 import { followService } from '../services/followService';
 import { postService } from '../services/postService';
+import FollowButton from '../components/profile/FollowButton';
+import UserFollowList from '../components/profile/UserFollowList';
 import { useAuth } from '../hooks/useAuth';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
@@ -149,7 +151,7 @@ export default function PublicProfile() {
                   </div>
                 </div>
 
-                {/* Profile Actions: Edit Profile (owner) or Disabled Follow (Phase 7 preview) */}
+                {/* Profile Actions: Edit Profile (owner) or Interactive Follow */}
                 <div className="flex items-center gap-3 pt-2 sm:pt-0">
                   {isOwnProfile ? (
                     <Link to="/settings/profile">
@@ -158,16 +160,14 @@ export default function PublicProfile() {
                       </Button>
                     </Link>
                   ) : (
-                    <div className="relative group">
-                      <button
-                        disabled
-                        className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-stone-100 text-stone-400 border border-stone-200 cursor-not-allowed select-none"
-                        title="Follow functionality will be implemented in Phase 7"
-                      >
-                        <UserCheck className="w-3.5 h-3.5" />
-                        <span>Follow (Phase 7)</span>
-                      </button>
-                    </div>
+                    <FollowButton
+                      targetUserId={profile.id}
+                      size="md"
+                      onFollowChange={async () => {
+                        const counts = await followService.getFollowCounts(profile.id);
+                        setFollowCounts(counts);
+                      }}
+                    />
                   )}
                 </div>
               </div>
@@ -216,27 +216,35 @@ export default function PublicProfile() {
 
                 {/* Real Followers & Following Counters from PostgreSQL */}
                 <div className="flex items-center gap-6 pt-2 text-xs">
-                  <div>
-                    <strong className="font-bold text-stone-900 text-sm">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('followers')}
+                    className="text-left group hover:opacity-80 transition-opacity"
+                  >
+                    <strong className="font-bold text-stone-900 text-sm group-hover:text-brand-700">
                       {followCounts.followersCount}
                     </strong>{' '}
                     <span className="text-stone-500">Followers</span>
-                  </div>
-                  <div>
-                    <strong className="font-bold text-stone-900 text-sm">
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('following')}
+                    className="text-left group hover:opacity-80 transition-opacity"
+                  >
+                    <strong className="font-bold text-stone-900 text-sm group-hover:text-brand-700">
                       {followCounts.followingCount}
                     </strong>{' '}
                     <span className="text-stone-500">Following</span>
-                  </div>
+                  </button>
                 </div>
               </div>
 
               {/* 3. Profile Content Tabs */}
               <div className="mt-8 border-b border-stone-200">
-                <nav className="flex space-x-8 text-sm font-medium">
+                <nav className="flex space-x-6 sm:space-x-8 text-sm font-medium overflow-x-auto scrollbar-none">
                   <button
                     onClick={() => setActiveTab('home')}
-                    className={`pb-3 px-1 border-b-2 transition-colors ${
+                    className={`pb-3 px-1 border-b-2 transition-colors whitespace-nowrap ${
                       activeTab === 'home'
                         ? 'border-brand-700 text-brand-700 font-semibold'
                         : 'border-transparent text-stone-500 hover:text-stone-700'
@@ -246,17 +254,37 @@ export default function PublicProfile() {
                   </button>
                   <button
                     onClick={() => setActiveTab('posts')}
-                    className={`pb-3 px-1 border-b-2 transition-colors ${
+                    className={`pb-3 px-1 border-b-2 transition-colors whitespace-nowrap ${
                       activeTab === 'posts'
                         ? 'border-brand-700 text-brand-700 font-semibold'
                         : 'border-transparent text-stone-500 hover:text-stone-700'
                     }`}
                   >
-                    Posts
+                    Posts ({authorPosts.length})
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('followers')}
+                    className={`pb-3 px-1 border-b-2 transition-colors whitespace-nowrap ${
+                      activeTab === 'followers'
+                        ? 'border-brand-700 text-brand-700 font-semibold'
+                        : 'border-transparent text-stone-500 hover:text-stone-700'
+                    }`}
+                  >
+                    Followers ({followCounts.followersCount})
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('following')}
+                    className={`pb-3 px-1 border-b-2 transition-colors whitespace-nowrap ${
+                      activeTab === 'following'
+                        ? 'border-brand-700 text-brand-700 font-semibold'
+                        : 'border-transparent text-stone-500 hover:text-stone-700'
+                    }`}
+                  >
+                    Following ({followCounts.followingCount})
                   </button>
                   <button
                     onClick={() => setActiveTab('about')}
-                    className={`pb-3 px-1 border-b-2 transition-colors ${
+                    className={`pb-3 px-1 border-b-2 transition-colors whitespace-nowrap ${
                       activeTab === 'about'
                         ? 'border-brand-700 text-brand-700 font-semibold'
                         : 'border-transparent text-stone-500 hover:text-stone-700'
@@ -368,6 +396,32 @@ export default function PublicProfile() {
                         </p>
                       </div>
                     )}
+                  </div>
+                )}
+
+                {activeTab === 'followers' && (
+                  <div className="space-y-4">
+                    <UserFollowList
+                      profileId={profile.id}
+                      type="followers"
+                      onFollowChange={async () => {
+                        const counts = await followService.getFollowCounts(profile.id);
+                        setFollowCounts(counts);
+                      }}
+                    />
+                  </div>
+                )}
+
+                {activeTab === 'following' && (
+                  <div className="space-y-4">
+                    <UserFollowList
+                      profileId={profile.id}
+                      type="following"
+                      onFollowChange={async () => {
+                        const counts = await followService.getFollowCounts(profile.id);
+                        setFollowCounts(counts);
+                      }}
+                    />
                   </div>
                 )}
 

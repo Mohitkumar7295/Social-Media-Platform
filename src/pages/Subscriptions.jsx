@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Bookmark, Compass, Sparkles, UserCheck } from 'lucide-react';
 import AppLayout from '../components/home/AppLayout';
 import UserAvatar from '../components/common/UserAvatar';
+import FollowButton from '../components/profile/FollowButton';
 import { subscriptionService } from '../services/subscriptionService';
 import { useAuth } from '../hooks/useAuth';
 
@@ -86,10 +87,16 @@ export default function Subscriptions() {
                 </div>
               </Link>
 
-              <span className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-800/80 text-zinc-300 text-xs font-medium border border-zinc-700/50">
-                <UserCheck className="w-3.5 h-3.5 text-[#FF6719]" />
-                <span>Following</span>
-              </span>
+              <FollowButton
+                targetUserId={sub.id}
+                initialIsFollowing={true}
+                size="sm"
+                onFollowChange={async ({ isFollowing }) => {
+                  if (!isFollowing) {
+                    setSubscriptions((prev) => prev.filter((s) => s.id !== sub.id));
+                  }
+                }}
+              />
             </div>
           ))}
         </div>

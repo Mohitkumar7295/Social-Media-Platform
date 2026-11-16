@@ -5,6 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { subscriptionService } from '../../services/subscriptionService';
 import { recommendationService } from '../../services/recommendationService';
 import UserAvatar from '../common/UserAvatar';
+import FollowButton from '../profile/FollowButton';
 
 export default function RightSidebar({ className = '' }) {
   const { user } = useAuth();
@@ -227,13 +228,20 @@ export default function RightSidebar({ className = '' }) {
                   </div>
                 </Link>
 
-                <button
-                  type="button"
-                  onClick={() => setFollowNotice(true)}
-                  className="shrink-0 px-3 py-1 rounded-full bg-[#1f1f24] hover:bg-[#282830] text-zinc-200 hover:text-white text-xs font-semibold border border-zinc-700/60 transition-colors"
-                >
-                  Follow
-                </button>
+                <FollowButton
+                  targetUserId={rec.id}
+                  size="xs"
+                  onFollowChange={async ({ isFollowing }) => {
+                    if (isFollowing) {
+                      const [subRes, recRes] = await Promise.all([
+                        subscriptionService.getSubscriptions(currentUserId),
+                        recommendationService.getRecommendedWriters(currentUserId, 5),
+                      ]);
+                      setSubscriptions(subRes.subscriptions || []);
+                      setRecommendations(recRes.recommendations || []);
+                    }
+                  }}
+                />
               </div>
             ))}
           </div>
@@ -245,32 +253,6 @@ export default function RightSidebar({ className = '' }) {
           </div>
         )}
       </div>
-
-      {/* Follow feature notice modal */}
-      {followNotice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="w-full max-w-sm bg-[#18181c] border border-[#2e2e36] rounded-2xl p-6 shadow-2xl">
-            <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 text-[#FF6719] flex items-center justify-center mb-3">
-              <UserPlus className="w-5 h-5" />
-            </div>
-            <h4 className="text-lg font-serif font-bold text-white mb-1.5">
-              Follow Actions Activate in Phase 7
-            </h4>
-            <p className="text-xs text-zinc-400 leading-relaxed mb-5">
-              The PostgreSQL `follows` schema and relation foundation are in place. The interactive follow / unfollow toggle workflows will be connected in Phase 7.
-            </p>
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => setFollowNotice(false)}
-                className="px-4 py-2 rounded-xl bg-[#FF6719] hover:bg-[#e8590c] text-white font-medium text-xs transition-colors"
-              >
-                Understood
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Sidebar Footer info */}
       <div className="text-[11px] text-zinc-600 px-2 leading-relaxed">
