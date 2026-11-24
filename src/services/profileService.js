@@ -100,7 +100,16 @@ export const profileService = {
         .select()
         .single();
 
-      return { profile: data, error };
+      if (error) {
+        // If profile with this ID already exists, fetch it instead of failing
+        if (error.code === '23505' || error.message?.includes('duplicate key') || error.message?.includes('unique constraint')) {
+          const { profile: existing } = await this.getProfileById(id);
+          if (existing) return { profile: existing, error: null };
+        }
+        return { profile: null, error };
+      }
+
+      return { profile: data, error: null };
     } catch (err) {
       return { profile: null, error: err };
     }
