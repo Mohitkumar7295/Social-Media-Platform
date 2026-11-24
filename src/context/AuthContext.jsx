@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { insforge } from '../lib/insforge';
 import { authService } from '../services/authService';
 import { profileService } from '../services/profileService';
 
